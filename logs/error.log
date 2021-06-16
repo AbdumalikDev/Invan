@@ -1,0 +1,98 @@
+{
+  message: 'storage.sample.create: finished with error: ValidationError: phone_number: Cast to Number failed for value "NaN" (type number) at path "phone_number"',
+  level: 'error',
+  timestamp: '2021-06-10T07:00:25.758Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.create: finished with error: ValidationError: phone_number: Cast to Number failed for value "NaN" (type number) at path "phone_number"',
+  level: 'error',
+  timestamp: '2021-06-10T07:06:01.941Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.findOne: finished with error: Error: Db object is not found',
+  level: 'error',
+  timestamp: '2021-06-10T07:20:05.271Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.findOne: finished with error: Error: Db object is not found',
+  level: 'error',
+  timestamp: '2021-06-10T08:00:44.622Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.findOne: finished with error: Error: Db object is not found',
+  level: 'error',
+  timestamp: '2021-06-10T08:01:39.942Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.findOne: finished with error: Error: Db object is not found',
+  level: 'error',
+  timestamp: '2021-06-10T08:06:19.303Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.findOne: finished with error: Error: Db object is not found',
+  level: 'error',
+  timestamp: '2021-06-10T08:06:35.599Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: `storage.user.create: finished with error: ValidationError: organizations: Cast to embedded failed for value "'Invan'" (type string) at path "organizations"`,
+  level: 'error',
+  timestamp: '2021-06-16T06:55:50.006Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.create: finished with error: MongoError: E11000 duplicate key error collection: invan_project.smsauths index: _id_ dup key: { _id: "ea059d9f-2e7a-41a0-bbed-1851f941ac24" }',
+  level: 'error',
+  timestamp: '2021-06-16T06:58:06.320Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.create: finished with error: MongoError: E11000 duplicate key error collection: invan_project.smsauths index: _id_ dup key: { _id: "ea059d9f-2e7a-41a0-bbed-1851f941ac24" }',
+  level: 'error',
+  timestamp: '2021-06-16T06:58:26.441Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: `storage.user.create: finished with error: ValidationError: organizations: Cast to embedded failed for value "'he'" (type string) at path "organizations"`,
+  level: 'error',
+  timestamp: '2021-06-16T07:54:32.250Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.user.create: finished with error: ValidationError: sessions.0.ip_address: Path `ip_address` is required.',
+  level: 'error',
+  timestamp: '2021-06-16T10:41:15.470Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.findOne: finished with error: Error: Db object is not found',
+  level: 'error',
+  timestamp: '2021-06-16T11:02:07.079Z',
+  label: 'invan',
+  metadata: {}
+}
+{
+  message: 'storage.sample.findOne: finished with error: Error: Db object is not found',
+  level: 'error',
+  timestamp: '2021-06-16T11:07:31.261Z',
+  label: 'invan',
+  metadata: {}
+}
