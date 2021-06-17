@@ -9,4 +9,5 @@ export interface UserRepo {
     create(payload: IUser): Promise<IUser>
     findOne(query: Object): Promise<IUser>
     userExist(query: Object): Promise<boolean>
+    update(query: Object, payload: Object): Promise<IUser | null>
 }

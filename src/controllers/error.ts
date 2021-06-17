@@ -6,9 +6,8 @@ export class ErrorController {
     sendErrorDev = (err: AppError, req: Request, res: Response, next: NextFunction) => {
         return res.status(err.statusCode).json({
             success: false,
-            error: err,
-            status: err.message,
-            stack: err.stack
+            message: err.message,
+            status: err.errstatus
         })
     }
 
@@ -17,7 +16,8 @@ export class ErrorController {
         if (err.isOperational) {
             return res.status(err.statusCode).json({
                 success: false,
-                status: err.message
+                message: err.message,
+                status: err.errstatus
             })
         }
 

@@ -36,7 +36,7 @@ export class AttemptStorage implements AttemptRepo {
 
             if (!attempt) {
                 logger.warn(`${this.scope}.update failed to findByIdAndUpdate`)
-                throw new AppError(404, 'Db object is not found')
+                throw new AppError(404, 'Db object is not found', 'obj')
             }
 
             return attempt

@@ -12,7 +12,7 @@ export class UserStorage implements UserRepo {
 
             if (!user) {
                 logger.warn(`${this.scope}.get failed to findOne`)
-                throw new AppError(404, 'Db object is not found')
+                throw new AppError(404, 'Db object is not found', 'obj')
             }
 
             return user
@@ -44,6 +44,17 @@ export class UserStorage implements UserRepo {
             return true
         } catch (error) {
             logger.error(`${this.scope}.userExist: finished with error: ${error}`)
+            throw error
+        }
+    }
+
+    async update(query: Object, payload: Object): Promise<IUser | null> {
+        try {
+            let newUser = await User.findOneAndUpdate({ ...query }, payload, { new: true })
+
+            return newUser
+        } catch (error) {
+            logger.error(`${this.scope}.create: finished with error: ${error}`)
             throw error
         }
     }
