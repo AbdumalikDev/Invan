@@ -22,7 +22,9 @@ export class UserController {
             }
 
             const userStatusOrg = await storage.user.userExist({
-                $match: { organizations: { $in: [organization] } }
+                organizations: {
+                    $elemMatch: { name: organization.name }
+                }
             })
 
             if (userStatusOrg) {
@@ -35,6 +37,12 @@ export class UserController {
                 return next(
                     new AppError(401, `Banned Time ${await userBan.createdAt.getTime()} for 3min`)
                 )
+            }
+
+            const userSmsAuth = await storage.smsAuth.findOne({ phone_number })
+
+            if (userSmsAuth) {
+                return next(new AppError(401, 'sms'))
             }
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
@@ -80,13 +88,17 @@ export class UserController {
                 }
             }
         } else {
-            const { name, organizations } = req.body
+            const { firstName, organization } = req.body
             const phone_number: number = Number(req.body.phone_number)
             const enteredCode: number = Number(req.body.code)
 
-            const code = (await storage.smsAuth.findOne({ phone_number })).code
+            const code = await storage.smsAuth.findOne({ phone_number })
 
-            if (code !== enteredCode) {
+            if (!code) {
+                return next(new AppError(404, 'user'))
+            }
+
+            if (code.code !== enteredCode) {
                 throw new AppError(401, 'code')
             }
 
@@ -98,8 +110,11 @@ export class UserController {
             ]
 
             const user = await storage.user.create({
-                name,
-                organizations,
+                name: {
+                    firstName,
+                    lastName: ''
+                },
+                organizations: [organization],
                 phone_number,
                 sessions
             } as IUser)

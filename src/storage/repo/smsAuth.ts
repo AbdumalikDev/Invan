@@ -1,4 +1,4 @@
-import { ISmsAuth } from "../../models/SmsAuth"
+import { ISmsAuth } from '../../models/SmsAuth'
 
 export interface ISmsAuthAllResponse {
     payloads: ISmsAuth[]
@@ -7,5 +7,5 @@ export interface ISmsAuthAllResponse {
 
 export interface SmsAuthRepo {
     create(payload: ISmsAuth): Promise<ISmsAuth>
-    findOne(query: Object): Promise<ISmsAuth>
+    findOne(query: Object): Promise<ISmsAuth | null>
 }
