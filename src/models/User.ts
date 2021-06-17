@@ -62,7 +62,7 @@ const UserSchema: Schema<IUser> = new Schema(
             {
                 _id: {
                     type: String,
-                    default: uuidv4()
+                    default: uuidv4
                 },
                 name: {
                     type: String,
@@ -83,8 +83,7 @@ const UserSchema: Schema<IUser> = new Schema(
             type: String
         },
         email: {
-            type: String,
-            unique: true
+            type: String
         },
         email_subs: [
             {
@@ -95,7 +94,7 @@ const UserSchema: Schema<IUser> = new Schema(
             {
                 _id: {
                     type: String,
-                    default: uuidv4()
+                    default: uuidv4
                 },
                 name: {
                     type: String
