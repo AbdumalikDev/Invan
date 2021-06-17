@@ -134,9 +134,101 @@ export class UserController {
     })
 
     login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        const phone_number = await storage.user.findOne({ phone_number: req.body })
-        res.status(200).json({
-            success: true
-        })
+        if(!req.body.code){
+            const code: number = Math.floor(100000 + Math.random() * 900000)
+            const phone_number: number = Number(req.body.phone_number)
+            
+            let findUser = await storage.user.userExist({phone_number})
+
+            if(!findUser) return next(new AppError(404,'phone'))
+
+            const userBan = await storage.ban.findOne({ phone_number })
+            
+            if (userBan) return next(new AppError(200,`You are banned`))
+            const userAttempt = await storage.attempt.findOne({ phone_number })
+            if (!userAttempt) {
+                const response = await smsSend(phone_number, code)
+
+                if (response.status !== 200) {
+                    throw new AppError(response.status, 'SMS not sent')
+                }
+
+                await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
+                await storage.attempt.create({ phone_number } as IAttempt)
+
+                res.status(200).json({
+                    success: true,
+                    status: 'code'
+                })
+            } else {
+                if (userAttempt.attempts === 3) {
+                    await storage.ban.create({ phone_number } as IBan)
+
+                    res.status(200).json({
+                        success: true,
+                        status: 'ban'
+                    })
+                } else {
+                    const response = await smsSend(phone_number, code)
+
+                    if (response.status !== 200) {
+                        throw new AppError(response.status, 'SMS not sent')
+                    }
+
+                    await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
+                    await storage.attempt.update({ phone_number }, {
+                        attempts: userAttempt.attempts + 1
+                    } as IAttempt)
+
+                    res.status(200).json({
+                        success: true,
+                        status: 'code'
+                    })
+                }
+            }
+        }else{
+            const phone_number: number = Number(req.body.phone_number)
+            const enteredCode: number = Number(req.body.code)
+            
+            const code = (await storage.smsAuth.findOne({ phone_number })).code
+
+            if (code !== enteredCode) {
+                return next(new AppError(401, 'code'))
+            }
+
+            const session={
+                    user_agent: req.headers['user-agent'] as string,
+                    ip_address: req.headers['x-forwarded-for'] as string || req.socket.remoteAddress as string
+            }
+
+            const user = await storage.user.findOne({phone_number})
+          
+            if(user.sessions.length>=3){
+                let userPullData = await storage.user.update({phone_number}, {
+                    $pull:{sessions:{_id:user.sessions[0]._id}}
+                })
+
+                let newUser = await storage.user.update({phone_number},{
+                    $push:{sessions:session}
+                })
+                const token = await signToken(user._id, newUser?.sessions[newUser.sessions.length-1]?._id as string)
+                
+                res.status(200).json({
+                    success:true,
+                    token 
+                })
+            }else{
+                let userUpdate = await storage.user.update({phone_number},{
+                    $push:{sessions:session}
+                })
+
+                const token = await signToken(user._id, userUpdate?._id as string)
+
+                res.status(200).json({
+                    succes:true,
+                    token
+                })
+            }
+        }
     })
 }
