@@ -8,9 +8,7 @@ type DecodedToken = {
 }
 
 export const signToken = async (user_id: string, session_id: string): Promise<String> => {
-    return jwt.sign({ user_id, session_id }, config.JwtSecret, {
-        expiresIn: config.JwtExpireIn
-    })
+    return jwt.sign({ user_id, session_id }, config.JwtSecret)
 }
 
 export const decodeToken = async (token: string): Promise<DecodedToken> => {

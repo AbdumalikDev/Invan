@@ -13,6 +13,7 @@ import moment from 'moment'
 export class UserController {
     register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
         if (!req.body.code) {
+            console.log(req.body)
             const phone_number: number = Number(req.body.phone_number)
             const organization = req.body.organization
             const code: number = Math.floor(100000 + Math.random() * 900000)
@@ -21,7 +22,6 @@ export class UserController {
             if (userStatusPhone) {
                 return next(new AppError(401, 'Phone number already exists', 'phone'))
             }
-
             const userStatusOrg = await storage.user.userExist({
                 organizations: {
                     $elemMatch: { name: organization.name }
@@ -63,63 +63,7 @@ export class UserController {
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
 
-            if (!userAttempt) {
-                const response = await smsSend(phone_number, code)
-
-                if (response.status !== 200) {
-                    return next(new AppError(response.status, 'SMS code not sent', 'sms'))
-                }
-
-                const smsAuth = await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
-                await storage.attempt.create({ phone_number } as IAttempt)
-
-                res.status(200).json({
-                    success: true,
-                    status: 'sms',
-                    message: 'SMS code sent',
-                    time: moment(await smsAuth.createdAt)
-                        .add(3, 'm')
-                        .toDate()
-                        .getTime()
-                })
-            } else {
-                if (userAttempt.attempts === 2) {
-                    const userBan = await storage.ban.create({ phone_number } as IBan)
-                    await storage.attempt.delete({ phone_number })
-
-                    return next(
-                        new AppError(
-                            401,
-                            `You are banned till ${moment(await userBan.createdAt)
-                                .add(3, 'm')
-                                .toDate()
-                                .toLocaleTimeString('en-US', { hour12: false })}`,
-                            'ban'
-                        )
-                    )
-                } else {
-                    const response = await smsSend(phone_number, code)
-
-                    if (response.status !== 200) {
-                        return next(new AppError(response.status, 'SMS code not sent', 'sms'))
-                    }
-
-                    const smsAuth = await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
-                    await storage.attempt.update({ phone_number }, {
-                        attempts: userAttempt.attempts + 1
-                    } as IAttempt)
-
-                    res.status(200).json({
-                        success: true,
-                        status: 'sms',
-                        message: 'Sms code sent',
-                        time: moment(await smsAuth.createdAt)
-                            .add(3, 'm')
-                            .toDate()
-                            .getTime()
-                    })
-                }
-            }
+            await smsSend(phone_number,code,userAttempt,req,res,next)
         } else {
             const { firstName, organization } = req.body
             const phone_number: number = Number(req.body.phone_number)
@@ -193,47 +137,9 @@ export class UserController {
             }
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
-            if (!userAttempt) {
-                const response = await smsSend(phone_number, code)
 
-                if (response.status !== 200) {
-                    return next(new AppError(response.status, 'SMS code not sent', 'sms'))
-                }
-
-                await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
-                await storage.attempt.create({ phone_number } as IAttempt)
-
-                res.status(200).json({
-                    success: true,
-                    status: 'code'
-                })
-            } else {
-                if (userAttempt.attempts === 2) {
-                    await storage.ban.create({ phone_number } as IBan)
-
-                    res.status(200).json({
-                        success: true,
-                        status: 'ban'
-                    })
-                } else {
-                    const response = await smsSend(phone_number, code)
-
-                    if (response.status !== 200) {
-                        return next(new AppError(response.status, 'SMS code not sent', 'sms'))
-                    }
-
-                    await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
-                    await storage.attempt.update({ phone_number }, {
-                        attempts: userAttempt.attempts + 1
-                    } as IAttempt)
-
-                    res.status(200).json({
-                        success: true,
-                        status: 'sms',
-                        message: 'SMS code sent'
-                    })
-                }
-            }
+            await smsSend(phone_number,code,userAttempt,req,res,next)
+            
         } else {
             const phone_number: number = Number(req.body.phone_number)
             const enteredCode: number = Number(req.body.code)
