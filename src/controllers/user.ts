@@ -1,26 +1,23 @@
 import { NextFunction, Request, Response } from 'express'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
-import { ISmsAuth } from '../models/SmsAuth'
 import { IUser } from '../models/User'
 import smsSend from './smsSend'
 import AppError from '../utils/appError'
-import { IAttempt } from '../models/Attempt'
-import { IBan } from '../models/Ban'
 import { signToken } from './auth'
 import moment from 'moment'
+import {IGetUserAuthInfoRequest} from "./auth"
 
 export class UserController {
     register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
         if (!req.body.code) {
-            console.log(req.body)
             const phone_number: number = Number(req.body.phone_number)
             const organization = req.body.organization
             const code: number = Math.floor(100000 + Math.random() * 900000)
 
             const userStatusPhone = await storage.user.userExist({ phone_number })
             if (userStatusPhone) {
-                return next(new AppError(401, 'Phone number already exists', 'phone'))
+                return next(new AppError(401, 'User is not found', 'phone'))
             }
             const userStatusOrg = await storage.user.userExist({
                 organizations: {
@@ -53,12 +50,13 @@ export class UserController {
                 res.status(200).json({
                     success: true,
                     status: 'sms',
-                    message: 'SMS code sent',
+                    message: 'SMS code already sent',
                     time: moment(await smsAuth.createdAt)
                         .add(3, 'm')
                         .toDate()
                         .getTime()
                 })
+                return
             }
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
@@ -97,6 +95,7 @@ export class UserController {
             } as IUser)
 
             await storage.attempt.delete({ phone_number })
+            await storage.smsAuth.delete({ phone_number })
 
             const token = await signToken(user._id, user.sessions[0]._id)
 
@@ -118,7 +117,7 @@ export class UserController {
 
             let findUser = await storage.user.userExist({ phone_number })
 
-            if (!findUser) return next(new AppError(404, 'Phone number already exists', 'phone'))
+            if (!findUser) return next(new AppError(404, 'User is not found', 'phone'))
 
             const userBan = await storage.ban.findOne({ phone_number })
 
@@ -134,6 +133,20 @@ export class UserController {
                         'ban'
                     )
                 )
+            }
+            const smsAuth = await storage.smsAuth.findOne({ phone_number })
+
+            if (smsAuth) {
+                res.status(200).json({
+                    success: true,
+                    status: 'sms',
+                    message: 'SMS code already sent',
+                    time: moment(await smsAuth.createdAt)
+                        .add(3, 'm')
+                        .toDate()
+                        .getTime()
+                })
+                return
             }
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
@@ -182,9 +195,12 @@ export class UserController {
                     newUser?.sessions[newUser.sessions.length - 1]?._id as string
                 )
 
+                await storage.attempt.delete({ phone_number })
+                await storage.smsAuth.delete({ phone_number })
                 res.status(200).json({
                     success: true,
-                    token
+                    token,
+                    status:'user'
                 })
             } else {
                 let userUpdate = await storage.user.update(
@@ -194,13 +210,42 @@ export class UserController {
                     }
                 )
 
-                const token = await signToken(user._id, userUpdate?._id as string)
+                const token = await signToken(user._id, userUpdate?.sessions[userUpdate.sessions.length - 1]?._id as string)
 
+                await storage.attempt.delete({ phone_number })
+                await storage.smsAuth.delete({ phone_number })
                 res.status(200).json({
                     succes: true,
-                    token
+                    token,
+                    status:'user'
                 })
             }
         }
     })
+
+
+    admin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+       res.status(200).json({
+           success:true
+       })
+    })
+
+    logout = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const { session_id, userInfo:{  phone_number} } = req.user
+        if(!session_id) return next(new AppError(401,'Session not found','sesssion'))
+        if(!phone_number) return next(new AppError(401,'Phone number is not found','phone'))
+
+        let userPullData = await storage.user.update(
+            { phone_number },
+            {
+                $pull: { sessions: { _id: session_id } }
+            }
+        )
+
+        if(!userPullData) return next(new AppError(400,'Cannot delete session','session'))
+        
+        res.status(200).json({
+            success:true
+        })
+     })
 }

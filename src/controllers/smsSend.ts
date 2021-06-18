@@ -32,22 +32,23 @@ async function sendMessage(phone_number:number, code:number){
 
 async function sendSMS_Attempt_Ban(phone_number:number,code:number,userAttempt:IAttempt | null,req:Request,res:Response, next:NextFunction){
     let response, success:boolean, status:string
+    let smsAuth
     if(!userAttempt) {
         response = await sendMessage(phone_number,code)
         if(response.status!=200) return next(new AppError(response.status,'SMS not sent','sms'))
-        await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
+        smsAuth = await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
         await storage.attempt.create({ phone_number } as IAttempt)
-        status='code'
+        status='sms'
         success=true
-    }else if(!(userAttempt?.attempts==3)){
+    }else if(!(userAttempt?.attempts==2)){
         response = await sendMessage(phone_number,code)
         if(response.status!=200) return next(new AppError(response.status,'SMS code not sent','sms'))
-        await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
+        smsAuth = await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
         await storage.attempt.update({ phone_number }, {
             attempts: userAttempt?.attempts + 1
         } as IAttempt)
         success= true,
-        status= 'code'
+        status= 'sms'
     }else{
         const userBan = await storage.ban.create({ phone_number } as IBan)
         await storage.attempt.delete({ phone_number })
@@ -64,8 +65,13 @@ async function sendSMS_Attempt_Ban(phone_number:number,code:number,userAttempt:I
     }
     
     res.status(200).json({
-        success,
-        status
+        success: true,
+        status: 'sms',
+        message: 'SMS code sent',
+        time: moment(await smsAuth.createdAt)
+            .add(3, 'm')
+            .toDate()
+            .getTime()
     })
 }
 export default sendSMS_Attempt_Ban
