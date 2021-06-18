@@ -50,5 +50,6 @@ export const AuthMiddleware = catchAsync(async (req: IGetUserAuthInfoRequest, re
         userInfo:user,
         session_id:userSession._id
     } as newUser
+    
     next()
 })

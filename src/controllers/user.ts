@@ -215,7 +215,7 @@ export class UserController {
                 await storage.attempt.delete({ phone_number })
                 await storage.smsAuth.delete({ phone_number })
                 res.status(200).json({
-                    succes: true,
+                    success: true,
                     token,
                     status:'user'
                 })
@@ -243,7 +243,45 @@ export class UserController {
         )
 
         if(!userPullData) return next(new AppError(400,'Cannot delete session','session'))
-        
+
+        res.status(200).json({
+            success:true
+        })
+    })
+
+
+    audit = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response,   next: NextFunction) => {
+
+        const { userInfo:{ sessions } } = req.user
+
+        if(!sessions) return next(new AppError(401,'Sessions are not found','sessions'))
+
+        res.status(200).json({
+            success:true,
+            sessions
+        })
+
+     })
+
+     deleteaudit = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+
+        const {  session_id, userInfo:{ phone_number }}  = req.user
+
+        if(!session_id) return next(new AppError(401,'User Session id  not found','session'))
+        if(!req.body.id) return next(new AppError(401,'Device Session id not found','device'))
+
+        if(session_id==req.body.id) return next(new AppError(405,"You can not revoke yourself","yourself"))
+
+        let deleteSession = await storage.user.update(
+            { phone_number },
+            {
+                $pull: { sessions: { _id: req.body.id } }
+            }
+        )
+        console.log(req.body.id)
+        console.log(deleteSession)
+        if(!deleteSession) return next( new AppError(400,'Something wrong!','wrong'))
+
         res.status(200).json({
             success:true
         })

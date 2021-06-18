@@ -6,7 +6,14 @@ const router = Router({ mergeParams: true })
 const controller = new UserController()
 
 router.route('/register').post(controller.register)
+
 router.route('/login').post(controller.login)
+
 router.route('/admin').get(AuthMiddleware, controller.admin)
+
 router.route('/logout').get(AuthMiddleware,controller.logout)
+
+router.route('/audit').get(AuthMiddleware, controller.audit).delete(AuthMiddleware, controller.deleteaudit)
+
+// router.route('/audit/delete').delete(AuthMiddleware, controller.deleteaudit)
 export default router
