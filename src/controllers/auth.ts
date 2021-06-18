@@ -47,10 +47,10 @@ export const AuthMiddleware = catchAsync(
 
         if (!userSession) return next(new AppError(404, 'Session not found', 'session'))
 
-        req.user = {
-            userInfo: user,
-            session_id: userSession._id
-        } as newUser
-        next()
-    }
-)
+    req.user= {
+        userInfo:user,
+        session_id:userSession._id
+    } as newUser
+    
+    next()
+})
