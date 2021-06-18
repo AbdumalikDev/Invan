@@ -12,6 +12,7 @@ interface Config {
     MongoAuthDisable: boolean
     JwtSecret: string
     NodeEnv: string
+    MongodbAtlasUri:string
 }
 
 let config: Config = {
@@ -21,9 +22,10 @@ let config: Config = {
     MongoDatabase: getConf('MONGO_DATABASE', 'invan_newproject'),
     MongoPassword: getConf('MONGO_PASSWORD', ''),
     MongoUser: getConf('MONGO_USER', ''),
-    MongoAuthDisable: true,
+    MongoAuthDisable: false,
     JwtSecret: getConf('JWT_SECRET', 'mySecret'),
-    NodeEnv: getConf('NODE_ENV', 'development')
+    NodeEnv: getConf('NODE_ENV', 'development'),
+    MongodbAtlasUri:getConf('MongodbAtlas',`mongodb+srv://Samandar:rersamandar123@cluster1.i31hr.mongodb.net/invanLogReg?retryWrites=true&w=majority`)
 }
 
 function getConf(name: string, def: string = ''): string {
