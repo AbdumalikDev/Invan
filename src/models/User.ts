@@ -54,7 +54,7 @@ const UserSchema: Schema<IUser> = new Schema(
             type: String
         },
         phone_number: {
-            type: String,
+            type: Number,
             required: true,
             unique: true
         },
