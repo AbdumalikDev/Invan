@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { NextFunction, Request, Response } from 'express'
 import catchAsync from '../utils/catchAsync'
 
-export class UserRegLogValidator {
+export class UserValidator {
     keys = {
         required: 'required',
         optional: 'optional'

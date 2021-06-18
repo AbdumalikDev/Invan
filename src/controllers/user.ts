@@ -17,7 +17,7 @@ export class UserController {
 
             const userStatusPhone = await storage.user.userExist({ phone_number })
             if (userStatusPhone) {
-                return next(new AppError(401, 'User is not found', 'phone'))
+                return next(new AppError(401, 'User already exists', 'phone'))
             }
             const userStatusOrg = await storage.user.userExist({
                 organizations: {
@@ -26,7 +26,7 @@ export class UserController {
             })
 
             if (userStatusOrg) {
-                return next(new AppError(401, 'Organization already exists', 'organization'))
+                return next(new AppError(401, 'User already exists', 'organization'))
             }
 
             const userBan = await storage.ban.findOne({ phone_number })
