@@ -8,29 +8,30 @@ export class UserRegLogValidator {
         optional: "optional"
     }
 
-    createSchema = Joi.object({
-        name: Joi.string().error(Error("Username is incorrect!")),
-        phone_number: Joi.number().error(Error("Phone number is incorrect!")),
-        organization: Joi.string().error(Error("Company name is incorrect!")),
-        status: Joi.number().error(Error("Status is incorrect!")),
-        code: Joi.number().error(Error("Code is incorrect!"))
+    registerSchema = Joi.object({
+        firstName: Joi.string().required().error(Error('Username is incorrect!')),
+        phone_number: Joi.string().required().error(Error('Phone number is incorrect!')),
+        organization: Joi.object().required().error(Error('Company name is incorrect!')),
+        code: Joi.string().error(Error('Code is incorrect!'))
     })
 
-    updateSchema = Joi.object({
-        phone_number: Joi.string().required()
+    loginSchema = Joi.object({
+        phone_number: Joi.string().required().error(Error('Phone Number is required')),
+        code: Joi.string().error(Error('Code is incorrect'))
     })
 
-    create = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        const { error } = this.createSchema.validate(req.body)
+    register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        const { error } = this.registerSchema.validate(req.body)
         if (error) return next(error)
 
         next()
     })
 
-    update = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        const { error } = this.updateSchema.validate(req.body)
+    login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        const { error } = this.loginSchema.validate(req.body)
         if (error) return next(error)
 
         next()
     })
+
 }
