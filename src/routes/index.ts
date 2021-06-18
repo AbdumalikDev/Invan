@@ -4,5 +4,4 @@ import userRouter from './user'
 const router = Router({ mergeParams: true })
 
 router.use('/user', userRouter)
-
 export default router
