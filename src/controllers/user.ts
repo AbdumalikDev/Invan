@@ -6,7 +6,7 @@ import smsSend from './smsSend'
 import AppError from '../utils/appError'
 import { signToken } from './auth'
 import moment from 'moment'
-import {IGetUserAuthInfoRequest} from "./auth"
+import { IGetUserAuthInfoRequest } from './auth'
 
 export class UserController {
     register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -17,7 +17,7 @@ export class UserController {
 
             const userStatusPhone = await storage.user.userExist({ phone_number })
             if (userStatusPhone) {
-                return next(new AppError(401, 'User is not found', 'phone'))
+                return next(new AppError(401, 'User already exists', 'phone'))
             }
             const userStatusOrg = await storage.user.userExist({
                 organizations: {
@@ -26,7 +26,7 @@ export class UserController {
             })
 
             if (userStatusOrg) {
-                return next(new AppError(401, 'Organization already exists', 'organization'))
+                return next(new AppError(401, 'User already exists', 'organization'))
             }
 
             const userBan = await storage.ban.findOne({ phone_number })
@@ -61,7 +61,7 @@ export class UserController {
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
 
-            await smsSend(phone_number,code,userAttempt,req,res,next)
+            await smsSend(phone_number, code, userAttempt, req, res, next)
         } else {
             const { firstName, organization } = req.body
             const phone_number: number = Number(req.body.phone_number)
@@ -151,8 +151,7 @@ export class UserController {
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
 
-            await smsSend(phone_number,code,userAttempt,req,res,next)
-            
+            await smsSend(phone_number, code, userAttempt, req, res, next)
         } else {
             const phone_number: number = Number(req.body.phone_number)
             const enteredCode: number = Number(req.body.code)
@@ -200,7 +199,7 @@ export class UserController {
                 res.status(200).json({
                     success: true,
                     token,
-                    status:'user'
+                    status: 'user'
                 })
             } else {
                 let userUpdate = await storage.user.update(
@@ -210,30 +209,36 @@ export class UserController {
                     }
                 )
 
-                const token = await signToken(user._id, userUpdate?.sessions[userUpdate.sessions.length - 1]?._id as string)
+                const token = await signToken(
+                    user._id,
+                    userUpdate?.sessions[userUpdate.sessions.length - 1]?._id as string
+                )
 
                 await storage.attempt.delete({ phone_number })
                 await storage.smsAuth.delete({ phone_number })
                 res.status(200).json({
                     success: true,
                     token,
-                    status:'user'
+                    status: 'user'
                 })
             }
         }
     })
 
-
     admin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-       res.status(200).json({
-           success:true
-       })
+        res.status(200).json({
+            success: true
+        })
     })
 
     logout = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { session_id, userInfo:{  phone_number} } = req.user
-        if(!session_id) return next(new AppError(401,'Session not found','sesssion'))
-        if(!phone_number) return next(new AppError(401,'Phone number is not found','phone'))
+        const {
+            session_id,
+            userInfo: { phone_number }
+        } = req.user
+
+        if (!session_id) return next(new AppError(401, 'Session not found', 'sesssion'))
+        if (!phone_number) return next(new AppError(401, 'Phone number is not found', 'phone'))
 
         let userPullData = await storage.user.update(
             { phone_number },
@@ -281,9 +286,5 @@ export class UserController {
         console.log(req.body.id)
         console.log(deleteSession)
         if(!deleteSession) return next( new AppError(400,'Something wrong!','wrong'))
-
-        res.status(200).json({
-            success:true
-        })
-     })
+    })
 }
