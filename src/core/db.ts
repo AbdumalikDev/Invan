@@ -26,18 +26,7 @@ function getMongoDBUrl(authDisable: boolean, dbInfo?: mongoDBInfo): string {
         return `mongodb://localhost:27017/${config.MongoDatabase}`
     }
 
-    url =
-        'mongodb://' +
-        config.MongoUser +
-        ':' +
-        config.MongoPassword +
-        '@' +
-        config.MongoHost +
-        ':' +
-        config.MongoPort.toString() +
-        '/' +
-        config.MongoDatabase
-
+    url = config.MongodbAtlasUri
     return url
 }
 export default class Database {

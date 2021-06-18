@@ -16,7 +16,7 @@ interface Config {
 }
 
 let config: Config = {
-    HttpPort: getConf('HTTP_PORT', '3055'),
+    HttpPort: getConf('PORT', '3055'),
     MongoHost: getConf('MONGO_HOST', 'localhost'),
     MongoPort: parseInt(getConf('MONGO_PORT', '27017')),
     MongoDatabase: getConf('MONGO_DATABASE', 'invan_newproject'),
@@ -25,7 +25,7 @@ let config: Config = {
     MongoAuthDisable: false,
     JwtSecret: getConf('JWT_SECRET', 'mySecret'),
     NodeEnv: getConf('NODE_ENV', 'development'),
-    MongodbAtlasUri:getConf('MongodbAtlas',`mongodb+srv://Samandar:rersamandar123@cluster1.i31hr.mongodb.net/invanLogReg?retryWrites=true&w=majority`)
+    MongodbAtlasUri:getConf('MONGODB_ATLAS_URI',``)
 }
 
 function getConf(name: string, def: string = ''): string {
