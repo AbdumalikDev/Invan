@@ -15,5 +15,4 @@ router.route('/logout').get(AuthMiddleware,controller.logout)
 
 router.route('/audit').get(AuthMiddleware, controller.audit).delete(AuthMiddleware, controller.deleteaudit)
 
-// router.route('/audit/delete').delete(AuthMiddleware, controller.deleteaudit)
 export default router

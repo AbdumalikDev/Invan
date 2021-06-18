@@ -278,12 +278,12 @@ export class UserController {
                 $pull: { sessions: { _id: req.body.id } }
             }
         )
-        console.log(req.body.id)
-        console.log(deleteSession)
+       
         if(!deleteSession) return next( new AppError(400,'Something wrong!','wrong'))
 
         res.status(200).json({
-            success:true
+            success:true,
+            sessions:deleteSession.sessions
         })
      })
 }
