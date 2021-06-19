@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import { IUser } from '../models/User'
-import smsSend from './smsSend'
+// import smsSend from './smsSend'
 import AppError from '../utils/appError'
 import { signToken } from './auth'
 import moment from 'moment'
@@ -62,7 +62,7 @@ export class UserController {
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
 
-            await smsSend(phone_number,code,userAttempt,req,res,next)
+            // await smsSend(phone_number,code,userAttempt,req,res,next)
         } else {
             const { firstName, organization } = req.body
             const phone_number: number = Number(req.body.phone_number)
@@ -152,7 +152,7 @@ export class UserController {
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
 
-            await smsSend(phone_number,code,userAttempt,req,res,next)
+            // await smsSend(phone_number,code,userAttempt,req,res,next)
             
         } else {
             const phone_number: number = Number(req.body.phone_number)
@@ -214,23 +214,7 @@ export class UserController {
                         newUser?.sessions[newUser.sessions.length - 1]?._id as string
                     )
                 }
-                // let userPullData = await storage.user.update(
-                //     { phone_number },
-                //     {
-                //         $pull: { sessions: { _id: user.sessions[0]._id } }
-                //     }
-                // )
-
-                // let newUser = await storage.user.update(
-                //     { phone_number },
-                //     {
-                //         $push: { sessions: session }
-                //     }
-                // )
-                // const token = await signToken(
-                //     user._id,
-                //     newUser?.sessions[newUser.sessions.length - 1]?._id as string
-                // )
+               
 
                 await storage.attempt.delete({ phone_number })
                 await storage.smsAuth.delete({ phone_number })
@@ -262,7 +246,6 @@ export class UserController {
                     )
                     token = await signToken(user._id, userUpdate?.sessions[userUpdate.sessions.length - 1]?._id as string)
                 }
-                // const token = await signToken(user._id, userUpdate?.sessions[userUpdate.sessions.length - 1]?._id as string)
 
                 await storage.attempt.delete({ phone_number })
                 await storage.smsAuth.delete({ phone_number })
