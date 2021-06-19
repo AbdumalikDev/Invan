@@ -25,7 +25,7 @@ const SmsAuthSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        expires: '3m'
+        expires: 170
     }
 })
 
