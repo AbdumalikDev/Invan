@@ -70,7 +70,7 @@ export class UserController {
             const code = await storage.smsAuth.findOne({ phone_number })
 
             if (!code) {
-                return next(new AppError(404, 'User not found', 'user'))
+                return next(new AppError(404, 'SMS code not found','sms'))
             }
 
             if (code.code !== enteredCode) {
@@ -160,7 +160,7 @@ export class UserController {
             const code = await storage.smsAuth.findOne({ phone_number })
 
             if (!code) {
-                return next(new AppError(401, 'SMS code already sent', 'sms'))
+                return next(new AppError(401, 'SMS code not found', 'sms'))
             }
 
             if (code.code !== enteredCode) {
