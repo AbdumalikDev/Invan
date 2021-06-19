@@ -1,11 +1,11 @@
-import Joi from "joi"
-import { NextFunction, Request, Response } from "express"
-import catchAsync from "../utils/catchAsync"
+import Joi from 'joi'
+import { NextFunction, Request, Response } from 'express'
+import catchAsync from '../utils/catchAsync'
 
-export class UserRegLogValidator {
+export class UserValidator {
     keys = {
-        required: "required",
-        optional: "optional"
+        required: 'required',
+        optional: 'optional'
     }
 
     registerSchema = Joi.object({
@@ -33,5 +33,4 @@ export class UserRegLogValidator {
 
         next()
     })
-
 }
