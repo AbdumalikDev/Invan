@@ -8,7 +8,6 @@ import { logger } from './config/logger'
         const db = new DB()
         db.connect()
 
-
         app.listen(config.HttpPort, () => {
             logger.info(`INDEX: Server is running on port: ${config.HttpPort}`)
         })

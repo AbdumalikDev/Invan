@@ -9,6 +9,7 @@ import moment from 'moment'
 import {IGetUserAuthInfoRequest} from "./auth"
 
 export class UserController {
+
     register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
         if (!req.body.code) {
             const phone_number: number = Number(req.body.phone_number)
@@ -249,7 +250,6 @@ export class UserController {
         })
     })
 
-
     audit = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response,   next: NextFunction) => {
 
         const { userInfo:{ sessions } } = req.user
@@ -263,7 +263,7 @@ export class UserController {
 
      })
 
-     deleteaudit = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+    deleteaudit = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
 
         const {  session_id, userInfo:{ phone_number }}  = req.user
 
@@ -284,6 +284,24 @@ export class UserController {
         res.status(200).json({
             success:true,
             sessions:deleteSession.sessions
+        })
+     })
+
+     adminfirst = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        res.status(200).json({
+            success:true
+        })
+     })
+
+     adminsecond = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        res.status(200).json({
+            success:true
+        })
+     })
+
+     adminthird = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        res.status(200).json({
+            success:true
         })
      })
 }
