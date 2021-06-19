@@ -176,25 +176,61 @@ export class UserController {
             }
 
             const user = await storage.user.findOne({ phone_number })
+            const { sessions } = user
 
+            let oldUser = sessions.find(usersession => {
+                return usersession.ip_address==session.ip_address && usersession.user_agent==session.user_agent
+            })
+            
             if (user.sessions.length >= 3) {
-                let userPullData = await storage.user.update(
-                    { phone_number },
-                    {
-                        $pull: { sessions: { _id: user.sessions[0]._id } }
-                    }
-                )
+                let token;
+                if(oldUser){
+                    let oldUserDelete = await storage.user.update({phone_number},{
+                        $pull: { sessions: { _id: oldUser._id } }
+                    })
+                    let oldUserAdd = await storage.user.update(
+                        { phone_number },
+                        {
+                            $push: { sessions: session }
+                        }
+                    )
+                    token = await signToken(user._id, oldUserAdd?.sessions[oldUserAdd.sessions.length - 1]?._id as string)
+                }else{
+                    let userPullData = await storage.user.update(
+                        { phone_number },
+                        {
+                            $pull: { sessions: { _id: user.sessions[0]._id } }
+                        }
+                    )
+    
+                    let newUser = await storage.user.update(
+                        { phone_number },
+                        {
+                            $push: { sessions: session }
+                        }
+                    )
+                    token = await signToken(
+                        user._id,
+                        newUser?.sessions[newUser.sessions.length - 1]?._id as string
+                    )
+                }
+                // let userPullData = await storage.user.update(
+                //     { phone_number },
+                //     {
+                //         $pull: { sessions: { _id: user.sessions[0]._id } }
+                //     }
+                // )
 
-                let newUser = await storage.user.update(
-                    { phone_number },
-                    {
-                        $push: { sessions: session }
-                    }
-                )
-                const token = await signToken(
-                    user._id,
-                    newUser?.sessions[newUser.sessions.length - 1]?._id as string
-                )
+                // let newUser = await storage.user.update(
+                //     { phone_number },
+                //     {
+                //         $push: { sessions: session }
+                //     }
+                // )
+                // const token = await signToken(
+                //     user._id,
+                //     newUser?.sessions[newUser.sessions.length - 1]?._id as string
+                // )
 
                 await storage.attempt.delete({ phone_number })
                 await storage.smsAuth.delete({ phone_number })
@@ -204,14 +240,29 @@ export class UserController {
                     status:'user'
                 })
             } else {
-                let userUpdate = await storage.user.update(
-                    { phone_number },
-                    {
-                        $push: { sessions: session }
-                    }
-                )
-
-                const token = await signToken(user._id, userUpdate?.sessions[userUpdate.sessions.length - 1]?._id as string)
+                let token;
+                if(oldUser){
+                    let oldUserDelete= await storage.user.update({phone_number},{
+                        $pull: { sessions: { _id: oldUser._id } }
+                    })
+                    let oldUserAdd = await storage.user.update(
+                        { phone_number },
+                        {
+                            $push: { sessions: session }
+                        }
+                    )
+                    token = await signToken(user._id, oldUserAdd?.sessions[oldUserAdd.sessions.length - 1]?._id as string)
+                    
+                }else{
+                    let userUpdate = await storage.user.update(
+                        { phone_number },
+                        {
+                            $push: { sessions: session }
+                        }
+                    )
+                    token = await signToken(user._id, userUpdate?.sessions[userUpdate.sessions.length - 1]?._id as string)
+                }
+                // const token = await signToken(user._id, userUpdate?.sessions[userUpdate.sessions.length - 1]?._id as string)
 
                 await storage.attempt.delete({ phone_number })
                 await storage.smsAuth.delete({ phone_number })
