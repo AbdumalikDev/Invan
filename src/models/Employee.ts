@@ -1,49 +1,51 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 
-export interface IUser extends Document {
+export interface IEmployee extends Document {
     _id: string
+    org_id: string
+    owner_id: string
     name: {
-        firstName: string
-        lastName: string
+        first_name: string
+        last_name: string
     }
     age: number
     gender: string
     phone_number: number
-    organizations: {
-        _id: string
-        name: string
-    }[]
-    billings: string[]
-    current_tariff: string
+    status: string
+    is_shared: boolean
+    access_level: string
     avatar: string
     email: string
-    email_subs: string[]
-    employees: {
-        _id: string
-        name: string
-    }[]
+    state: string
     sessions: {
         _id: string
         user_agent: string
         ip_address: string
         created_at: Date
     }[]
-    audit: string[]
+    allow_sessions: number
 }
 
-const UserSchema: Schema<IUser> = new Schema(
+const EmployeeSchema: Schema<IEmployee> = new Schema(
     {
         _id: {
             type: String,
             default: uuidv4
         },
+        org_id: {
+            type: String,
+            required: true
+        },
+        owner_id: {
+            type: String
+        },
         name: {
-            firstName: {
+            first_name: {
                 type: String,
                 required: true
             },
-            lastName: {
+            last_name: {
                 type: String
             }
         },
@@ -58,27 +60,17 @@ const UserSchema: Schema<IUser> = new Schema(
             required: true,
             unique: true
         },
-        organizations: [
-            {
-                _id: {
-                    type: String,
-                    default: uuidv4
-                },
-                name: {
-                    type: String,
-                    required: true,
-                    unique: true
-                }
-            }
-        ],
-        billings: [
-            {
-                type: String
-            }
-        ],
-        current_tariff: {
+        status: {
             type: String,
-            default: 'free'
+            required: true,
+            default: 'admin'
+        },
+        is_shared: {
+            type: Boolean,
+            default: true
+        },
+        access_level: {
+            type: String
         },
         avatar: {
             type: String
@@ -86,22 +78,11 @@ const UserSchema: Schema<IUser> = new Schema(
         email: {
             type: String
         },
-        email_subs: [
-            {
-                type: String
-            }
-        ],
-        employees: [
-            {
-                _id: {
-                    type: String,
-                    default: uuidv4
-                },
-                name: {
-                    type: String
-                }
-            }
-        ],
+        state: {
+            type: String,
+            required: true,
+            default: 'pending'
+        },
         sessions: [
             {
                 _id: {
@@ -122,15 +103,15 @@ const UserSchema: Schema<IUser> = new Schema(
                 }
             }
         ],
-        audit: [
-            {
-                type: String
-            }
-        ]
+        allow_sessions: {
+            type: Number,
+            required: true,
+            default: 2
+        }
     },
     {
         timestamps: true
     }
 )
 
-export default mongoose.model<IUser>('users', UserSchema)
+export default mongoose.model<IEmployee>('employee', EmployeeSchema)

@@ -8,5 +8,4 @@ export interface ISmsAuthAllResponse {
 export interface SmsAuthRepo {
     create(payload: ISmsAuth): Promise<ISmsAuth>
     findOne(query: Object): Promise<ISmsAuth | null>
-    delete(query: Object): Promise<string>
 }

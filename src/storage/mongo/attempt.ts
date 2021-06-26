@@ -48,7 +48,11 @@ export class AttemptStorage implements AttemptRepo {
 
     async delete(query: Object): Promise<string> {
         try {
-            await Attempt.findOneAndDelete({ ...query })
+            const attempt = await Attempt.findOneAndDelete({ ...query })
+
+            if (!attempt) {
+                throw new AppError(404, 'Db object is not found', 'attempt')
+            }
 
             return 'Successfully deleted'
         } catch (error) {

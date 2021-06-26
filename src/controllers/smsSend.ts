@@ -39,19 +39,20 @@ async function sendSMS_Attempt_Ban(
     let response, success: boolean, status: string
     let smsAuth
     if (!userAttempt) {
-        response = await sendMessage(phone_number, code)
+        // response = await sendMessage(phone_number, code)
 
-        if (response.status !== 200)
-            return next(new AppError(response.status, 'SMS not sent', 'sms'))
+        // if (response.status !== 200)
+        //     return next(new AppError(response.status, 'SMS not sent', 'sms'))
+
         smsAuth = await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
         await storage.attempt.create({ phone_number } as IAttempt)
         status = 'sms'
         success = true
     } else if (!(userAttempt?.attempts === 2)) {
-        response = await sendMessage(phone_number, code)
+        // response = await sendMessage(phone_number, code)
 
-        if (response.status !== 200)
-            return next(new AppError(response.status, 'SMS code not sent', 'sms'))
+        // if (response.status !== 200)
+        //     return next(new AppError(response.status, 'SMS code not sent', 'sms'))
 
         smsAuth = await storage.smsAuth.create({ phone_number, code } as ISmsAuth)
 
@@ -83,7 +84,8 @@ async function sendSMS_Attempt_Ban(
         time: moment(await smsAuth.createdAt)
             .add(3, 'm')
             .toDate()
-            .getTime()
+            .getTime(),
+        code
     })
 }
 export default sendSMS_Attempt_Ban

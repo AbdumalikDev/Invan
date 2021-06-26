@@ -1,18 +1,21 @@
-import { UserStorage } from './mongo/user'
+import { EmployeeStorage } from './mongo/employee'
 import { SmsAuthStorage } from './mongo/smsAuth'
 import { AttemptStorage } from './mongo/attempt'
 import { BanStorage } from './mongo/ban'
+import { OrganizationStorage } from './mongo/organization'
 
 interface IStorage {
-    user: UserStorage
+    employee: EmployeeStorage
     smsAuth: SmsAuthStorage
     attempt: AttemptStorage
     ban: BanStorage
+    org: OrganizationStorage
 }
 
 export let storage: IStorage = {
-    user: new UserStorage(),
+    employee: new EmployeeStorage(),
     smsAuth: new SmsAuthStorage(),
     attempt: new AttemptStorage(),
-    ban: new BanStorage()
+    ban: new BanStorage(),
+    org: new OrganizationStorage()
 }

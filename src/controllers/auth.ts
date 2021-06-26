@@ -4,17 +4,17 @@ import { NextFunction, Request, Response } from 'express'
 import AppError from '../utils/appError'
 import catchAsync from '../utils/catchAsync'
 import { storage } from '../storage/main'
-import { IUser } from '../models/User'
+import { IEmployee } from '../models/Employee'
 
-export interface newUser extends IUser {
+export interface newEmployee extends IEmployee {
     session_id: string
-    userInfo: IUser
+    employee_info: IEmployee
 }
 export interface IGetUserAuthInfoRequest extends Request {
-    user: newUser
+    employee: newEmployee
 }
 type DecodedToken = {
-    user_id: string
+    employee_id: string
     session_id: string
     iat: number
 }
@@ -35,22 +35,23 @@ export const AuthMiddleware = catchAsync(
 
         if (!token) return next(new AppError(401, 'Token not found', 'token'))
 
-        let { user_id, session_id } = await decodeToken(token)
+        let { employee_id, session_id } = await decodeToken(token)
 
-        let user = await storage.user.findOne({ _id: user_id })
+        let employee = await storage.employee.findOne({ _id: employee_id })
 
-        if (!user) return next(new AppError(404, 'User not found', 'user'))
+        if (!employee) return next(new AppError(404, 'User not found', 'user'))
 
-        let userSession = user.sessions.find((session) => {
+        let employeeSession = employee.sessions.find((session) => {
             return session._id === session_id
         })
 
-        if (!userSession) return next(new AppError(404, 'Session not found', 'session'))
+        if (!employeeSession) return next(new AppError(404, 'Session not found', 'session'))
 
-    req.user= {
-        userInfo:user,
-        session_id:userSession._id
-    } as newUser
-    
-    next()
-})
+        req.employee = {
+            employee_info: employee,
+            session_id: employeeSession._id
+        } as newEmployee
+
+        next()
+    }
+)
