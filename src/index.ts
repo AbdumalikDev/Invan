@@ -2,8 +2,8 @@ import app from './app'
 import DB from './core/db'
 import config from './config/config'
 import { logger } from './config/logger'
-;import { storage } from './storage/main';
-(async function () {
+import { storage } from './storage/main';
+;(async function () {
     try {
         const db = new DB()
         db.connect()
