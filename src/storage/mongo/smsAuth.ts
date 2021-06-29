@@ -27,4 +27,15 @@ export class SmsAuthStorage implements SmsAuthRepo {
             throw error
         }
     }
+
+    async delete(query: Object): Promise<string> {
+        try {
+            await SmsAuth.findOneAndDelete({ ...query })
+
+            return 'Successfully deleted'
+        } catch (error) {
+            logger.error(`${this.scope}.delete: finished with error: ${error}`)
+            throw error
+        }
+    }
 }

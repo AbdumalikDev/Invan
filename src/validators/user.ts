@@ -9,9 +9,9 @@ export class UserValidator {
     }
 
     registerSchema = Joi.object({
-        firstName: Joi.string().required().error(Error('Username is incorrect!')),
+        org_name: Joi.string().required().error(Error('Organization name is incorrect!')),
         phone_number: Joi.string().required().error(Error('Phone number is incorrect!')),
-        organization: Joi.object().required().error(Error('Company name is incorrect!')),
+        first_name: Joi.string().required().error(Error('First name is incorrect!')),
         code: Joi.string().error(Error('Code is incorrect!'))
     })
 
