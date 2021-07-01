@@ -5,11 +5,11 @@ import { expressLogger } from './config/logger'
 import { ErrorController } from './controllers/error'
 import swaggerUi from "swagger-ui-express"
 import swaggerDocs from "./swagger"
+import path from "path"
 
 
 const app = express()
 const errorController = new ErrorController()
-
 // middlewares
 app.use(cors())
 app.use(express.json())
@@ -17,6 +17,8 @@ app.use(express.urlencoded({ extended: true }))
 app.use(expressLogger())
 
 app.use(routes)
+
+
 app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 app.get('/status', (req: Request, res: Response) => {
@@ -24,6 +26,7 @@ app.get('/status', (req: Request, res: Response) => {
         status: 'OK'
     })
 })
+
 
 app.use(errorController.hanle)
 

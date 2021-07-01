@@ -32,4 +32,20 @@ export class AuditStorage implements AuditRepo {
             throw error
         }
     }
+
+    async findAndPopulate(query: Object): Promise<IAudit[]> {
+        try {
+            const audits = await Audit.find(query).populate('employee_id','name')
+
+            if (!audits) {
+                logger.warn(`${this.scope}.get failed to find`)
+                throw new AppError(404, 'Audits not found', 'audit')
+            }
+
+            return audits
+        } catch (error) {
+            logger.error(`${this.scope}.find: finished with error: ${error}`)
+            throw error
+        }
+    }
 }

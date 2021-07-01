@@ -8,4 +8,5 @@ export interface IAuditAllResponse {
 export interface AuditRepo {
     create(payload: IAudit): Promise<IAudit>
     find(query: Object): Promise<IAudit[]>
+    findAndPopulate(query: Object): Promise<IAudit[]>
 }

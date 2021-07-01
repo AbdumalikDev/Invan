@@ -20,6 +20,16 @@ export class UserValidator {
         code: Joi.string().error(Error('Code is incorrect'))
     })
 
+    employeeCreateSchema = Joi.object({
+        first_name:Joi.string().required().error(Error('First name is required')),
+        last_name:Joi.string().error(Error('Last name is incorrect!')),
+        age:Joi.string().error(Error('Age is incorrect!')),
+        gender:Joi.string().error(Error('Gender is incorrect!')),
+        phone_number:Joi.string().required().error(Error('Phone number is incorrect!')),
+        allow_sessions:Joi.number().required().error(Error('Allow sessions is incorrect!')),
+        email:Joi.string().email().error(Error('Email is incorrect!'))
+    })
+
     register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
         const { error } = this.registerSchema.validate(req.body)
         if (error) return next(error)
@@ -34,6 +44,12 @@ export class UserValidator {
         next()
     })
 
+    employeCreate = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
+
+        const {error} = this.employeeCreateSchema.validate(req.body)
+        if(error) return next(error)
+        next()
+    })
     // update = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     //     const { error } = this.updateSchema.validate(req.body)
     //     if (error) return next(error)

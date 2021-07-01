@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose'
+import mongoose, { Schema, Document, PopulatedDoc } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 
-export interface IEmployee extends Document {
+export interface IEmployee extends Document{
     _id: string
     org_id: string
     owner_id: string
@@ -35,7 +35,8 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
         },
         org_id: {
             type: String,
-            required: true
+            required: true,
+            ref:"organization"
         },
         owner_id: {
             type: String
@@ -113,5 +114,6 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
         timestamps: true
     }
 )
+
 
 export default mongoose.model<IEmployee>('employee', EmployeeSchema)

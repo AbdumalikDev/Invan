@@ -6,7 +6,11 @@ export interface IAudit extends Document {
     org_id: string
     employee_id: string
     action: string
-    event: string
+    events: string
+    link_info:{
+        name:string
+        link:string,
+    }
 }
 
 const AuditSchema: Schema<IAudit> = new Schema(
@@ -17,11 +21,13 @@ const AuditSchema: Schema<IAudit> = new Schema(
         },
         org_id: {
             type: String,
-            required: true
+            required: true,
+            ref:"organization"
         },
         employee_id: {
             type: String,
-            required: true
+            required: true,
+            ref:"employee"
         },
         action: {
             type: String,
@@ -31,6 +37,14 @@ const AuditSchema: Schema<IAudit> = new Schema(
         events: {
             type: String,
             required: true
+        },
+        link_info:{
+            link:{
+                type:String
+            },
+            name:{
+                type:String
+            }
         }
     },
     {

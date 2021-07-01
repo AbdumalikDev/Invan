@@ -8,8 +8,10 @@ import { signToken } from './auth'
 import moment from 'moment'
 import { IOrganization } from '../models/Organization'
 import { IGetUserAuthInfoRequest } from "./auth"
+import { IAudit } from "../models/Audit"
 
 export class OrgController {
+
     create = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
         if (!req.body.code) {
             const phone_number: number = Number(req.body.phone_number)
@@ -19,7 +21,7 @@ export class OrgController {
             const orgStatus = await storage.org.orgExist({ org_name })
 
             if (orgStatus) {
-                return next(new AppError(401, 'User already exists', 'org'))
+                return next(new AppError(409, 'User already exists', 'org'))
             }
 
             const userBan = await storage.ban.findOne({ phone_number })
@@ -27,7 +29,7 @@ export class OrgController {
             if (userBan) {
                 return next(
                     new AppError(
-                        401,
+                        403,
                         `You are banned till ${moment(await userBan.createdAt)
                             .add(3, 'm')
                             .toDate()
@@ -54,6 +56,7 @@ export class OrgController {
             const userAttempt = await storage.attempt.findOne({ phone_number })
 
             await smsSend(phone_number, code, userAttempt, req, res, next)
+
         } else {
             const { first_name, org_name } = req.body
             const phone_number: number = Number(req.body.phone_number)
@@ -66,7 +69,7 @@ export class OrgController {
             }
 
             if (code.code !== enteredCode){
-                throw new AppError(401, 'SMS code is incorrect', 'sms')
+                throw new AppError(403, 'SMS code is incorrect', 'sms')
             }
 
             const sessions = [
@@ -95,19 +98,23 @@ export class OrgController {
             employee = await storage.employee.update({ phone_number }, { owner_id: employee.id })
 
             await storage.attempt.delete({ phone_number })
-
+            await storage.smsAuth.delete({ phone_number} )
             const token = await signToken(employee._id, employee.sessions[0]._id)
 
-            res.status(200).json({
+            await storage.audit.create({
+                org_id:org._id,
+                employee_id:employee._id,
+                action:'create',
+                events:'Invan enter',
+            } as IAudit)
+            
+            res.status(201).json({
                 success: true,
                 status: 'user',
                 message: 'User Successfully Registered',
-                data: {
-                    token,
-                    org,
-                    employee
-                }
+                token
             })
+
         }
     })
 
@@ -120,7 +127,7 @@ export class OrgController {
     logout = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const {
             session_id,
-            employee_info: { phone_number }
+            employee_info: { phone_number, _id, org_id }
         } = req.employee
 
         if (!session_id) return next(new AppError(401, 'Session not found', 'sesssion'))
@@ -133,10 +140,18 @@ export class OrgController {
             }
         )
 
+        await storage.audit.create({
+            org_id,
+            employee_id:_id,
+            action:'create',
+            events:'Invan exit',
+        } as IAudit)
+
         if (!userPullData) return next(new AppError(400, 'Cannot delete session', 'session'))
 
         res.status(200).json({
             success: true
         })
     })
+
 }

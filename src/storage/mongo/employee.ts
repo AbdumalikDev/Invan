@@ -9,7 +9,6 @@ export class EmployeeStorage implements EmployeeRepo {
     async findOne(query: Object): Promise<IEmployee> {
         try {
             let employee = await Employee.findOne({ ...query })
-
             if (!employee) {
                 logger.warn(`${this.scope}.get failed to findOne`)
                 throw new AppError(404, 'Employee not found', 'emp')
@@ -22,6 +21,7 @@ export class EmployeeStorage implements EmployeeRepo {
         }
     }
 
+   
     async create(payload: IEmployee): Promise<IEmployee> {
         try {
             let newEmployee = await Employee.create(payload)
@@ -65,4 +65,20 @@ export class EmployeeStorage implements EmployeeRepo {
             throw error
         }
     }
+
+    // async findAndPopulate(query: Object): Promise<IEmployee[]> {
+    //     try {
+    //         const employee = await Employee.find(query).populate('org_id')
+
+    //         if (!audits) {
+    //             logger.warn(`${this.scope}.get failed to find`)
+    //             throw new AppError(404, 'Audits not found', 'audit')
+    //         }
+
+    //         return audits
+    //     } catch (error) {
+    //         logger.error(`${this.scope}.find: finished with error: ${error}`)
+    //         throw error
+    //     }
+    // }
 }

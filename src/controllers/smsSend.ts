@@ -8,10 +8,10 @@ import { IBan } from '../models/Ban'
 import { ISmsAuth } from '../models/SmsAuth'
 import moment from 'moment'
 
-async function sendMessage(phone_number: number, code: number) {
+export async function sendMessage(phone_number: number, text?: number | string,) {
     const data = new FormData()
     data.append('mobile_phone', phone_number)
-    data.append('message', code)
+    data.append('message', text)
     data.append('from', '4546')
     data.append('callback_url', 'http://0000.uz/test.php')
 
