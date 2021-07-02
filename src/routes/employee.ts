@@ -15,16 +15,21 @@ router.route('/register').post(validator.register, orgController.create)
 
 router.route('/login').post(validator.login, empController.login)
 
-router.route('/app').get(AuthMiddleware,orgController.admin)
-
-router.route('/logout').get(AuthMiddleware,orgController.logout)
-
-router.route('/audit').get(AuthMiddleware,empController.allAudits)
-
-router.route('/create').post(AuthMiddleware,fileUpload(),validator.employeCreate,empController.create)
-
 router.route('/activate/:token').get(empController.activate)
 
 router.use('/image',express.static(path.join(__dirname,'../','assets','images')))
-// http://192.168.129:3000/employee/register
+
+router.use(AuthMiddleware)
+
+router.route('/app').get(orgController.admin)
+
+router.route('/logout').get(orgController.logout)
+
+router.route('/create').post(fileUpload(),validator.employeCreate,empController.create)
+
+router.route('/edit/:id').get(empController.getEmployee).put(fileUpload(),validator.employeCreate,empController.editEmployee)
+
+router.route('/all').get(empController.getAllEmployee)
+
+
 export default router

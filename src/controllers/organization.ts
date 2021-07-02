@@ -8,7 +8,6 @@ import { signToken } from './auth'
 import moment from 'moment'
 import { IOrganization } from '../models/Organization'
 import { IGetUserAuthInfoRequest } from "./auth"
-import { IAudit } from "../models/Audit"
 
 export class OrgController {
 
@@ -101,26 +100,25 @@ export class OrgController {
             await storage.smsAuth.delete({ phone_number} )
             const token = await signToken(employee._id, employee.sessions[0]._id)
 
-            await storage.audit.create({
-                org_id:org._id,
-                employee_id:employee._id,
-                action:'create',
-                events:'Invan enter',
-            } as IAudit)
-            
+         
+            let employeeInfo = await storage.employee.findAndPopulate({phone_number})
+
             res.status(201).json({
                 success: true,
-                status: 'user',
-                message: 'User Successfully Registered',
-                token
+                status: 'emp',
+                message: 'Employee Successfully Registered',
+                token,
+                data:employeeInfo
+
             })
 
         }
     })
 
-    admin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    admin = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         res.status(200).json({
-            success: true
+            success: true,
+            data:req.employee.employee_info
         })
     })
 
@@ -140,12 +138,6 @@ export class OrgController {
             }
         )
 
-        await storage.audit.create({
-            org_id,
-            employee_id:_id,
-            action:'create',
-            events:'Invan exit',
-        } as IAudit)
 
         if (!userPullData) return next(new AppError(400, 'Cannot delete session', 'session'))
 

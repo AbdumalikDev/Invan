@@ -1,9 +1,10 @@
-import mongoose, { Schema, Document, PopulatedDoc } from 'mongoose'
+import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import { IOrganization } from './Organization'
 
 export interface IEmployee extends Document{
     _id: string
-    org_id: string
+    org_id: string | IOrganization
     owner_id: string
     name: {
         first_name: string
@@ -47,14 +48,17 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
                 required: true
             },
             last_name: {
-                type: String
+                type: String,
+                default:null
             }
         },
         age: {
-            type: Number
+            type: Number,
+            default:null
         },
         gender: {
-            type: String
+            type: String,
+            default:null
         },
         phone_number: {
             type: Number,
@@ -74,10 +78,12 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
             type: String
         },
         avatar: {
-            type: String
+            type: String,
+            default:null
         },
         email: {
-            type: String
+            type: String,
+            default:null
         },
         state: {
             type: String,

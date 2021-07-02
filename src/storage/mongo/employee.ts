@@ -1,5 +1,6 @@
 import { EmployeeRepo, IEmployeeAllResponse } from '../repo/employee'
 import Employee, { IEmployee } from '../../models/Employee'
+import  { IOrganization } from '../../models/Organization'
 import { logger } from '../../config/logger'
 import AppError from '../../utils/appError'
 
@@ -66,19 +67,33 @@ export class EmployeeStorage implements EmployeeRepo {
         }
     }
 
-    // async findAndPopulate(query: Object): Promise<IEmployee[]> {
-    //     try {
-    //         const employee = await Employee.find(query).populate('org_id')
+    async findAndPopulate(query: Object): Promise<IEmployee> {
+        try {
+            let employee = await Employee.findOne({ ...query }).populate('org_id')
+            if (!employee) {
+                logger.warn(`${this.scope}.get failed to findOne`)
+                throw new AppError(404, 'Employee not found', 'emp')
+            }
 
-    //         if (!audits) {
-    //             logger.warn(`${this.scope}.get failed to find`)
-    //             throw new AppError(404, 'Audits not found', 'audit')
-    //         }
+            return employee
+        } catch (error) {
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
+            throw error
+        }
+    }
 
-    //         return audits
-    //     } catch (error) {
-    //         logger.error(`${this.scope}.find: finished with error: ${error}`)
-    //         throw error
-    //     }
-    // }
+    async findAllandPopulate(query: Object): Promise<IEmployee[]> {
+        try {
+            let employee = await Employee.find({ ...query }).populate('org_id')
+            if (!employee) {
+                logger.warn(`${this.scope}.get failed to findOne`)
+                throw new AppError(404, 'Employee not found', 'emp')
+            }
+
+            return employee
+        } catch (error) {
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
+            throw error
+        }
+    }
 }

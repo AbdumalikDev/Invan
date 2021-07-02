@@ -3,14 +3,14 @@ import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import smsSend, { sendMessage } from './smsSend'
 import AppError from '../utils/appError'
-import  Employee, { IEmployee }  from "../models/Employee"
+import { IEmployee }  from "../models/Employee"
+import { IOrganization }  from "../models/Organization"
 import { signToken, IGetUserAuthInfoRequest, decodeToken } from './auth'
 import moment from 'moment'
 import path from "path"
 import fsPromise from "fs/promises"
 import fsSync from "fs"
 import { v4 as uuidv4 } from 'uuid'
-import { IAudit } from "../models/Audit"
 
 
 export class EmployeeController {
@@ -65,7 +65,7 @@ export class EmployeeController {
         } else {
             const phone_number: number = Number(req.body.phone_number)
             const enteredCode: number = Number(req.body.code)
-            const employee = await storage.employee.findOne({ phone_number })
+            let employee = await storage.employee.findOne({ phone_number })
 
             const code = await storage.smsAuth.findOne({ phone_number })
 
@@ -117,12 +117,13 @@ export class EmployeeController {
                 await storage.attempt.delete({ phone_number })
                 await storage.smsAuth.delete({ phone_number })
 
-              
-                console.log(employee)
+                employee = await storage.employee.findAndPopulate({phone_number})
+
                 res.status(200).json({
                     success: true,
-                    status: 'employee',
-                    token
+                    status: 'emp',
+                    token,
+                    data:employee
                 })
             } else {
                 if (oldEmployeeSession) {
@@ -144,14 +145,17 @@ export class EmployeeController {
                 )
 
                 await storage.attempt.delete({ phone_number })
+
                 await storage.smsAuth.delete({ phone_number })
 
-                
-                console.log(employee)
+                    
+                employee = await storage.employee.findAndPopulate({phone_number})
+
                 res.status(200).json({
                     success: true,
-                    status: 'employee',
-                    token
+                    status: 'emp',
+                    token,
+                    data:employee
                 })
             }
         }
@@ -207,16 +211,6 @@ export class EmployeeController {
         
         let smsLinkToken = await signToken(newEmployee._id)
         
-        await storage.audit.create({
-            org_id,
-            employee_id:_id,
-            action:'create',
-            events:'1 employee were created',
-            link_info: {
-                link:`/employee/edit/${newEmployee._id}`,
-                name:`${newEmployee.name.first_name}`
-            }
-        } as IAudit)
 
         // // await sendMessage(phone_number,`http://192.168.1.129:3000/employee/activate/${smsLinkToken}`)
 
@@ -230,7 +224,7 @@ export class EmployeeController {
 
     activate = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
         const { token } = req.params
-        console.log(token)
+
         let {employee_id} = await decodeToken(token)
 
         if(!employee_id) return next(new AppError(404,'Employee id not found','id'))
@@ -246,27 +240,73 @@ export class EmployeeController {
         res.status(200).json({
             success:true,
             message:"Employee activated",
-            status:'employee'
+            status:'emp'
         })
 
     })
 
-    allAudits = catchAsync(async (req:IGetUserAuthInfoRequest, res:Response, next:NextFunction) =>{
+    getEmployee = catchAsync(async (req:Request, res:Response, next:NextFunction) =>{
+        const { id } = req.params
 
-        const { employee_info:{ _id, status }} = req.employee
-
-        const allAudits = await storage.audit.findAndPopulate({employee_id:_id})
-
-        if(!allAudits.length) return next(new AppError(404,'Audits not found', 'auidits'))
+        let employee = await storage.employee.findAndPopulate({_id:id})
 
         res.status(200).json({
             success:true,
-            data:allAudits,
-            status:'audits'
+            data:employee
         })
     })
 
-    edit = catchAsync(async (req:Request, res:Response, next:NextFunction) =>{
+    editEmployee = catchAsync(async (req:IGetUserAuthInfoRequest, res:Response, next:NextFunction) =>{
         const { id } = req.params
+       
+
+        let employeeInfo = await storage.employee.findAndPopulate({_id:id})
+
+        let employeeOrg  = employeeInfo.org_id as IOrganization
+
+        
+        let employeeImgId;  
+
+        if(req.files){
+            
+            employeeImgId = uuidv4()
+            
+            let imgFolder = fsSync.existsSync(path.join(__dirname,'../','assets','images',employeeOrg.org_name))
+            
+            if(!imgFolder){
+                let orgImgFolder = await fsPromise.mkdir(path.join(__dirname,'../','assets','images',employeeOrg.org_name))
+            }
+            
+            let filePath = path.join(__dirname,'../','assets','images',employeeOrg.org_name,employeeImgId+'.png')
+            
+            await fsPromise.writeFile(filePath,req.files.file.data)
+        }
+
+        let employeeAvatar = req.files ? `/${employeeOrg.org_name}/${employeeImgId}.png` : null
+
+        let edit_employee = await storage.employee.update({_id:id},{
+            ...req.body,
+            avatar:employeeAvatar
+        })
+
+
+        res.status(200).json({
+            succes:true,
+            data:edit_employee
+        })
+    })  
+
+    getAllEmployee = catchAsync(async (req:IGetUserAuthInfoRequest, res:Response, next:NextFunction) =>{
+        const { employee_info:{ _id, owner_id} } = req.employee
+
+        let employees = await storage.employee.findAllandPopulate({owner_id:owner_id})
+
+        if(!employees) return next(new AppError(404,'Employees not found','emps'))
+
+        res.status(200).json({
+            success:true,
+            data:employees
+        })
+
     })
 }

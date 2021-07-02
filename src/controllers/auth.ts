@@ -35,12 +35,13 @@ export const decodeToken = async (token: string): Promise<DecodedToken> => {
 
 export const AuthMiddleware = catchAsync(
     async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+
         const token = req.headers.authorization
         
         if (!token) return next(new AppError(401, 'Token not found', 'token'))
 
         let { employee_id, session_id } = await decodeToken(token)
-        let employee = await storage.employee.findOne({ _id: employee_id })
+        let employee = await storage.employee.findAndPopulate({ _id: employee_id })
 
         if (!employee) return next(new AppError(404, 'User not found', 'user'))
 

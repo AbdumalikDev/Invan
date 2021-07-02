@@ -3,7 +3,6 @@ import { SmsAuthStorage } from './mongo/smsAuth'
 import { AttemptStorage } from './mongo/attempt'
 import { BanStorage } from './mongo/ban'
 import { OrganizationStorage } from './mongo/organization'
-import { AuditStorage } from './mongo/audit'
 
 interface IStorage {
     employee: EmployeeStorage
@@ -11,7 +10,6 @@ interface IStorage {
     attempt: AttemptStorage
     ban: BanStorage
     org: OrganizationStorage
-    audit: AuditStorage
 }
 
 export let storage: IStorage = {
@@ -20,5 +18,4 @@ export let storage: IStorage = {
     attempt: new AttemptStorage(),
     ban: new BanStorage(),
     org: new OrganizationStorage(),
-    audit: new AuditStorage()
 }
