@@ -5,7 +5,6 @@ import { expressLogger } from './config/logger'
 import { ErrorController } from './controllers/error'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDocs from './swagger'
-import path from 'path'
 
 const app = express()
 const errorController = new ErrorController()
