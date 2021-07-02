@@ -23,7 +23,7 @@ type DecodedToken = {
     iat: number
 }
 
-export const signToken = async (employee_id: string, session_id: string): Promise<String> => {
+export const signToken = async (employee_id: string, session_id?: string): Promise<String> => {
     return jwt.sign({ employee_id, session_id }, config.JwtSecret)
 }
 

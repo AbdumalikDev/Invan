@@ -30,14 +30,9 @@ const OrganizationSchema: Schema<IOrganization> = new Schema(
         },
         phone_number: {
             type: Number,
-<<<<<<< HEAD
             required: true,
             unique: true
         }
-=======
-            required: true
-        },
->>>>>>> mainsam
     },
     {
         timestamps: true
