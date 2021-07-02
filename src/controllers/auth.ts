@@ -1,6 +1,7 @@
 import config from '../config/config'
 import jwt from 'jsonwebtoken'
 import { NextFunction, Request, Response } from 'express'
+import { UploadedFile } from 'express-fileupload'
 import AppError from '../utils/appError'
 import catchAsync from '../utils/catchAsync'
 import { storage } from '../storage/main'
@@ -12,6 +13,9 @@ export interface newEmployee extends IEmployee {
 }
 export interface IGetUserAuthInfoRequest extends Request {
     employee: newEmployee
+    files: {
+        file: UploadedFile
+    }
 }
 type DecodedToken = {
     employee_id: string
@@ -36,8 +40,7 @@ export const AuthMiddleware = catchAsync(
         if (!token) return next(new AppError(401, 'Token not found', 'token'))
 
         let { employee_id, session_id } = await decodeToken(token)
-
-        let employee = await storage.employee.findOne({ _id: employee_id })
+        let employee = await storage.employee.findAndPopulate({ _id: employee_id })
 
         if (!employee) return next(new AppError(404, 'User not found', 'user'))
 

@@ -1,5 +1,6 @@
 import { EmployeeRepo, IEmployeeAllResponse } from '../repo/employee'
 import Employee, { IEmployee } from '../../models/Employee'
+import  { IOrganization } from '../../models/Organization'
 import { logger } from '../../config/logger'
 import AppError from '../../utils/appError'
 
@@ -9,7 +10,6 @@ export class EmployeeStorage implements EmployeeRepo {
     async findOne(query: Object): Promise<IEmployee> {
         try {
             let employee = await Employee.findOne({ ...query })
-
             if (!employee) {
                 logger.warn(`${this.scope}.get failed to findOne`)
                 throw new AppError(404, 'Employee not found', 'emp')
@@ -22,6 +22,7 @@ export class EmployeeStorage implements EmployeeRepo {
         }
     }
 
+   
     async create(payload: IEmployee): Promise<IEmployee> {
         try {
             let newEmployee = await Employee.create(payload)
@@ -62,6 +63,36 @@ export class EmployeeStorage implements EmployeeRepo {
             return newEmployee
         } catch (error) {
             logger.error(`${this.scope}.create: finished with error: ${error}`)
+            throw error
+        }
+    }
+
+    async findAndPopulate(query: Object): Promise<IEmployee> {
+        try {
+            let employee = await Employee.findOne({ ...query }).populate('org_id')
+            if (!employee) {
+                logger.warn(`${this.scope}.get failed to findOne`)
+                throw new AppError(404, 'Employee not found', 'emp')
+            }
+
+            return employee
+        } catch (error) {
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
+            throw error
+        }
+    }
+
+    async findAllandPopulate(query: Object): Promise<IEmployee[]> {
+        try {
+            let employee = await Employee.find({ ...query }).populate('org_id')
+            if (!employee) {
+                logger.warn(`${this.scope}.get failed to findOne`)
+                throw new AppError(404, 'Employee not found', 'emp')
+            }
+
+            return employee
+        } catch (error) {
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
             throw error
         }
     }

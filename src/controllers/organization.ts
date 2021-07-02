@@ -20,13 +20,13 @@ export class OrgController {
             const orgStatus = await storage.org.orgExist({ org_name })
 
             if (orgStatus) {
-                return next(new AppError(401, 'Organization already exists', 'org'))
+                return next(new AppError(409, 'Organization already exists', 'org'))
             }
 
             const empStatus = await storage.employee.userExist({ phone_number })
 
             if (empStatus) {
-                return next(new AppError(401, 'Employee already exists', 'emp'))
+                return next(new AppError(409, 'Employee already exists', 'emp'))
             }
 
             const userBan = await storage.ban.findOne({ phone_number })
@@ -34,7 +34,7 @@ export class OrgController {
             if (userBan) {
                 return next(
                     new AppError(
-                        401,
+                        403,
                         `You are banned till ${moment(await userBan.createdAt)
                             .add(3, 'm')
                             .toDate()
@@ -73,7 +73,7 @@ export class OrgController {
             }
 
             if (code.code !== enteredCode) {
-                throw new AppError(401, 'SMS code is incorrect', 'sms')
+                throw new AppError(403, 'SMS code is incorrect', 'sms')
             }
 
             const session = {
@@ -106,32 +106,32 @@ export class OrgController {
             } as IAudit)
 
             await storage.attempt.delete({ phone_number })
-
+            await storage.smsAuth.delete({ phone_number })
             const token = await signToken(employee._id, employee.sessions[0]._id)
 
-            res.status(200).json({
+            let employeeInfo = await storage.employee.findAndPopulate({ phone_number })
+
+            res.status(201).json({
                 success: true,
-                status: 'user',
-                message: 'User Successfully Registered',
-                data: {
-                    token,
-                    org,
-                    employee
-                }
+                status: 'emp',
+                message: 'Employee Successfully Registered',
+                token,
+                data: employeeInfo
             })
         }
     })
 
-    admin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    admin = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         res.status(200).json({
-            success: true
+            success: true,
+            data: req.employee.employee_info
         })
     })
 
     logout = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const {
             session_id,
-            employee_info: { phone_number }
+            employee_info: { phone_number, _id, org_id }
         } = req.employee
 
         if (!session_id) return next(new AppError(401, 'Session not found', 'sesssion'))
