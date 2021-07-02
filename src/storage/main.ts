@@ -4,6 +4,9 @@ import { AttemptStorage } from './mongo/attempt'
 import { BanStorage } from './mongo/ban'
 import { OrganizationStorage } from './mongo/organization'
 import { AuditStorage } from './mongo/audit'
+import { ProductStorage } from './mongo/product'
+import { UnitStorage } from './mongo/unit'
+import { CategoryStorage } from './mongo/category'
 
 interface IStorage {
     employee: EmployeeStorage
@@ -12,6 +15,9 @@ interface IStorage {
     ban: BanStorage
     org: OrganizationStorage
     audit: AuditStorage
+    product: ProductStorage
+    unit: UnitStorage
+    category: CategoryStorage
 }
 
 export let storage: IStorage = {
@@ -20,5 +26,8 @@ export let storage: IStorage = {
     attempt: new AttemptStorage(),
     ban: new BanStorage(),
     org: new OrganizationStorage(),
-    audit: new AuditStorage()
+    audit: new AuditStorage(),
+    product: new ProductStorage(),
+    unit: new UnitStorage(),
+    category: new CategoryStorage()
 }

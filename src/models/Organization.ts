@@ -30,7 +30,8 @@ const OrganizationSchema: Schema<IOrganization> = new Schema(
         },
         phone_number: {
             type: Number,
-            required: true
+            required: true,
+            unique: true
         }
     },
     {

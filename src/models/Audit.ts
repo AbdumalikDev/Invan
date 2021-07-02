@@ -4,9 +4,8 @@ import { v4 as uuidv4 } from 'uuid'
 export interface IAudit extends Document {
     _id: string
     org_id: string
-    employee_id: string
     action: string
-    event: string
+    events: string
 }
 
 const AuditSchema: Schema<IAudit> = new Schema(
@@ -16,10 +15,6 @@ const AuditSchema: Schema<IAudit> = new Schema(
             default: uuidv4
         },
         org_id: {
-            type: String,
-            required: true
-        },
-        employee_id: {
             type: String,
             required: true
         },

@@ -7,7 +7,8 @@ import AppError from '../utils/appError'
 import { signToken } from './auth'
 import moment from 'moment'
 import { IOrganization } from '../models/Organization'
-import { IGetUserAuthInfoRequest } from "./auth"
+import { IGetUserAuthInfoRequest } from './auth'
+import { IAudit } from '../models/Audit'
 
 export class OrgController {
     create = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -19,7 +20,13 @@ export class OrgController {
             const orgStatus = await storage.org.orgExist({ org_name })
 
             if (orgStatus) {
-                return next(new AppError(401, 'User already exists', 'org'))
+                return next(new AppError(401, 'Organization already exists', 'org'))
+            }
+
+            const empStatus = await storage.employee.userExist({ phone_number })
+
+            if (empStatus) {
+                return next(new AppError(401, 'Employee already exists', 'emp'))
             }
 
             const userBan = await storage.ban.findOne({ phone_number })
@@ -65,16 +72,14 @@ export class OrgController {
                 return next(new AppError(404, 'User not found', 'user'))
             }
 
-            if (code.code !== enteredCode){
+            if (code.code !== enteredCode) {
                 throw new AppError(401, 'SMS code is incorrect', 'sms')
             }
 
-            const sessions = [
-                {
-                    user_agent: req.headers['user-agent'],
-                    ip_address: req.headers['x-forwarded-for'] || req.socket.remoteAddress
-                }
-            ]
+            const session = {
+                user_agent: req.headers['user-agent'],
+                ip_address: req.headers['x-forwarded-for'] || req.socket.remoteAddress
+            }
 
             const org = await storage.org.create({
                 org_name,
@@ -89,10 +94,16 @@ export class OrgController {
                 phone_number,
                 status: 'super_admin',
                 state: 'active',
-                sessions
+                sessions: [session]
             } as IEmployee)
 
             employee = await storage.employee.update({ phone_number }, { owner_id: employee.id })
+
+            await storage.audit.create({
+                org_id: org.id,
+                action: 'create',
+                events: `${session.user_agent} ${session.ip_address} logged in`
+            } as IAudit)
 
             await storage.attempt.delete({ phone_number })
 
