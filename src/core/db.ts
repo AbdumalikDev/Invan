@@ -27,17 +27,7 @@ function getMongoDBUrl(authDisable: boolean, dbInfo?: mongoDBInfo): string {
     }
 
     url =
-        'mongodb://' +
-        config.MongoUser +
-        ':' +
-        config.MongoPassword +
-        '@' +
-        config.MongoHost +
-        ':' +
-        config.MongoPort.toString() +
-        '/' +
-        config.MongoDatabase
-
+        'mongodb+srv://Samandar:rersamandar123@cluster1.i31hr.mongodb.net/invan?retryWrites=true&w=majority'
     return url
 }
 export default class Database {

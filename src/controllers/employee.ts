@@ -11,6 +11,7 @@ import path from 'path'
 import fsPromise from 'fs/promises'
 import fsSync from 'fs'
 import { v4 as uuidv4 } from 'uuid'
+import { IAudit } from '../models/Audit'
 
 export class EmployeeController {
     login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -91,7 +92,9 @@ export class EmployeeController {
                     usersession.user_agent == session.user_agent
                 )
             })
+
             let token
+
             if (employee.sessions.length >= employee.allow_sessions) {
                 let user_id: string
                 user_id = oldEmployeeSession ? oldEmployeeSession._id : employee.sessions[0]._id
@@ -118,6 +121,14 @@ export class EmployeeController {
                 await storage.smsAuth.delete({ phone_number })
 
                 employee = await storage.employee.findAndPopulate({ phone_number })
+
+                let employeeOrg = employee.org_id as IOrganization
+
+                await storage.audit.create({
+                    org_id: employeeOrg._id,
+                    action: 'create',
+                    events: `${session.user_agent} ${session.ip_address} logged in`
+                } as IAudit)
 
                 res.status(200).json({
                     success: true,
@@ -153,6 +164,14 @@ export class EmployeeController {
 
                 employee = await storage.employee.findAndPopulate({ phone_number })
 
+                let employeeOrg = employee.org_id as IOrganization
+
+                await storage.audit.create({
+                    org_id: employeeOrg._id,
+                    action: 'create',
+                    events: `${session.user_agent} ${session.ip_address} logged in`
+                } as IAudit)
+
                 res.status(200).json({
                     success: true,
                     status: 'emp',
@@ -165,7 +184,7 @@ export class EmployeeController {
 
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const {
-            employee_info: { status, org_id, owner_id, _id }
+            employee_info: { org_id, owner_id, _id }
         } = req.employee
 
         // if(status!='super_admin') return next(new AppError(405,"You do not have permission.",'emp'))
@@ -174,11 +193,12 @@ export class EmployeeController {
 
         let employee = await storage.employee.userExist({ phone_number })
 
-        if (employee) return next(new AppError(409, 'Employee already exist', 'emp'))
+        if (employee) return next(new AppError(409, 'Phone number already exist', 'phone number'))
 
         let employeeOrg = await storage.org.findOne({ _id: org_id })
 
         let employeeImgId
+
         if (req.files) {
             employeeImgId = uuidv4()
 
@@ -204,32 +224,40 @@ export class EmployeeController {
             await fsPromise.writeFile(filePath, req.files.file.data)
         }
 
-        let employeeAvatar = req.files ? `/${employeeOrg.org_name}/${employeeImgId}.png` : null
+        let employeeAvatar = req.files
+            ? `/employee/image/${employeeOrg.org_name}/${employeeImgId}.png`
+            : null
 
         let newEmployee = await storage.employee.create({
             org_id,
-            owner_id,
+            owner_id: _id,
             name: {
                 first_name,
-                last_name
+                last_name: last_name ? last_name : null
             },
-            age,
-            gender,
+            age: age ? age : null,
+            gender: gender ? gender : null,
             phone_number,
-            email,
+            email: email ? email : null,
             allow_sessions,
             avatar: employeeAvatar
         } as IEmployee)
 
         let smsLinkToken = await signToken(newEmployee._id)
 
-        // // await sendMessage(phone_number,`http://192.168.1.129:3000/employee/activate/${smsLinkToken}`)
+        // await sendMessage(phone_number,`http://192.168.1.129:3005/employee/activate/${smsLinkToken}`)
+
+        await storage.audit.create({
+            org_id: employeeOrg._id,
+            action: 'create',
+            events: `1 employee created <a href="http://192.168.1.129:3005/employee/edit/${newEmployee._id}">${newEmployee.name.first_name}</a>`
+        } as IAudit)
 
         res.status(200).json({
             success: true,
             message: 'Activation link sent',
             status: 'link',
-            link: `http://192.168.1.129:3000/employee/activate/${smsLinkToken}`
+            link: `http://192.168.1.129:3005/employee/activate/${smsLinkToken}`
         })
     })
 
@@ -273,6 +301,10 @@ export class EmployeeController {
         async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
             const { id } = req.params
 
+            // let employeeIsExist = await storage.employee.userExist({phone_number:req.body.phone_number})
+
+            // if(employeeIsExist) return next(new AppError(400,'Employee phone already exist','phone'))
+
             let employeeInfo = await storage.employee.findAndPopulate({ _id: id })
 
             let employeeOrg = employeeInfo.org_id as IOrganization
@@ -304,15 +336,27 @@ export class EmployeeController {
                 await fsPromise.writeFile(filePath, req.files.file.data)
             }
 
-            let employeeAvatar = req.files ? `/${employeeOrg.org_name}/${employeeImgId}.png` : null
+            let employeeAvatar = req.files
+                ? `/employee/image/${employeeOrg.org_name}/${employeeImgId}.png`
+                : null
 
             let edit_employee = await storage.employee.update(
                 { _id: id },
                 {
                     ...req.body,
+                    name: {
+                        first_name: req.body.first_name,
+                        last_name: req.body.last_name
+                    },
                     avatar: employeeAvatar
                 }
             )
+
+            await storage.audit.create({
+                org_id: employeeOrg._id,
+                action: 'update',
+                events: `1 employee updated <a href="http://192.168.1.129:3005/employee/edit/${edit_employee._id}">${edit_employee.name.first_name}</a>`
+            } as IAudit)
 
             res.status(200).json({
                 succes: true,
@@ -324,16 +368,57 @@ export class EmployeeController {
     getAllEmployee = catchAsync(
         async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
             const {
-                employee_info: { _id, owner_id }
+                employee_info: { _id }
             } = req.employee
 
-            let employees = await storage.employee.findAllandPopulate({ owner_id: owner_id })
+            let employees = await storage.employee.findAllandPopulate({ owner_id: _id })
 
             if (!employees) return next(new AppError(404, 'Employees not found', 'emps'))
+
+            let employeeOwner = employees.find((emp) => emp._id == _id)
+
+            employees = employeeOwner ? employees : [req.employee.employee_info, ...employees]
 
             res.status(200).json({
                 success: true,
                 data: employees
+            })
+        }
+    )
+
+    deleteEmployees = catchAsync(
+        async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+            const employees = req.body.employees
+
+            const {
+                employee_info: { owner_id, _id }
+            } = req.employee
+
+            let organizationInfo = req.employee.employee_info.org_id as IOrganization
+
+            if (!employees.length) return next(new AppError(403, 'Emloyees not found', 'emp'))
+
+            let employeeCantDelete = employees.findIndex((empId: string) => empId == _id)
+
+            let deletingEmployees = employeeCantDelete
+                ? employees
+                : employees.splice(employeeCantDelete, 1)
+
+            let employee = await storage.employee.deleteMany({ _id: { $in: deletingEmployees } })
+
+            let restEmployees = await storage.employee.findAllandPopulate({ owner_id: owner_id })
+
+            if (!restEmployees) return next(new AppError(404, 'Employees not found', 'emps'))
+
+            await storage.audit.create({
+                org_id: organizationInfo._id,
+                action: 'delete',
+                events: `${employees.length} employees deleted`
+            } as IAudit)
+
+            res.status(200).json({
+                success: true,
+                data: restEmployees
             })
         }
     )

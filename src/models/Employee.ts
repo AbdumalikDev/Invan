@@ -112,8 +112,7 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
         ],
         allow_sessions: {
             type: Number,
-            required: true,
-            default: 2
+            default:2
         }
     },
     {
