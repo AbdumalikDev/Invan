@@ -7,8 +7,8 @@ import { logger } from './config/logger'
         const db = new DB()
         db.connect()
 
-        app.listen(config.HttpPort || 8080, () => {
-            logger.info(`INDEX: Server is running on port: ${config.HttpPort || 8080}`)
+        app.listen(config.HttpPort, () => {
+            logger.info(`INDEX: Server is running on port: ${config.HttpPort}`)
         })
 
         logger.info('INDEX: Database connection initialized.')

@@ -15,7 +15,7 @@ interface Config {
 }
 
 let config: Config = {
-    HttpPort: getConf('HTTP_PORT', ''),
+    HttpPort: getConf('PORT', ''),
     MongoHost: getConf('MONGO_HOST', 'localhost'),
     MongoPort: parseInt(getConf('MONGO_PORT', '27017')),
     MongoDatabase: getConf('MONGO_DATABASE', 'invan_myproject'),
