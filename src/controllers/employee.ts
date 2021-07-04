@@ -309,6 +309,9 @@ export class EmployeeController {
 
             let employeeInfo = await storage.employee.findAndPopulate({ _id: id })
 
+            if (req.employee.status == 'admin' && employeeInfo.status == 'super_admin')
+                return next(new AppError(400, 'You can not edit super admin', 'edit super admin'))
+
             let employeeOrg = employeeInfo.org_id as IOrganization
 
             let employeeImgId
