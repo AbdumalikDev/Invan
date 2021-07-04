@@ -21,7 +21,7 @@ let config: Config = {
     MongoDatabase: getConf('MONGO_DATABASE', 'invan_myproject'),
     MongoPassword: getConf('MONGO_PASSWORD', ''),
     MongoUser: getConf('MONGO_USER', ''),
-    MongoAuthDisable: false,
+    MongoAuthDisable: true,
     JwtSecret: getConf('JWT_SECRET', 'mySecret'),
     NodeEnv: getConf('NODE_ENV', 'production')
 }

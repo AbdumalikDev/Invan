@@ -21,7 +21,7 @@ export class EmployeeController {
 
             let findEmployee = await storage.employee.userExist({ phone_number })
 
-            if (!findEmployee) return next(new AppError(404, 'Employee is not found', 'phone'))
+            if (!findEmployee) return next(new AppError(404, 'Employee not found', 'emp'))
 
             let statusOfEmployee = await storage.employee.findOne({ phone_number })
 
@@ -46,7 +46,7 @@ export class EmployeeController {
             const smsAuth = await storage.smsAuth.findOne({ phone_number })
 
             if (smsAuth) {
-                res.status(200).json({
+                return res.status(200).json({
                     success: true,
                     status: 'sms',
                     message: 'SMS code already sent',
@@ -55,7 +55,6 @@ export class EmployeeController {
                         .toDate()
                         .getTime()
                 })
-                return
             }
 
             const userAttempt = await storage.attempt.findOne({ phone_number })
@@ -69,7 +68,7 @@ export class EmployeeController {
             const code = await storage.smsAuth.findOne({ phone_number })
 
             if (!code) {
-                return next(new AppError(409, 'SMS code already sent', 'sms'))
+                return next(new AppError(409, 'SMS code not found!', 'sms'))
             }
 
             if (code.code !== enteredCode) {
@@ -184,7 +183,7 @@ export class EmployeeController {
 
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const {
-            employee_info: { org_id, owner_id, _id }
+            employee_info: { org_id, _id }
         } = req.employee
 
         let { first_name, last_name, age, gender, phone_number, email, allow_sessions } = req.body
@@ -263,8 +262,6 @@ export class EmployeeController {
         const { token } = req.params
 
         let { employee_id } = await decodeToken(token)
-
-        if (!employee_id) return next(new AppError(404, 'Employee id not found', 'id'))
 
         let employee = await storage.employee.findOne({ _id: employee_id })
 

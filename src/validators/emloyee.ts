@@ -34,7 +34,7 @@ export class UserValidator {
         last_name: Joi.string()
             .allow('')
             .error(new AppError(400, 'Last name is incorrect!', 'last name')),
-        age: Joi.string()
+        age: Joi.number()
             .allow('')
             .error(new AppError(400, 'Age is incorrect!', 'age'))
             .min(10)
