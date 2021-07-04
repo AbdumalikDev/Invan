@@ -24,8 +24,7 @@ export class ErrorController {
         // B) Programming or other unknown error: don't leak error details
         res.status(err.statusCode).json({
             success: false,
-            message: err.message,
-            status: err.message.split(' ')[0]
+            message: 'Something went very wrong!'
         })
     }
 
