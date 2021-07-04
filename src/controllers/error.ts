@@ -22,10 +22,10 @@ export class ErrorController {
         }
 
         // B) Programming or other unknown error: don't leak error details
-        console.error('ERROR 💥', err)
-        res.status(500).json({
+        res.status(err.statusCode).json({
             success: false,
-            message: 'Something went very wrong!'
+            message: err.message,
+            status: err.message.split(' ')[0]
         })
     }
 
