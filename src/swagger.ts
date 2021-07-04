@@ -128,7 +128,7 @@ export default {
     },
     apis: ['**/*Route.js'],
     paths: {
-        'employee/register': {
+        '/employee/register': {
             post: {
                 summary: 'Registration',
                 requestBody: {
@@ -453,7 +453,7 @@ export default {
                 }
             }
         },
-        'employee/login': {
+        '/employee/login': {
             post: {
                 summary: 'Login',
                 requestBody: {
@@ -767,7 +767,7 @@ export default {
                 }
             }
         },
-        'employee/logout': {
+        '/employee/logout': {
             get: {
                 summary: 'Log out',
                 security: [
@@ -877,7 +877,7 @@ export default {
                 }
             }
         },
-        'employee/create': {
+        '/employee/create': {
             post: {
                 summary: 'Create employee',
                 security: [
@@ -984,7 +984,7 @@ export default {
                 }
             }
         },
-        'employee/activate/{token}': {
+        '/employee/activate/{token}': {
             get: {
                 summary: 'Check Link and Activate Employee',
                 security: [
@@ -1058,7 +1058,7 @@ export default {
                 }
             }
         },
-        'employee/edit/{id}': {
+        '/employee/edit/{id}': {
             put: {
                 summary: 'Edit Employee',
                 security: [
@@ -1512,7 +1512,7 @@ export default {
                 }
             }
         },
-        'employee/all': {
+        '/employee/all': {
             get: {
                 summary: 'Get all employee',
                 security: [
@@ -1692,7 +1692,7 @@ export default {
                 }
             }
         },
-        'employee/delete': {
+        '/employee/delete': {
             delete: {
                 summary: 'Delete employees',
                 security: [
