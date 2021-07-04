@@ -406,7 +406,7 @@ export class EmployeeController {
 
             let organizationInfo = req.employee.employee_info.org_id as IOrganization
 
-            if (!employees.length) return next(new AppError(403, 'Emloyees not found', 'emp'))
+            if (!employees.length) return next(new AppError(404, 'Emloyees not found', 'emp'))
 
             let employeeCantDelete = employees.findIndex((empId: string) => empId == _id)
 
@@ -423,8 +423,6 @@ export class EmployeeController {
             let employee = await storage.employee.deleteMany({ _id: { $in: employees } })
 
             let restEmployees = await storage.employee.findAllandPopulate({ owner_id: owner_id })
-
-            if (!restEmployees) return next(new AppError(404, 'Employees not found', 'emps'))
 
             await storage.audit.create({
                 org_id: organizationInfo._id,

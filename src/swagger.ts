@@ -1059,6 +1059,259 @@ export default {
             }
         },
         'employee/edit/{id}': {
+            put: {
+                summary: 'Edit Employee',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'multipart/form-data': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    file: {
+                                        type: 'string',
+                                        format: 'binary'
+                                    },
+                                    first_name: {
+                                        type: 'string',
+                                        requried: true
+                                    },
+                                    last_name: {
+                                        type: 'string'
+                                    },
+                                    age: {
+                                        type: 'string'
+                                    },
+                                    gender: {
+                                        type: 'string'
+                                    },
+                                    email: {
+                                        type: 'string'
+                                    },
+                                    allow_sessions: {
+                                        type: 'string'
+                                    },
+                                    phone_number: {
+                                        type: 'string',
+                                        required: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        data: {
+                                            type: 'object',
+                                            properties: {
+                                                name: {
+                                                    type: 'object',
+                                                    properties: {
+                                                        last_name: {
+                                                            type: 'string'
+                                                        },
+                                                        first_name: {
+                                                            type: 'string'
+                                                        }
+                                                    }
+                                                },
+                                                age: {
+                                                    type: 'string',
+                                                    default: null
+                                                },
+                                                gender: {
+                                                    type: 'string',
+                                                    default: null
+                                                },
+                                                status: {
+                                                    type: 'string',
+                                                    default: 'admin'
+                                                },
+                                                is_shared: {
+                                                    type: 'string',
+                                                    default: true
+                                                },
+                                                avatar: {
+                                                    type: 'string',
+                                                    default: null
+                                                },
+                                                email: {
+                                                    type: 'string',
+                                                    default: null
+                                                },
+                                                state: {
+                                                    type: 'string',
+                                                    default: 'pending'
+                                                },
+                                                allow_sessions: {
+                                                    type: 'number'
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                org_id: {
+                                                    type: 'object',
+                                                    properties: {
+                                                        current_tarif: {
+                                                            type: 'string'
+                                                        },
+                                                        _id: {
+                                                            type: 'string'
+                                                        },
+                                                        org_name: {
+                                                            type: 'string'
+                                                        },
+                                                        phone_number: {
+                                                            type: 'number'
+                                                        },
+                                                        createdAt: {
+                                                            type: 'string'
+                                                        },
+                                                        updatedAt: {
+                                                            type: 'string'
+                                                        }
+                                                    }
+                                                },
+                                                owner_id: {
+                                                    type: 'string'
+                                                },
+                                                phone_number: {
+                                                    type: 'number'
+                                                },
+                                                sessions: {
+                                                    type: 'array'
+                                                },
+                                                createdAt: {
+                                                    type: 'string'
+                                                },
+                                                updated_at: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    example: {
+                                        success: true,
+                                        data: {
+                                            name: {
+                                                last_name: 'Karimov',
+                                                first_name: 'Olim'
+                                            },
+                                            age: null,
+                                            gender: null,
+                                            status: 'admin',
+                                            is_shared: true,
+                                            avatar: '/employee/image/Invan/34822811-3938-4933-a844-2628b7eede8f.png',
+                                            email: null,
+                                            state: 'active',
+                                            allow_sessions: 1,
+                                            _id: '409973da-4deb-4187-a87b-5ff388eb342e',
+                                            org_id: {
+                                                current_tarif: 'free',
+                                                _id: '999af55e-5ce3-47c6-9b0b-e6f6f4a9053c',
+                                                org_name: 'Invan',
+                                                phone_number: 998935186780,
+                                                createdAt: '2021-07-04T10:43:02.224Z',
+                                                updatedAt: '2021-07-04T10:43:02.224Z'
+                                            },
+                                            owner_id: 'ffbd6c9d-e4a4-4793-91fd-9a53196f93be',
+                                            phone_number: 998935186785,
+                                            sessions: [
+                                                {
+                                                    user_agent:
+                                                        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
+                                                    ip_address: '213.230.79.37',
+                                                    _id: '80173629-b211-46d1-94c4-e58ebb05ee4d',
+                                                    created_at: '2021-07-04T10:46:26.685Z'
+                                                }
+                                            ],
+                                            createdAt: '2021-07-04T10:43:24.789Z',
+                                            updatedAt: '2021-07-04T10:46:26.683Z'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '400-cant-edit': {
+                        description: 'Bad request',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        messsage: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        status: 'edit super admin',
+                                        message: 'You can not edit super admin'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '400-phone-already-exist': {
+                        description: 'Bad request',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        messsage: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        status: 'phone number',
+                                        message: 'Phone number already exist'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             get: {
                 summary: 'Check Link and Activate Employee',
                 security: [
@@ -1251,6 +1504,450 @@ export default {
                                         success: false,
                                         status: 'edit super admin',
                                         message: 'You can not edit super admin'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        'employee/all': {
+            get: {
+                summary: 'Get all employee',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        data: {
+                                            type: 'object',
+                                            properties: {
+                                                name: {
+                                                    type: 'object',
+                                                    properties: {
+                                                        last_name: {
+                                                            type: 'string'
+                                                        },
+                                                        first_name: {
+                                                            type: 'string'
+                                                        }
+                                                    }
+                                                },
+                                                age: {
+                                                    type: 'string',
+                                                    default: null
+                                                },
+                                                gender: {
+                                                    type: 'string',
+                                                    default: null
+                                                },
+                                                status: {
+                                                    type: 'string',
+                                                    default: 'admin'
+                                                },
+                                                is_shared: {
+                                                    type: 'string',
+                                                    default: true
+                                                },
+                                                avatar: {
+                                                    type: 'string',
+                                                    default: null
+                                                },
+                                                email: {
+                                                    type: 'string',
+                                                    default: null
+                                                },
+                                                state: {
+                                                    type: 'string',
+                                                    default: 'pending'
+                                                },
+                                                allow_sessions: {
+                                                    type: 'number'
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                org_id: {
+                                                    type: 'object',
+                                                    properties: {
+                                                        current_tarif: {
+                                                            type: 'string'
+                                                        },
+                                                        _id: {
+                                                            type: 'string'
+                                                        },
+                                                        org_name: {
+                                                            type: 'string'
+                                                        },
+                                                        phone_number: {
+                                                            type: 'number'
+                                                        },
+                                                        createdAt: {
+                                                            type: 'string'
+                                                        },
+                                                        updatedAt: {
+                                                            type: 'string'
+                                                        }
+                                                    }
+                                                },
+                                                owner_id: {
+                                                    type: 'string'
+                                                },
+                                                phone_number: {
+                                                    type: 'number'
+                                                },
+                                                sessions: {
+                                                    type: 'array'
+                                                },
+                                                createdAt: {
+                                                    type: 'string'
+                                                },
+                                                updated_at: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    example: {
+                                        success: true,
+                                        data: {
+                                            name: {
+                                                last_name: 'Karimov',
+                                                first_name: 'Olim'
+                                            },
+                                            age: null,
+                                            gender: null,
+                                            status: 'admin',
+                                            is_shared: true,
+                                            avatar: '/employee/image/Invan/34822811-3938-4933-a844-2628b7eede8f.png',
+                                            email: null,
+                                            state: 'active',
+                                            allow_sessions: 1,
+                                            _id: '409973da-4deb-4187-a87b-5ff388eb342e',
+                                            org_id: {
+                                                current_tarif: 'free',
+                                                _id: '999af55e-5ce3-47c6-9b0b-e6f6f4a9053c',
+                                                org_name: 'Invan',
+                                                phone_number: 998935186780,
+                                                createdAt: '2021-07-04T10:43:02.224Z',
+                                                updatedAt: '2021-07-04T10:43:02.224Z'
+                                            },
+                                            owner_id: 'ffbd6c9d-e4a4-4793-91fd-9a53196f93be',
+                                            phone_number: 998935186785,
+                                            sessions: [
+                                                {
+                                                    user_agent:
+                                                        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
+                                                    ip_address: '213.230.79.37',
+                                                    _id: '80173629-b211-46d1-94c4-e58ebb05ee4d',
+                                                    created_at: '2021-07-04T10:46:26.685Z'
+                                                }
+                                            ],
+                                            createdAt: '2021-07-04T10:43:24.789Z',
+                                            updatedAt: '2021-07-04T10:46:26.683Z'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '404': {
+                        description: 'Bad request',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        messsage: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        status: 'emps',
+                                        message: 'Employees not found'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        'employee/delete': {
+            delete: {
+                summary: 'Delete employees',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    employess: {
+                                        type: 'array',
+                                        default: [
+                                            {
+                                                type: 'string'
+                                            }
+                                        ]
+                                    }
+                                },
+                                example: {
+                                    employees: [
+                                        '80173629-b211-46d1-94c4-e58ebb05ee4d',
+                                        '80173629-b211-46d1-94c4-e58ebb05ee43'
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        data: {
+                                            type: 'array',
+                                            default: [
+                                                {
+                                                    type: 'object',
+                                                    properties: {
+                                                        name: {
+                                                            type: 'object',
+                                                            properties: {
+                                                                last_name: {
+                                                                    type: 'string'
+                                                                },
+                                                                first_name: {
+                                                                    type: 'string'
+                                                                }
+                                                            }
+                                                        },
+                                                        age: {
+                                                            type: 'string',
+                                                            default: null
+                                                        },
+                                                        gender: {
+                                                            type: 'string',
+                                                            default: null
+                                                        },
+                                                        status: {
+                                                            type: 'string',
+                                                            default: 'admin'
+                                                        },
+                                                        is_shared: {
+                                                            type: 'string',
+                                                            default: true
+                                                        },
+                                                        avatar: {
+                                                            type: 'string',
+                                                            default: null
+                                                        },
+                                                        email: {
+                                                            type: 'string',
+                                                            default: null
+                                                        },
+                                                        state: {
+                                                            type: 'string',
+                                                            default: 'pending'
+                                                        },
+                                                        allow_sessions: {
+                                                            type: 'number'
+                                                        },
+                                                        _id: {
+                                                            type: 'string'
+                                                        },
+                                                        org_id: {
+                                                            type: 'object',
+                                                            properties: {
+                                                                current_tarif: {
+                                                                    type: 'string'
+                                                                },
+                                                                _id: {
+                                                                    type: 'string'
+                                                                },
+                                                                org_name: {
+                                                                    type: 'string'
+                                                                },
+                                                                phone_number: {
+                                                                    type: 'number'
+                                                                },
+                                                                createdAt: {
+                                                                    type: 'string'
+                                                                },
+                                                                updatedAt: {
+                                                                    type: 'string'
+                                                                }
+                                                            }
+                                                        },
+                                                        owner_id: {
+                                                            type: 'string'
+                                                        },
+                                                        phone_number: {
+                                                            type: 'number'
+                                                        },
+                                                        sessions: {
+                                                            type: 'array'
+                                                        },
+                                                        createdAt: {
+                                                            type: 'string'
+                                                        },
+                                                        updated_at: {
+                                                            type: 'string'
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    example: [
+                                        {
+                                            success: true,
+                                            data: {
+                                                name: {
+                                                    last_name: 'Karimov',
+                                                    first_name: 'Olim'
+                                                },
+                                                age: null,
+                                                gender: null,
+                                                status: 'admin',
+                                                is_shared: true,
+                                                avatar: '/employee/image/Invan/34822811-3938-4933-a844-2628b7eede8f.png',
+                                                email: null,
+                                                state: 'active',
+                                                allow_sessions: 1,
+                                                _id: '409973da-4deb-4187-a87b-5ff388eb342e',
+                                                org_id: {
+                                                    current_tarif: 'free',
+                                                    _id: '999af55e-5ce3-47c6-9b0b-e6f6f4a9053c',
+                                                    org_name: 'Invan',
+                                                    phone_number: 998935186780,
+                                                    createdAt: '2021-07-04T10:43:02.224Z',
+                                                    updatedAt: '2021-07-04T10:43:02.224Z'
+                                                },
+                                                owner_id: 'ffbd6c9d-e4a4-4793-91fd-9a53196f93be',
+                                                phone_number: 998935186785,
+                                                sessions: [
+                                                    {
+                                                        user_agent:
+                                                            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
+                                                        ip_address: '213.230.79.37',
+                                                        _id: '80173629-b211-46d1-94c4-e58ebb05ee4d',
+                                                        created_at: '2021-07-04T10:46:26.685Z'
+                                                    }
+                                                ],
+                                                createdAt: '2021-07-04T10:43:24.789Z',
+                                                updatedAt: '2021-07-04T10:46:26.683Z'
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    '404': {
+                        description: 'Bad request',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        messsage: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        status: 'emps',
+                                        message: 'Employees not found'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '400-cant-delete-owner': {
+                        description: 'Bad request',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        messsage: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        status: 'delete owner',
+                                        message: 'You can not delete your owner'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '400-cant-delete-self': {
+                        description: 'Bad request',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        messsage: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        status: 'self delete',
+                                        message: 'You can not delete your self'
                                     }
                                 }
                             }
