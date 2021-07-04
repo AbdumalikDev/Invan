@@ -401,7 +401,7 @@ export class EmployeeController {
             const employees = req.body.employees
 
             const {
-                employee_info: { owner_id, _id }
+                employee_info: { owner_id, _id, status }
             } = req.employee
 
             let organizationInfo = req.employee.employee_info.org_id as IOrganization
@@ -412,6 +412,12 @@ export class EmployeeController {
 
             if (employeeCantDelete != -1) {
                 return next(new AppError(400, 'You can not delete your self', 'self delete'))
+            }
+
+            let findOwner = employees.findIndex((empId: string) => empId == owner_id)
+
+            if (findOwner != -1) {
+                return next(new AppError(400, 'You can not delete your owner', 'delete owner'))
             }
 
             let employee = await storage.employee.deleteMany({ _id: { $in: employees } })
