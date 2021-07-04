@@ -187,11 +187,6 @@ export class EmployeeController {
             employee_info: { org_id, owner_id, _id }
         } = req.employee
 
-        // if(status!='super_admin') return next(new AppError(405,"You do not have permission.",'emp'))
-
-        console.log('2')
-        console.log(req.body)
-
         let { first_name, last_name, age, gender, phone_number, email, allow_sessions } = req.body
 
         let employee = await storage.employee.userExist({ phone_number })
@@ -233,16 +228,16 @@ export class EmployeeController {
 
         let newEmployee = await storage.employee.create({
             org_id,
-            owner_id,
+            owner_id: _id,
             name: {
                 first_name,
-                last_name
+                last_name: last_name ? last_name : null
             },
-            age,
-            gender,
+            age: age ? age : null,
+            gender: gender ? gender : null,
             phone_number,
-            email,
-            allow_sessions,
+            email: email ? email : null,
+            allow_sessions: allow_sessions ? allow_sessions : 2,
             avatar: employeeAvatar
         } as IEmployee)
 
@@ -253,14 +248,14 @@ export class EmployeeController {
         await storage.audit.create({
             org_id: employeeOrg._id,
             action: 'create',
-            events: `1 employee created <a href="http://192.168.1.129:3005/employee/edit/${newEmployee._id}">${newEmployee.name.first_name}</a>`
+            events: `1 employee created <a href="https://invan-pos-updated.herokuapp.com/employee/edit/${newEmployee._id}">${newEmployee.name.first_name}</a>`
         } as IAudit)
 
         res.status(200).json({
             success: true,
             message: 'Activation link sent',
             status: 'link',
-            link: `http://192.168.1.129:3005/employee/activate/${smsLinkToken}`
+            link: `https://invan-pos-updated.herokuapp.com/employee/activate/${smsLinkToken}`
         })
     })
 
@@ -289,27 +284,28 @@ export class EmployeeController {
         })
     })
 
-    getEmployee = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        const { id } = req.params
+    getEmployee = catchAsync(
+        async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+            const { id } = req.params
+            const {
+                employee_info: { status }
+            } = req.employee
 
-        let employee = await storage.employee.findAndPopulate({ _id: id })
+            let employee = await storage.employee.findAndPopulate({ _id: id })
 
-        res.status(200).json({
-            success: true,
-            data: employee
-        })
-    })
+            if (status == 'admin' && employee.status == 'super_admin')
+                return next(new AppError(400, 'You can not edit super admin', 'edit super admin'))
+
+            res.status(200).json({
+                success: true,
+                data: employee
+            })
+        }
+    )
 
     editEmployee = catchAsync(
         async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
             const { id } = req.params
-
-            let employeeIsExist = await storage.employee.userExist({
-                phone_number: req.body.phone_number
-            })
-
-            if (employeeIsExist)
-                return next(new AppError(400, 'Employee phone already exist', 'phone'))
 
             let employeeInfo = await storage.employee.findAndPopulate({ _id: id })
 
@@ -346,14 +342,21 @@ export class EmployeeController {
                 ? `/employee/image/${employeeOrg.org_name}/${employeeImgId}.png`
                 : null
 
-            let { first_name, last_name, avatar, email, gender, allow_sessions } = req.body
+            let { first_name, last_name, phone_number } = req.body
+
+            let { phone_number: empOldPhone } = employeeInfo
+            let isPhoneNumberExist = await storage.employee.userExist({ phone_number })
+
+            if (empOldPhone != phone_number && isPhoneNumberExist)
+                return next(new AppError(400, 'Phone number already exist', 'phone number'))
+
             let edit_employee = await storage.employee.update(
                 { _id: id },
                 {
                     ...req.body,
                     name: {
-                        first_name: req.body.first_name,
-                        last_name: req.body.last_name
+                        first_name: first_name,
+                        last_name: last_name
                     },
                     avatar: employeeAvatar
                 }
@@ -362,7 +365,7 @@ export class EmployeeController {
             await storage.audit.create({
                 org_id: employeeOrg._id,
                 action: 'update',
-                events: `1 employee updated <a href="http://192.168.1.129:3005/employee/edit/${edit_employee._id}">${edit_employee.name.first_name}</a>`
+                events: `1 employee updated <a href="https://invan-pos-updated.herokuapp.com/employee/edit/${edit_employee._id}">${edit_employee.name.first_name}</a>`
             } as IAudit)
 
             res.status(200).json({
@@ -407,11 +410,11 @@ export class EmployeeController {
 
             let employeeCantDelete = employees.findIndex((empId: string) => empId == _id)
 
-            let deletingEmployees = employeeCantDelete
-                ? employees
-                : employees.splice(employeeCantDelete, 1)
+            if (employeeCantDelete != -1) {
+                return next(new AppError(400, 'You can not delete your self', 'self delete'))
+            }
 
-            let employee = await storage.employee.deleteMany({ _id: { $in: deletingEmployees } })
+            let employee = await storage.employee.deleteMany({ _id: { $in: employees } })
 
             let restEmployees = await storage.employee.findAllandPopulate({ owner_id: owner_id })
 

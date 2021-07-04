@@ -31,7 +31,7 @@ export class ErrorController {
     hanle = (err: AppError, req: Request, res: Response, next: NextFunction) => {
         err.statusCode = err.statusCode || 500
         err.status = err.status || 'error'
-
+        config.NodeEnv = config.NodeEnv === 'development' ? 'production' : 'development'
         if (config.NodeEnv === 'development') {
             this.sendErrorDev(err, req, res, next)
         } else if (config.NodeEnv === 'production') {

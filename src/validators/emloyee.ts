@@ -23,25 +23,36 @@ export class UserValidator {
         phone_number: Joi.string()
             .required()
             .pattern(/^998(9[012345789]|6[125679]|7[01234569])[0-9]{7}$/)
-            .error(Error('Phone number is incorrect!')),
-        code: Joi.string().error(Error('Code is incorrect'))
+            .error(new AppError(400, 'Phone number is incorrect!', 'phone number')),
+        code: Joi.string().error(new AppError(400, 'Code is incorrect', 'code'))
     })
 
     employeeCreateSchema = Joi.object({
-        first_name: Joi.string().required().error(Error('First name is required')),
-        last_name: Joi.string().allow('').error(Error('Last name is incorrect!')),
-        age: Joi.string().allow('').error(Error('Age is incorrect!')).min(10).max(100),
-        gender: Joi.string().allow('').error(Error('Gender is incorrect!')),
+        first_name: Joi.string()
+            .required()
+            .error(new AppError(400, 'First name is incorrect!', 'first name')),
+        last_name: Joi.string()
+            .allow('')
+            .error(new AppError(400, 'Last name is incorrect!', 'last name')),
+        age: Joi.string()
+            .allow('')
+            .error(new AppError(400, 'Age is incorrect!', 'age'))
+            .min(10)
+            .max(100),
+        gender: Joi.string().allow('').error(new AppError(400, 'Gender is incorrect!', 'gender')),
         phone_number: Joi.string()
             .required()
             .pattern(/^998(9[012345789]|6[125679]|7[01234569])[0-9]{7}$/)
-            .error(Error('Phone number is incorrect!')),
-        allow_sessions: Joi.string().allow('').error(Error('Allow sessions is incorrect!')),
-        email: Joi.string().email().allow('').error(Error('Email is incorrect!')),
-        file: Joi.object().allow('').error(Error('Email is incorrect!'))
+            .error(new AppError(400, 'Phone number is incorrect!', 'phone')),
+        allow_sessions: Joi.string()
+            .allow('')
+            .error(new AppError(400, 'Allow sessions is incorrect!', 'allow sessions')),
+        email: Joi.string().allow('').error(new AppError(400, 'Email is incorrect!', 'email')),
+        file: Joi.object().allow('').error(new AppError(400, 'Uploaded File is incorrect!', 'file'))
     })
 
     register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        console.log(req.body)
         const { error } = this.registerSchema.validate(req.body)
         if (error) return next(error)
 
@@ -56,8 +67,6 @@ export class UserValidator {
     })
 
     employeCreate = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        console.log('1')
-        console.log(req.body)
         const { error } = this.employeeCreateSchema.validate(req.body)
         if (error) return next(error)
         next()
