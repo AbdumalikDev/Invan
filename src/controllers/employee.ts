@@ -189,6 +189,9 @@ export class EmployeeController {
 
         // if(status!='super_admin') return next(new AppError(405,"You do not have permission.",'emp'))
 
+        console.log('2')
+        console.log(req.body)
+
         let { first_name, last_name, age, gender, phone_number, email, allow_sessions } = req.body
 
         let employee = await storage.employee.userExist({ phone_number })
@@ -230,15 +233,15 @@ export class EmployeeController {
 
         let newEmployee = await storage.employee.create({
             org_id,
-            owner_id: _id,
+            owner_id,
             name: {
                 first_name,
-                last_name: last_name ? last_name : null
+                last_name
             },
-            age: age ? age : null,
-            gender: gender ? gender : null,
+            age,
+            gender,
             phone_number,
-            email: email ? email : null,
+            email,
             allow_sessions,
             avatar: employeeAvatar
         } as IEmployee)
@@ -301,9 +304,12 @@ export class EmployeeController {
         async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
             const { id } = req.params
 
-            // let employeeIsExist = await storage.employee.userExist({phone_number:req.body.phone_number})
+            let employeeIsExist = await storage.employee.userExist({
+                phone_number: req.body.phone_number
+            })
 
-            // if(employeeIsExist) return next(new AppError(400,'Employee phone already exist','phone'))
+            if (employeeIsExist)
+                return next(new AppError(400, 'Employee phone already exist', 'phone'))
 
             let employeeInfo = await storage.employee.findAndPopulate({ _id: id })
 
@@ -340,6 +346,7 @@ export class EmployeeController {
                 ? `/employee/image/${employeeOrg.org_name}/${employeeImgId}.png`
                 : null
 
+            let { first_name, last_name, avatar, email, gender, allow_sessions } = req.body
             let edit_employee = await storage.employee.update(
                 { _id: id },
                 {

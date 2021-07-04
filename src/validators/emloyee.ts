@@ -55,14 +55,10 @@ export class UserValidator {
     })
 
     employeCreate = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        console.log('1')
+        console.log(req.body)
         const { error } = this.employeeCreateSchema.validate(req.body)
         if (error) return next(error)
         next()
     })
-    // update = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    //     const { error } = this.updateSchema.validate(req.body)
-    //     if (error) return next(error)
-
-    //     next()
-    // })
 }
