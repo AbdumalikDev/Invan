@@ -5,7 +5,7 @@ export default {
     info: {
         title: 'INVAN POS system API',
         description: 'INVAN POS system API Documentation',
-        version: '1.0.0',
+        version: '1.0.2',
         contact: {
             name: 'Samandar'
         }
