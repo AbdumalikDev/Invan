@@ -104,7 +104,7 @@ export default {
                     status: 'org'
                 }
             },
-            banned: {
+            'user-banned': {
                 type: 'object',
                 properties: {
                     success: {
@@ -415,7 +415,7 @@ export default {
                         content: {
                             'application/json': {
                                 schema: {
-                                    $ref: '#/components/schemas/banned'
+                                    $ref: '#/components/schemas/user-banned'
                                 }
                             }
                         }
@@ -749,7 +749,7 @@ export default {
                         content: {
                             'application/json': {
                                 schema: {
-                                    $ref: '#/components/schemas/banned'
+                                    $ref: '#/components/schemas/user-banned'
                                 }
                             }
                         }
