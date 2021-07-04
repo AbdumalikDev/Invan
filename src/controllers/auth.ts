@@ -37,8 +37,6 @@ export const AuthMiddleware = catchAsync(
     async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const token = req.headers.authorization
 
-        console.log(token)
-
         if (!token) return next(new AppError(401, 'Token not found', 'token'))
 
         let { employee_id, session_id } = await decodeToken(token)
