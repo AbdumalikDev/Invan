@@ -35,7 +35,7 @@ export const decodeToken = async (token: string): Promise<DecodedToken> => {
 
 export const AuthMiddleware = catchAsync(
     async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const token = req.headers.authorization
+        const token = req.headers.authorization || ''
 
         if (!token) return next(new AppError(401, 'Token not found', 'token'))
 
