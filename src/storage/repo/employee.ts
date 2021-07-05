@@ -12,4 +12,5 @@ export interface EmployeeRepo {
     update(query: Object, payload: Object): Promise<IEmployee>
     findAndPopulate(query: Object): Promise<IEmployee>
     findAllandPopulate(query: Object): Promise<IEmployee[]>
+    deleteMany(query: Object):Promise<any>
 }

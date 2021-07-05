@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { IOrganization } from './Organization'
 
-export interface IEmployee extends Document{
+export interface IEmployee extends Document {
     _id: string
     org_id: string | IOrganization
     owner_id: string
@@ -37,7 +37,7 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
         org_id: {
             type: String,
             required: true,
-            ref:"organization"
+            ref: 'organization'
         },
         owner_id: {
             type: String
@@ -49,16 +49,16 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
             },
             last_name: {
                 type: String,
-                default:null
+                default: null
             }
         },
         age: {
             type: Number,
-            default:null
+            default: null
         },
         gender: {
             type: String,
-            default:null
+            default: null
         },
         phone_number: {
             type: Number,
@@ -79,11 +79,11 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
         },
         avatar: {
             type: String,
-            default:null
+            default: null
         },
         email: {
             type: String,
-            default:null
+            default: null
         },
         state: {
             type: String,
@@ -112,7 +112,6 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
         ],
         allow_sessions: {
             type: Number,
-            required: true,
             default: 2
         }
     },
@@ -120,6 +119,5 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
         timestamps: true
     }
 )
-
 
 export default mongoose.model<IEmployee>('employee', EmployeeSchema)

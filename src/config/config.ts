@@ -15,22 +15,21 @@ interface Config {
 }
 
 let config: Config = {
-    HttpPort: getConf('HTTP_PORT', '3000'),
+    HttpPort: getConf('PORT', ''),
     MongoHost: getConf('MONGO_HOST', 'localhost'),
     MongoPort: parseInt(getConf('MONGO_PORT', '27017')),
-    MongoDatabase: getConf('MONGO_DATABASE', 'invan_newproject'),
+    MongoDatabase: getConf('MONGO_DATABASE', 'invan_myproject'),
     MongoPassword: getConf('MONGO_PASSWORD', ''),
     MongoUser: getConf('MONGO_USER', ''),
-    MongoAuthDisable: true,
+    MongoAuthDisable: false,
     JwtSecret: getConf('JWT_SECRET', 'mySecret'),
-    NodeEnv: getConf('NODE_ENV', 'development')
+    NodeEnv: getConf('NODE_ENV', 'production')
 }
 
 function getConf(name: string, def: string = ''): string {
     if (process.env[name]) {
         return process.env[name] || ''
     }
-
     return def
 }
 

@@ -96,4 +96,21 @@ export class EmployeeStorage implements EmployeeRepo {
             throw error
         }
     }
+
+    async deleteMany(query: Object):Promise<any>{
+        try {
+            let employee = await Employee.deleteMany({ ...query })
+
+            if (!employee) {
+                logger.warn(`${this.scope}.get failed to findOne`)
+                throw new AppError(404, 'Employee not found', 'emp')
+            }
+
+            return employee
+        } catch (error) {
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
+            throw error
+        }
+    }
+
 }
