@@ -126,11 +126,15 @@ export default {
             }
         }
     },
+    tags: {
+        name: 'Employee'
+    },
     apis: ['**/*Route.js'],
     paths: {
         '/employee/register': {
             post: {
                 summary: 'Registration',
+                tags: ['Employee'],
                 requestBody: {
                     content: {
                         'application/json': {
@@ -456,6 +460,7 @@ export default {
         '/employee/login': {
             post: {
                 summary: 'Login',
+                tags: ['Employee'],
                 requestBody: {
                     content: {
                         'application/json': {
@@ -775,6 +780,7 @@ export default {
                         JWT: []
                     }
                 ],
+                tags: ['Employee'],
                 responses: {
                     '200': {
                         description: 'OK',
@@ -885,6 +891,7 @@ export default {
                         JWT: []
                     }
                 ],
+                tags: ['Employee'],
                 requestBody: {
                     required: true,
                     content: {
@@ -992,6 +999,7 @@ export default {
                         JWT: []
                     }
                 ],
+                tags: ['Employee'],
                 parameters: [
                     {
                         in: 'path',
@@ -1066,6 +1074,7 @@ export default {
                         JWT: []
                     }
                 ],
+                tags: ['Employee'],
                 parameters: [
                     {
                         in: 'path',
@@ -1319,6 +1328,7 @@ export default {
                         JWT: []
                     }
                 ],
+                tags: ['Employee'],
                 parameters: [
                     {
                         in: 'path',
@@ -1520,6 +1530,7 @@ export default {
                         JWT: []
                     }
                 ],
+                tags: ['Employee'],
                 responses: {
                     '200': {
                         description: 'OK',
@@ -1700,6 +1711,7 @@ export default {
                         JWT: []
                     }
                 ],
+                tags: ['Employee'],
                 requestBody: {
                     content: {
                         'application/json': {
