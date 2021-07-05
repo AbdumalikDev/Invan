@@ -17,7 +17,7 @@ router.route('/login').post(validator.login, empController.login)
 
 router.route('/activate/:token').get(empController.activate)
 
-// router.use(AuthMiddleware)
+router.use('/image', express.static(path.join(__dirname, '../', 'assets', 'images')))
 
 router.route('/app').get(AuthMiddleware, orgController.admin)
 

@@ -7,6 +7,5 @@ export interface IUnitAllResponse {
 
 export interface UnitRepo {
     create(payload: IUnit): Promise<IUnit>
-    update(id: string, payload: IUnit): Promise<IUnit>
     find(query: Object): Promise<IUnit[]>
 }
