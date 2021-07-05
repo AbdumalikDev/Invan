@@ -398,10 +398,19 @@ export class EmployeeController {
     getAllEmployee = catchAsync(
         async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
             const {
-                employee_info: { _id }
+                employee_info: { _id, status, org_id }
             } = req.employee
 
-            let employees = await storage.employee.findAllandPopulate({ owner_id: _id })
+            let orgInfo = org_id as IOrganization
+
+            let employees
+
+            if (status == 'super_admin') {
+                console.log('hello')
+                employees = await storage.employee.findAllandPopulate({ org_id: orgInfo._id })
+            } else {
+                employees = await storage.employee.findAllandPopulate({ owner_id: _id })
+            }
 
             if (!employees) return next(new AppError(404, 'Employees not found', 'emps'))
 
