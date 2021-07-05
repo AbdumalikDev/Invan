@@ -1,7 +1,6 @@
 import { AuditRepo } from '../repo/audit'
 import Audit, { IAudit } from '../../models/Audit'
 import { logger } from '../../config/logger'
-import AppError from '../../utils/appError'
 
 export class AuditStorage implements AuditRepo {
     private scope = 'storage.audit'
@@ -19,12 +18,7 @@ export class AuditStorage implements AuditRepo {
 
     async find(query: Object): Promise<IAudit[]> {
         try {
-            const audits = await Audit.find(query)
-
-            if (!audits) {
-                logger.warn(`${this.scope}.get failed to find`)
-                throw new AppError(404, 'Audits not found', 'audit')
-            }
+            const audits = await Audit.find(query).select('action events createdAt')
 
             return audits
         } catch (error) {
