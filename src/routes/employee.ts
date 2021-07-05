@@ -17,23 +17,23 @@ router.route('/login').post(validator.login, empController.login)
 
 router.route('/activate/:token').get(empController.activate)
 
-router.use('/image', express.static(path.join(__dirname, '../', 'assets', 'images')))
+// router.use(AuthMiddleware)
 
-router.use(AuthMiddleware)
+router.route('/app').get(AuthMiddleware, orgController.admin)
 
-router.route('/app').get(orgController.admin)
+router.route('/logout').get(AuthMiddleware, orgController.logout)
 
-router.route('/logout').get(orgController.logout)
-
-router.route('/create').post(fileUpload(), validator.employeCreate, empController.create)
+router
+    .route('/create')
+    .post(AuthMiddleware, fileUpload(), validator.employeCreate, empController.create)
 
 router
     .route('/edit/:id')
-    .get(empController.getEmployee)
-    .put(fileUpload(), validator.employeCreate, empController.editEmployee)
+    .get(AuthMiddleware, empController.getEmployee)
+    .put(AuthMiddleware, fileUpload(), validator.employeCreate, empController.editEmployee)
 
-router.route('/delete').delete(empController.deleteEmployees)
+router.route('/delete').delete(AuthMiddleware, empController.deleteEmployees)
 
-router.route('/all').get(empController.getAllEmployee)
+router.route('/all').get(AuthMiddleware, empController.getAllEmployee)
 
 export default router

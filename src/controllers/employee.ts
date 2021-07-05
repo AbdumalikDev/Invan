@@ -254,7 +254,7 @@ export class EmployeeController {
             success: true,
             message: 'Activation link sent',
             status: 'link',
-            link: `https://invan-pos-updated.herokuapp.com/employee/activate/${smsLinkToken}`
+            link: `https://back-office-invan.netlify.app/employee/activate/${smsLinkToken}`
         })
     })
 
@@ -406,7 +406,7 @@ export class EmployeeController {
             const employees = req.body.employees
 
             const {
-                employee_info: { owner_id, _id, status }
+                employee_info: { owner_id, _id }
             } = req.employee
 
             let organizationInfo = req.employee.employee_info.org_id as IOrganization
@@ -427,7 +427,7 @@ export class EmployeeController {
 
             let employee = await storage.employee.deleteMany({ _id: { $in: employees } })
 
-            let restEmployees = await storage.employee.findAllandPopulate({ owner_id: owner_id })
+            let restEmployees = await storage.employee.findAllandPopulate({ _id: _id })
 
             await storage.audit.create({
                 org_id: organizationInfo._id,

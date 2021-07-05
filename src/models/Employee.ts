@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose'
-import { Type } from 'typescript'
 import { v4 as uuidv4 } from 'uuid'
 import { IOrganization } from './Organization'
+
 export interface IEmployee extends Document {
     _id: string
     org_id: string | IOrganization
