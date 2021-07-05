@@ -444,7 +444,7 @@ export class EmployeeController {
 
             let employee = await storage.employee.deleteMany({ _id: { $in: employees } })
 
-            let restEmployees = await storage.employee.findAllandPopulate({ _id: _id })
+            let restEmployees = await storage.employee.findAllandPopulate({ owner_id: _id })
 
             await storage.audit.create({
                 org_id: organizationInfo._id,
@@ -454,7 +454,7 @@ export class EmployeeController {
 
             res.status(200).json({
                 success: true,
-                data: restEmployees
+                data: [req.employee.employee_info, ...restEmployees]
             })
         }
     )
