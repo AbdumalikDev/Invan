@@ -66,6 +66,16 @@ export class ProductController {
         })
     })
 
+    delete = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        await storage.product.delete(req.params.id)
+
+        res.status(200).json({
+            success: true,
+            status: 'product',
+            message: 'Product has been successfully deleted'
+        })
+    })
+
     findOne = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
         let product = await storage.product.findById(req.params.id)
 
