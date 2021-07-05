@@ -359,21 +359,19 @@ export class EmployeeController {
                 ? `/employee/image/${employeeOrg.org_name}/${employeeImgId}.png`
                 : null
 
-            let { first_name, last_name, phone_number, email, gender, age, allow_sessions } =
-                req.body
+            let { first_name, last_name, email, gender, age, allow_sessions } = req.body
 
-            let { phone_number: empOldPhone } = employeeInfo
-            let isPhoneNumberExist = await storage.employee.userExist({ phone_number })
+            // let { phone_number: empOldPhone } = employeeInfo
+            // let isPhoneNumberExist = await storage.employee.userExist({ phone_number })
 
-            if (empOldPhone != phone_number && isPhoneNumberExist)
-                return next(new AppError(400, 'Phone number already exist', 'phone number'))
+            // if (empOldPhone != phone_number && isPhoneNumberExist)
+            // return next(new AppError(400, 'Phone number already exist', 'phone number'))
 
             let edit_employee = await storage.employee.update(
                 { _id: id },
                 {
                     age: age ? age : null,
                     gender: gender ? gender : null,
-                    phone_number,
                     email: email ? email : null,
                     allow_sessions: allow_sessions ? allow_sessions : 2,
                     name: {
