@@ -15,13 +15,13 @@ interface Config {
 }
 
 let config: Config = {
-    HttpPort: getConf('PORT', ''),
+    HttpPort: getConf('PORT', '3000'),
     MongoHost: getConf('MONGO_HOST', 'localhost'),
     MongoPort: parseInt(getConf('MONGO_PORT', '27017')),
     MongoDatabase: getConf('MONGO_DATABASE', 'invan_myproject'),
     MongoPassword: getConf('MONGO_PASSWORD', ''),
     MongoUser: getConf('MONGO_USER', ''),
-    MongoAuthDisable: false,
+    MongoAuthDisable: true,
     JwtSecret: getConf('JWT_SECRET', 'mySecret'),
     NodeEnv: getConf('NODE_ENV', 'production')
 }

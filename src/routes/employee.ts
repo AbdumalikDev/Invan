@@ -19,8 +19,6 @@ router.route('/activate/:token').get(empController.activate)
 
 router.use('/image', express.static(path.join(__dirname, '../', 'assets', 'images')))
 
-router.route('/app').get(AuthMiddleware, orgController.admin)
-
 router.route('/logout').get(AuthMiddleware, orgController.logout)
 
 router

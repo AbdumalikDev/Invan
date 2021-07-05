@@ -39,11 +39,7 @@ export class ProductController {
         const { name, description, unit, category } = req.body
         const org_id = req.employee.employee_info.org_id
 
-        let product = await storage.product.findById(req.params.id)
-
-        if (product.org_id !== org_id) {
-            next(new AppError(401, 'Authorization denied', 'product'))
-        }
+        let product = await storage.product.findOne({ org_id, id: req.params.id })
 
         product = await storage.product.update(req.params.id, {
             name,
@@ -66,8 +62,10 @@ export class ProductController {
         })
     })
 
-    delete = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        await storage.product.delete(req.params.id)
+    delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
+
+        await storage.product.delete({ org_id, id: req.params.id })
 
         res.status(200).json({
             success: true,
@@ -76,14 +74,18 @@ export class ProductController {
         })
     })
 
-    findOne = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        let product = await storage.product.findById(req.params.id)
+    findOne = catchAsync(
+        async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+            const org_id = req.employee.employee_info.org_id
 
-        res.status(200).json({
-            success: true,
-            status: 'product',
-            message: 'Product has been successfully updated',
-            product
-        })
-    })
+            let product = await storage.product.findOne({ org_id, id: req.params.id })
+
+            res.status(200).json({
+                success: true,
+                status: 'product',
+                message: 'Product has been successfully updated',
+                product
+            })
+        }
+    )
 }

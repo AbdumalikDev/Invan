@@ -48,17 +48,14 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
                 required: true
             },
             last_name: {
-                type: String,
-                default: null
+                type: String
             }
         },
         age: {
-            type: Number,
-            default: null
+            type: Number
         },
         gender: {
-            type: String,
-            default: null
+            type: String
         },
         phone_number: {
             type: Number,
@@ -78,12 +75,10 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
             type: String
         },
         avatar: {
-            type: String,
-            default: null
+            type: String
         },
         email: {
-            type: String,
-            default: null
+            type: String
         },
         state: {
             type: String,

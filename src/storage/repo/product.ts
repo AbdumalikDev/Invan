@@ -8,7 +8,7 @@ export interface IProductAllResponse {
 export interface ProductRepo {
     create(payload: IProduct): Promise<IProduct>
     update(id: string, payload: IProduct): Promise<IProduct>
-    delete(id: string): Promise<string>
+    delete(query: Object): Promise<string>
     find(query: Object): Promise<IProduct[]>
-    findById(id: string): Promise<IProduct>
+    findOne(query: Object): Promise<IProduct>
 }

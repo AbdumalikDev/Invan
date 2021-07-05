@@ -17,16 +17,16 @@ export class OrgController {
             const org_name = req.body.org_name
             const code: number = Math.floor(100000 + Math.random() * 900000)
 
-            const orgStatus = await storage.org.orgExist({ org_name })
+            const orgNameStatus = await storage.org.orgExist({ org_name })
 
-            if (orgStatus) {
-                return next(new AppError(409, 'Organization already exists', 'org'))
+            if (orgNameStatus) {
+                return next(new AppError(409, 'Organization already exists', 'orgName'))
             }
 
-            const empStatus = await storage.employee.userExist({ phone_number })
+            const orgPhoneStatus = await storage.org.orgExist({ phone_number })
 
-            if (empStatus) {
-                return next(new AppError(409, 'Employee already exists', 'emp'))
+            if (orgPhoneStatus) {
+                return next(new AppError(409, 'Organization already exists', 'orgPhone'))
             }
 
             const userBan = await storage.ban.findOne({ phone_number })

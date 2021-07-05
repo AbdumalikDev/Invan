@@ -35,9 +35,9 @@ export class ProductStorage implements ProductRepo {
         }
     }
 
-    async delete(id: string): Promise<string> {
+    async delete(query: Object): Promise<string> {
         try {
-            await Product.findByIdAndDelete(id)
+            await Product.findOneAndDelete(query)
 
             return 'Product successfully deleted'
         } catch (error) {
@@ -57,9 +57,9 @@ export class ProductStorage implements ProductRepo {
         }
     }
 
-    async findById(id: string): Promise<IProduct> {
+    async findOne(query: Object): Promise<IProduct> {
         try {
-            const product = await Product.findById(id).populate('unit').populate('category')
+            const product = await Product.findOne(query).populate('unit').populate('category')
 
             if (!product) {
                 logger.warn(`${this.scope}.get failed to findOne`)
