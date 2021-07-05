@@ -446,6 +446,12 @@ export class EmployeeController {
 
             let restEmployees = await storage.employee.findAllandPopulate({ owner_id: _id })
 
+            let employeeOwner = restEmployees.find((emp) => emp._id == _id)
+
+            let allRestEmployees = employeeOwner
+                ? restEmployees
+                : [req.employee.employee_info, ...restEmployees]
+
             await storage.audit.create({
                 org_id: organizationInfo._id,
                 action: 'delete',
@@ -454,7 +460,7 @@ export class EmployeeController {
 
             res.status(200).json({
                 success: true,
-                data: [req.employee.employee_info, ...restEmployees]
+                data: allRestEmployees
             })
         }
     )
