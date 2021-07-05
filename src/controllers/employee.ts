@@ -274,10 +274,27 @@ export class EmployeeController {
             }
         )
 
+        const session = {
+            user_agent: req.headers['user-agent'] as string,
+            ip_address:
+                (req.headers['x-forwarded-for'] as string) || (req.socket.remoteAddress as string)
+        }
+
+        let newUser = await storage.employee.update(
+            { phone_number: employee.phone_number },
+            {
+                $push: { sessions: session }
+            }
+        )
+
+        let generateToken = await signToken(
+            employee_id,
+            newUser?.sessions[newUser.sessions.length - 1]?._id as string
+        )
+
         res.status(200).json({
             success: true,
-            message: 'Employee activated',
-            status: 'emp'
+            token: generateToken
         })
     })
 
