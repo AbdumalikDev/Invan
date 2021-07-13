@@ -121,6 +121,12 @@ export class OrgController {
         }
     })
 
+    admin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        res.status(200).json({
+            success: true
+        })
+    })
+
     logout = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const {
             session_id,

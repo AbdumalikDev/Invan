@@ -24,7 +24,7 @@ export class ProductController {
         await storage.audit.create({
             org_id,
             action: 'create',
-            events: `<a href="http://localhost:3000/product/${product.id}">Product</a> successfully created`
+            events: `${product.id} successfully created`
         } as IAudit)
 
         res.status(200).json({
@@ -39,9 +39,7 @@ export class ProductController {
         const { name, description, unit, category } = req.body
         const org_id = req.employee.employee_info.org_id
 
-        let product = await storage.product.findOne({ org_id, id: req.params.id })
-
-        product = await storage.product.update(req.params.id, {
+        const product = await storage.product.update({ org_id, id: req.params.id }, {
             name,
             description,
             unit,
@@ -51,7 +49,7 @@ export class ProductController {
         await storage.audit.create({
             org_id,
             action: 'update',
-            events: `<a href="http://localhost:3000/product/${product.id}">Product</a> successfully updated`
+            events: `${product.id} successfully updated`
         } as IAudit)
 
         res.status(200).json({
@@ -67,6 +65,12 @@ export class ProductController {
 
         await storage.product.delete({ org_id, id: req.params.id })
 
+        await storage.audit.create({
+            org_id,
+            action: 'create',
+            events: `${req.params.id} successfully created`
+        } as IAudit)
+
         res.status(200).json({
             success: true,
             status: 'product',
@@ -74,18 +78,16 @@ export class ProductController {
         })
     })
 
-    findOne = catchAsync(
-        async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-            const org_id = req.employee.employee_info.org_id
+    getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
 
-            let product = await storage.product.findOne({ org_id, id: req.params.id })
+        let products = await storage.product.find({ org_id })
 
-            res.status(200).json({
-                success: true,
-                status: 'product',
-                message: 'Product has been successfully updated',
-                product
-            })
-        }
-    )
+        res.status(200).json({
+            success: true,
+            status: 'product',
+            message: 'All products',
+            products
+        })
+    })
 }
