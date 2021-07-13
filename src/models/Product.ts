@@ -38,8 +38,7 @@ const ProductSchema: Schema<IProduct> = new Schema({
         required: true
     },
     description: {
-        type: String,
-        required: true
+        type: String
     },
     bar_code: {
         type: String

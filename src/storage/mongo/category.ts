@@ -17,18 +17,29 @@ export class CategoryStorage implements CategoryRepo {
         }
     }
 
-    async update(id: string, payload: ICategory): Promise<ICategory> {
+    async update(query: Object, payload: ICategory): Promise<ICategory> {
         try {
-            const category = await Category.findByIdAndUpdate(id, payload)
+            const category = await Category.findOneAndUpdate(query, payload, { new: true })
 
             if (!category) {
-                logger.warn(`${this.scope}.update failed to findByIdAndUpdate`)
+                logger.warn(`${this.scope}.update failed to findOneAndUpdate`)
                 throw new AppError(404, 'Category not found', 'category')
             }
 
             return category
         } catch (error) {
             logger.error(`${this.scope}.update: finished with error: ${error}`)
+            throw error
+        }
+    }
+
+    async delete(query: Object): Promise<string> {
+        try {
+            await Category.findOneAndDelete(query)
+
+            return 'Category successfully deleted'
+        } catch (error) {
+            logger.error(`${this.scope}.delete: finished with error: ${error}`)
             throw error
         }
     }
@@ -44,13 +55,13 @@ export class CategoryStorage implements CategoryRepo {
         }
     }
 
-    async findById(id: String): Promise<ICategory> {
+    async findById(id: string): Promise<ICategory> {
         try {
-            const category = await Category.findById(id).populate('sub_categories')
+            const category = await Category.findById(id)
 
             if (!category) {
                 logger.warn(`${this.scope}.findById failed to findById`)
-                throw new AppError(404, 'Category not found', 'categ')
+                throw new AppError(404, 'Category not found', 'category')
             }
 
             return category

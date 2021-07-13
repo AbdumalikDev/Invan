@@ -17,18 +17,29 @@ export class UnitStorage implements UnitRepo {
         }
     }
 
-    async update(id: string, payload: IUnit): Promise<IUnit> {
+    async update(query: Object, payload: IUnit): Promise<IUnit> {
         try {
-            const unit = await Unit.findByIdAndUpdate(id, payload, { new: true })
+            const unit = await Unit.findOneAndUpdate(query, payload, { new: true })
 
             if (!unit) {
-                logger.warn(`${this.scope}.update failed to findByIdAndUpdate`)
+                logger.warn(`${this.scope}.update failed to findOneAndUpdate`)
                 throw new AppError(404, 'Unit not found', 'unit')
             }
 
             return unit
         } catch (error) {
             logger.error(`${this.scope}.update: finished with error: ${error}`)
+            throw error
+        }
+    }
+
+    async delete(query: Object): Promise<string> {
+        try {
+            await Unit.findOneAndDelete({ query })
+
+            return 'Unit successfully deleted'
+        } catch (error) {
+            logger.error(`${this.scope}.delete: finished with error: ${error}`)
             throw error
         }
     }

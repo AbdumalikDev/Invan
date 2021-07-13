@@ -15,9 +15,14 @@ afterAll(async () => {
 
 describe('Unit testing', () => {
     const unit = {
+<<<<<<< HEAD
         name: "Ikhtiyor",
         full_name: "abc",
 
+=======
+        name: 'Ikhtiyor',
+        full_name: 'abc'
+>>>>>>> 89dda6e70a30aaff3738e1d872b3740d7399593c
     }
 
     test('create new unit: success', () => {
@@ -26,6 +31,7 @@ describe('Unit testing', () => {
         })
     })
 
+<<<<<<< HEAD
     test('create new unit: fail (duplicate key error)', () => {
         expect.assertions(1)
 
@@ -48,4 +54,11 @@ describe('Unit testing', () => {
         })
     })
 
+=======
+    test('get all unit: success', () => {
+        return storage.find(unit as IUnit).then((data) => {
+            expect(data[0].name).toEqual(unit.name)
+        })
+    })
+>>>>>>> 89dda6e70a30aaff3738e1d872b3740d7399593c
 })

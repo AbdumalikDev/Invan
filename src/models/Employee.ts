@@ -1,9 +1,10 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import { IOrganization } from './Organization'
 
 export interface IEmployee extends Document {
     _id: string
-    org_id: string
+    org_id: string | IOrganization
     owner_id: string
     name: {
         first_name: string
@@ -35,7 +36,8 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
         },
         org_id: {
             type: String,
-            required: true
+            required: true,
+            ref: 'organization'
         },
         owner_id: {
             type: String
@@ -105,7 +107,6 @@ const EmployeeSchema: Schema<IEmployee> = new Schema(
         ],
         allow_sessions: {
             type: Number,
-            required: true,
             default: 2
         }
     },

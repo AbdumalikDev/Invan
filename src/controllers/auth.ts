@@ -1,6 +1,7 @@
 import config from '../config/config'
 import jwt from 'jsonwebtoken'
 import { NextFunction, Request, Response } from 'express'
+import { UploadedFile } from 'express-fileupload'
 import AppError from '../utils/appError'
 import catchAsync from '../utils/catchAsync'
 import { storage } from '../storage/main'
@@ -12,6 +13,9 @@ export interface newEmployee extends IEmployee {
 }
 export interface IGetUserAuthInfoRequest extends Request {
     employee: newEmployee
+    files: {
+        file: UploadedFile
+    }
 }
 type DecodedToken = {
     employee_id: string
@@ -19,27 +23,26 @@ type DecodedToken = {
     iat: number
 }
 
-export const signToken = async (employee_id: string, session_id: string): Promise<String> => {
+export const signToken = async (employee_id: string, session_id?: string): Promise<String> => {
     return jwt.sign({ employee_id, session_id }, config.JwtSecret)
 }
 
 export const decodeToken = async (token: string): Promise<DecodedToken> => {
     const decoded = (await jwt.verify(token, config.JwtSecret)) as DecodedToken
-
     return decoded
 }
 
 export const AuthMiddleware = catchAsync(
     async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const token = req.headers.authorization
+        const token = req.headers.authorization || null
 
-        if (!token) return next(new AppError(401, 'Token not found', 'token'))
+        if (!token || token == 'null') return next(new AppError(401, 'Token not found', 'token'))
 
         let { employee_id, session_id } = await decodeToken(token)
 
-        let employee = await storage.employee.findOne({ _id: employee_id })
+        let employee = await storage.employee.findAndPopulate({ _id: employee_id })
 
-        if (!employee) return next(new AppError(404, 'User not found', 'user'))
+        if (!employee) return next(new AppError(404, 'Employee not found', 'emp'))
 
         let employeeSession = employee.sessions.find((session) => {
             return session._id === session_id

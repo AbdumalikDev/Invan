@@ -5,8 +5,9 @@ import { ProductController } from '../controllers/product'
 const router = Router({ mergeParams: true })
 const controller = new ProductController()
 
+router.route('/').get(AuthMiddleware, controller.getAll)
 router.route('/create').post(AuthMiddleware, controller.create)
 router.route('/update/:id').patch(AuthMiddleware, controller.update)
-router.route('/:id').get(AuthMiddleware, controller.findOne)
+router.route('/delete/:id').delete(AuthMiddleware, controller.delete)
 
 export default router

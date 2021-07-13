@@ -10,4 +10,7 @@ export interface EmployeeRepo {
     findOne(query: Object): Promise<IEmployee>
     userExist(query: Object): Promise<boolean>
     update(query: Object, payload: Object): Promise<IEmployee>
+    findAndPopulate(query: Object): Promise<IEmployee>
+    findAllandPopulate(query: Object): Promise<IEmployee[]>
+    deleteMany(query: Object):Promise<any>
 }

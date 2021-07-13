@@ -8,7 +8,6 @@ import swaggerDocs from './swagger'
 
 const app = express()
 const errorController = new ErrorController()
-
 // middlewares
 app.use(cors())
 app.use(express.json())
