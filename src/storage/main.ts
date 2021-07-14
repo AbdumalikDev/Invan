@@ -7,11 +7,12 @@ import { AuditStorage } from './mongo/audit'
 import { ProductStorage } from './mongo/product'
 import { UnitStorage } from './mongo/unit'
 import { CategoryStorage } from './mongo/category'
-import { ItemStorage } from "./mongo/Item"
+import { ItemStorage } from './mongo/Item'
 import { WarehouseStorage } from './mongo/warehouse'
 import { ContractorStorage } from './mongo/contractor'
-import { IncomeStorage } from "./mongo/income"
+import { IncomeStorage } from './mongo/income'
 import { ReceiptStorage } from './mongo/receipt'
+import { OutcomeStorage } from './mongo/outcome'
 
 interface IStorage {
     employee: EmployeeStorage
@@ -28,6 +29,7 @@ interface IStorage {
     contractor: ContractorStorage
     income: IncomeStorage
     receipt: ReceiptStorage
+    outcome: OutcomeStorage
 }
 
 export let storage: IStorage = {
@@ -44,5 +46,6 @@ export let storage: IStorage = {
     warehouse: new WarehouseStorage(),
     contractor: new ContractorStorage(),
     income: new IncomeStorage(),
-    receipt: new ReceiptStorage()
+    receipt: new ReceiptStorage(),
+    outcome: new OutcomeStorage()
 }
