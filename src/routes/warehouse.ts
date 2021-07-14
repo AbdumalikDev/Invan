@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { AuthMiddleware } from '../controllers/auth'
-import { WarehouseContoller } from '../controllers/Item'
+import { WarehouseContoller } from '../controllers/warehouse'
 
 const router = Router({ mergeParams: true })
 const controller = new WarehouseContoller()

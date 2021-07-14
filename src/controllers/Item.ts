@@ -6,7 +6,7 @@ import AppError from '../utils/appError'
 import { IItem } from '../models/Item'
 import { IAudit } from '../models/Audit'
 
-export class ItemContoller {
+export class ItemController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { product_id, cost, quantity, } = req.body
         const emp_id = req.employee.employee_info.id
