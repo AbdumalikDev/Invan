@@ -1,14 +1,14 @@
-import { ContractorRepo, IContractorAllResponse } from "../repo/contractor"
-import Contractor, { IContractor } from "../../models/Contractor"
+import { IncomeRepo, IIncomeAllResponse } from "../repo/income"
+import Income, { IIncome } from "../../models/Income"
 import { logger } from "../../config/logger"
 import AppError from "../../utils/appError"
 
-export class ContractorStorage implements ContractorRepo {
-    private scope = "storage.contractor"
+export class IncomeStorage implements IncomeRepo {
+    private scope = "storage.income"
 
-    async find(query: Object): Promise<IContractor[]> {
+    async find(query: Object): Promise<IIncome[]> {
         try {
-            let dbObj = await Contractor.find({ ...query })
+            let dbObj = await Income.find({ ...query })
 
             return dbObj
         } catch (error) {
@@ -17,13 +17,13 @@ export class ContractorStorage implements ContractorRepo {
         }
     }
 
-    async findOne(query: Object): Promise<IContractor> {
+    async findById(id: string): Promise<IIncome> {
         try {
-            let dbObj = await Contractor.findOne({ ...query })
+            let dbObj = await Income.findById(id)
 
             if (!dbObj) {
                 logger.warn(`${this.scope}.get failed to findOne`)
-                throw new AppError(404, "Db object is not found", "contractor")
+                throw new AppError(404, "Db object is not found", "income")
             }
 
             return dbObj
@@ -33,13 +33,13 @@ export class ContractorStorage implements ContractorRepo {
         }
     }
 
-    async findById(id: string): Promise<IContractor> {
+    async findOne(query: Object): Promise<IIncome> {
         try {
-            let dbObj = await Contractor.findById(id)
+            let dbObj = await Income.findOne({ ...query })
 
             if (!dbObj) {
                 logger.warn(`${this.scope}.get failed to findOne`)
-                throw new AppError(404, "Db object is not found", "contractor")
+                throw new AppError(404, "Db object is not found", "income")
             }
 
             return dbObj
@@ -49,9 +49,9 @@ export class ContractorStorage implements ContractorRepo {
         }
     }
 
-    async create(payload: IContractor): Promise<IContractor> {
+    async create(payload: IIncome): Promise<IIncome> {
         try {
-            let dbObj = await Contractor.create(payload)
+            let dbObj = await Income.create(payload)
 
             return dbObj
         } catch (error) {
@@ -60,15 +60,15 @@ export class ContractorStorage implements ContractorRepo {
         }
     }
 
-    async update(query: Object, payload: IContractor): Promise<IContractor> {
+    async update(query: Object, payload: IIncome): Promise<IIncome> {
         try {
-            let dbObj = await Contractor.findByIdAndUpdate(query, payload, {
+            let dbObj = await Income.findByIdAndUpdate(query, payload, {
                 new: true
             })
 
             if (!dbObj) {
                 logger.warn(`${this.scope}.update failed to findByIdAndUpdate`)
-                throw new AppError(404, "Db object is not found", "contractor")
+                throw new AppError(404, "Db object is not found", "income")
             }
 
             return dbObj
@@ -80,13 +80,11 @@ export class ContractorStorage implements ContractorRepo {
 
     async delete(query: Object): Promise<any> {
         try {
-            let dbObj = await Contractor.findOneAndDelete(query)
-            if (!dbObj) {
-                throw new Error("there is no Contractor")
-            }
+            let dbObj = await Income.findOneAndDelete(query)
+
             if (!dbObj) {
                 logger.warn(`${this.scope}.delete failed to findByIdAndDelete`)
-                throw new AppError(404, "Db object is not found", "contractor")
+                throw new AppError(404, "Db object is not found", "income")
             }
 
             return dbObj
