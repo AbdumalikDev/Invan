@@ -4,9 +4,6 @@ import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import { IProduct } from '../models/Product'
 import { IAudit } from '../models/Audit'
-import multer from 'multer'
-import fs from 'fs'
-import path from 'path'
 
 export class ProductController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
@@ -24,22 +21,6 @@ export class ProductController {
             category
         } = req.body
 
-        const upload = multer({
-            storage: multer.diskStorage({
-                destination: (req, file, cb) => {
-                    cb(null, 'uploads')
-                },
-                filename: (req, file, cb) => {
-                    cb(null, file.fieldname + '-' + Date.now())
-                }
-            })
-        })
-
-        const image = {
-            data: fs.readFileSync(path.join(`${__dirname}/uploads/${req.file?.filename}`)),
-            contentType: 'image/png'
-        }
-
         const emp_id = req.employee.employee_info.id
         const org_id = req.employee.employee_info.org_id
 
@@ -48,7 +29,6 @@ export class ProductController {
             emp_id,
             name,
             description,
-            image,
             bar_code,
             SKU,
             vendor_code,
