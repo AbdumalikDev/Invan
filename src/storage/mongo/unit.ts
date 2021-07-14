@@ -19,7 +19,9 @@ export class UnitStorage implements UnitRepo {
 
     async update(query: Object, payload: IUnit): Promise<IUnit> {
         try {
-            const unit = await Unit.findOneAndUpdate(query, payload, { new: true })
+            const unit = await Unit.findOneAndUpdate(query, payload, { new: true }).select(
+                '_id name full_name'
+            )
 
             if (!unit) {
                 logger.warn(`${this.scope}.update failed to findOneAndUpdate`)
@@ -33,11 +35,16 @@ export class UnitStorage implements UnitRepo {
         }
     }
 
-    async delete(query: Object): Promise<string> {
+    async delete(query: Object): Promise<IUnit> {
         try {
-            await Unit.findOneAndDelete({ query })
+            const unit = await Unit.findOneAndDelete(query)
 
-            return 'Unit successfully deleted'
+            if (!unit) {
+                logger.warn(`${this.scope}.delete failed to findOneAndDelete`)
+                throw new AppError(404, 'Unit not found', 'unit')
+            }
+
+            return unit
         } catch (error) {
             logger.error(`${this.scope}.delete: finished with error: ${error}`)
             throw error
@@ -46,11 +53,27 @@ export class UnitStorage implements UnitRepo {
 
     async find(query: Object): Promise<IUnit[]> {
         try {
-            const units = await Unit.find(query)
+            const units = await Unit.find(query).select('_id name full_name')
 
             return units
         } catch (error) {
             logger.error(`${this.scope}.find: finished with error: ${error}`)
+            throw error
+        }
+    }
+
+    async findOne(query: Object): Promise<IUnit> {
+        try {
+            const unit = await Unit.findOne(query).select('_id name full_name')
+
+            if (!unit) {
+                logger.warn(`${this.scope}.findOne failed to findOne`)
+                throw new AppError(404, 'Unit not found', 'unit')
+            }
+
+            return unit
+        } catch (error) {
+            logger.error(`${this.scope}.findById: finished with error: ${error}`)
             throw error
         }
     }

@@ -111,7 +111,7 @@ export class OrgController {
 
             let employeeInfo = await storage.employee.findAndPopulate({ phone_number })
 
-            res.status(201).json({
+            res.status(200).json({
                 success: true,
                 status: 'emp',
                 message: 'Employee Successfully Registered',
@@ -121,9 +121,10 @@ export class OrgController {
         }
     })
 
-    admin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    admin = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         res.status(200).json({
-            success: true
+            success: true,
+            data: req.employee.employee_info
         })
     })
 

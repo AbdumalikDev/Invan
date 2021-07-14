@@ -2,21 +2,60 @@ import { Request, Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
-import AppError from '../utils/appError'
 import { IProduct } from '../models/Product'
 import { IAudit } from '../models/Audit'
+import multer from 'multer'
+import fs from 'fs'
+import path from 'path'
 
 export class ProductController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, description, unit, category } = req.body
-        const employee_id = req.employee.employee_info.id
+        const {
+            name,
+            description,
+            bar_code,
+            SKU,
+            vendor_code,
+            weight,
+            volume,
+            VAT,
+            is_shared,
+            unit,
+            category
+        } = req.body
+
+        const upload = multer({
+            storage: multer.diskStorage({
+                destination: (req, file, cb) => {
+                    cb(null, 'uploads')
+                },
+                filename: (req, file, cb) => {
+                    cb(null, file.fieldname + '-' + Date.now())
+                }
+            })
+        })
+
+        const image = {
+            data: fs.readFileSync(path.join(`${__dirname}/uploads/${req.file?.filename}`)),
+            contentType: 'image/png'
+        }
+
+        const emp_id = req.employee.employee_info.id
         const org_id = req.employee.employee_info.org_id
 
         const product = await storage.product.create({
+            org_id,
+            emp_id,
             name,
             description,
-            employee_id,
-            org_id,
+            image,
+            bar_code,
+            SKU,
+            vendor_code,
+            weight,
+            volume,
+            VAT,
+            is_shared,
             unit,
             category
         } as IProduct)

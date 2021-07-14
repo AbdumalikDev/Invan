@@ -7,6 +7,7 @@ import { AuditStorage } from './mongo/audit'
 import { ProductStorage } from './mongo/product'
 import { UnitStorage } from './mongo/unit'
 import { CategoryStorage } from './mongo/category'
+import { ReceiptStorage } from './mongo/receipt'
 
 interface IStorage {
     employee: EmployeeStorage
@@ -18,6 +19,7 @@ interface IStorage {
     product: ProductStorage
     unit: UnitStorage
     category: CategoryStorage
+    receipt: ReceiptStorage
 }
 
 export let storage: IStorage = {
@@ -29,5 +31,6 @@ export let storage: IStorage = {
     audit: new AuditStorage(),
     product: new ProductStorage(),
     unit: new UnitStorage(),
-    category: new CategoryStorage()
+    category: new CategoryStorage(),
+    receipt: new ReceiptStorage()
 }
