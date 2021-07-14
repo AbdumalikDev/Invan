@@ -14,9 +14,15 @@ afterAll(async () => {
 
 describe('Audit testing', () => {
     const audit = {
+<<<<<<< HEAD
+        org_id: "9daedae6-96e0-473d-800f-s0554db0ed4c7",
+        action: "create",
+        events: "user created"
+=======
         org_id: '9daedae6-96e0-473d-800f-s0554db0ed4c7',
         action: 'create',
         events: 'user created'
+>>>>>>> 89dda6e70a30aaff3738e1d872b3740d7399593c
     }
 
     test('create new audit: success', () => {
@@ -25,9 +31,30 @@ describe('Audit testing', () => {
         })
     })
 
+<<<<<<< HEAD
+    test('create new audit: fail (duplicate key error)', () => {
+        expect.assertions(1)
+
+        return storage.create(audit as IAudit).catch((error) => {
+            expect(error.code).toEqual(11000)
+        })
+    })
+
+    test("get all audit: success", () => {
+        return storage.find(audit as IAudit).then((data) => {
+            expect(data[0]).toEqual(audit)
+        })
+    })
+    test("get alll audit:fail ", () => {
+        expect.assertions(1)
+
+        return storage.find(audit as IAudit).catch((error) => {
+            expect(error.code).toEqual(11000)
+=======
     test('get all audit: success', () => {
         return storage.find(audit as IAudit).then((data) => {
             expect(data[0].action).toEqual(audit.action)
+>>>>>>> 89dda6e70a30aaff3738e1d872b3740d7399593c
         })
     })
 })
