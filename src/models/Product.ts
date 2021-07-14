@@ -4,12 +4,12 @@ import { v4 as uuidv4 } from 'uuid'
 export interface IProduct extends Document {
     _id: string
     org_id: string
-    employee_id: string
+    emp_id: string
     name: string
     description: string
     bar_code: string
     SKU: string
-    photo: string
+    image: any
     unit: string
     category: string
     vendor_code: string
@@ -29,7 +29,7 @@ const ProductSchema: Schema<IProduct> = new Schema({
         type: String,
         required: true
     },
-    employee_id: {
+    emp_id: {
         type: String,
         required: true
     },
@@ -46,8 +46,9 @@ const ProductSchema: Schema<IProduct> = new Schema({
     SKU: {
         type: String
     },
-    photo: {
-        type: String
+    image: {
+        data: Buffer,
+        contentType: String
     },
     unit: {
         type: String,

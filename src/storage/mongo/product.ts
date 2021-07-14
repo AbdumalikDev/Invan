@@ -37,7 +37,12 @@ export class ProductStorage implements ProductRepo {
 
     async delete(query: Object): Promise<string> {
         try {
-            await Product.findOneAndDelete(query)
+            const product = await Product.findOneAndDelete(query)
+
+            if (!product) {
+                logger.warn(`${this.scope}.delete failed to findOneAndDelete`)
+                throw new AppError(404, 'Product not found', 'product')
+            }
 
             return 'Product successfully deleted'
         } catch (error) {

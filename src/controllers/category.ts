@@ -7,7 +7,7 @@ import { ICategory } from '../models/Category'
 export class CategoryController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, sub_categories } = req.body
-        const org_id = req.employee.org_id
+        const org_id = req.employee.employee_info.org_id
 
         const category = await storage.category.create({
             org_id,
@@ -25,7 +25,7 @@ export class CategoryController {
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, sub_categories } = req.body
-        const org_id = req.employee.org_id
+        const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
 
         const category = await storage.category.update({ org_id, _id }, {
@@ -42,21 +42,21 @@ export class CategoryController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.org_id
+        const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
 
-        const dbRes = await storage.category.delete({ org_id, _id })
+        const category = await storage.category.delete({ org_id, _id })
 
         res.status(200).json({
             success: true,
             status: 'category',
             message: 'Category has been successfully deleted',
-            dbRes
+            category
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.org_id
+        const org_id = req.employee.employee_info.org_id
 
         const categories = await storage.category.find({ org_id })
 

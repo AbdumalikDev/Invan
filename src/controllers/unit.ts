@@ -8,7 +8,7 @@ import { IUnit } from '../models/Unit'
 export class UnitController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, full_name } = req.body
-        const org_id = req.employee.org_id
+        const org_id = req.employee.employee_info.org_id
 
         const unit = await storage.unit.create({ org_id, name, full_name } as IUnit)
 
@@ -22,7 +22,7 @@ export class UnitController {
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, full_name } = req.body
-        const org_id = req.employee.org_id
+        const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
 
         const unit = await storage.unit.update({ org_id, _id }, {
@@ -40,19 +40,25 @@ export class UnitController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.org_id
-        const _id = req.params.id
-        await storage.unit.delete({ org_id, _id })
+        const org_id = req.employee.employee_info.org_id
+        const ids = req.body
+
+        ids.forEach(async (_id: string) => {
+            await storage.unit.delete({ org_id, _id })
+        })
+
+        const units = await storage.unit.find({ org_id })
 
         res.status(200).json({
             success: true,
             status: 'unit',
-            message: 'Unit has been deleted'
+            message: 'Units has been deleted',
+            units
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.org_id
+        const org_id = req.employee.employee_info.org_id
 
         const units = await storage.unit.find({ org_id })
 
@@ -61,6 +67,19 @@ export class UnitController {
             status: 'unit',
             message: 'All units',
             units
+        })
+    })
+
+    getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
+
+        const unit = await storage.unit.findOne({ org_id, _id: req.params.id })
+
+        res.status(200).json({
+            success: true,
+            status: 'unit',
+            message: 'Unit found',
+            unit
         })
     })
 }
