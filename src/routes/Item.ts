@@ -9,6 +9,6 @@ router.route('/').get(AuthMiddleware, controller.getAll)
 router.route('/create').post(AuthMiddleware, controller.create)
 router.route('/update/:id').patch(AuthMiddleware, controller.update)
 router.route('/delete/:id').delete(AuthMiddleware, controller.delete)
-router.route('/getall').get(AuthMiddleware, controller.getAll)
+
 
 export default router
