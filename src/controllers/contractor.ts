@@ -3,65 +3,74 @@ import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import AppError from '../utils/appError'
-import { IWarehouse } from '../models/Warehouse'
+import { IContractor } from '../models/Contractor'
 import { IAudit } from '../models/Audit'
 
-export class WarehouseController {
+export class ContractorController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, group } = req.body
+        const { name, address, phone_number, contract, email, group } = req.body
         const emp_id = req.employee.employee_info.id
         const org_id = req.employee.employee_info.org_id
 
-        const warehouse = await storage.warehouse.create({
+        const contractor = await storage.contractor.create({
             name,
+            address,
+            phone_number,
+            contract,
+            email,
             group,
             org_id,
             emp_id
-        } as IWarehouse)
+        } as IContractor)
 
         await storage.audit.create({
             org_id,
             action: 'create',
-            events: `${warehouse.id} successfully created`
+            events: `${contractor.id} successfully created`
         } as IAudit)
 
         res.status(200).json({
             success: true,
-            status: 'warehouse',
-            message: 'Warehouse has been successfully created',
-            warehouse
+            status: 'contractor',
+            message: 'Contractor has been successfully created',
+            contractor
         })
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, group } = req.body
+        const { name, address, phone_number, contract, email, group } = req.body
         const org_id = req.employee.employee_info.org_id
         const emp_id = req.employee.employee_info.id
 
-        const warehouse = await storage.warehouse.update({ org_id, id: req.params.id }, {
+        const contractor = await storage.contractor.update({ org_id, id: req.params.id }, {
             name,
+            address,
+            phone_number,
+            contract,
+            email,
             group,
             org_id,
             emp_id
-        } as IWarehouse)
+        } as IContractor)
 
         await storage.audit.create({
             org_id,
             action: 'update',
-            events: `${warehouse.id} successfully updated`
+            events: `${contractor.id} successfully updated`
         } as IAudit)
 
         res.status(200).json({
             success: true,
-            status: 'warehouse',
-            message: 'Warehouse has been successfully updated',
-            warehouse
+            status: 'contractor',
+            message: 'Contractor has been successfully updated',
+            contractor
         })
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        await storage.warehouse.delete({ org_id, id: req.params.id })
+
+        await storage.contractor.delete({ org_id, id: req.params.id })
 
         await storage.audit.create({
             org_id,
@@ -71,21 +80,21 @@ export class WarehouseController {
 
         res.status(200).json({
             success: true,
-            status: 'warehouse',
-            message: 'Warehouse has been successfully deleted'
+            status: 'contractor',
+            message: 'Contractor has been successfully deleted'
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        let warehouses = await storage.warehouse.find({ org_id })
+        let contracts = await storage.contractor.find({ org_id })
 
         res.status(200).json({
             success: true,
-            status: 'warehouse',
-            message: 'All warehouses',
-            warehouses
+            status: 'contractor',
+            message: 'All contracts',
+            contracts
         })
     })
 }

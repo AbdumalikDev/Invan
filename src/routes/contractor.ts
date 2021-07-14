@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import { AuthMiddleware } from '../controllers/auth'
-import { WarehouseController } from '../controllers/warehouse'
+import { ContractorController } from '../controllers/contractor'
 
 const router = Router({ mergeParams: true })
-const controller = new WarehouseController()
+const controller = new ContractorController()
 
 router.route('/').get(AuthMiddleware, controller.getAll)
 router.route('/create').post(AuthMiddleware, controller.create)
