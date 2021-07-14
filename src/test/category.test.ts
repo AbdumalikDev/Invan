@@ -14,10 +14,8 @@ afterAll(async () => {
 
 describe('Category testing', () => {
     const category = {
-<<<<<<< HEAD
-        _id:"819c04d0-7d50-405f-9649-d8ae49e1fba7",
-        name: "oziq-ovqatlar"
-
+        _id: '819c04d0-7d50-405f-9649-d8ae49e1fba7',
+        name: 'oziq-ovqatlar'
     }
 
     test('create new category: success', () => {
@@ -34,12 +32,12 @@ describe('Category testing', () => {
         })
     })
 
-    test("get all category: success", () => {
+    test('get all category: success', () => {
         return storage.find(category as ICategory).then((data) => {
             expect(data).toEqual(category)
         })
     })
-    test("get alll category:fail ", () => {
+    test('get alll category:fail ', () => {
         expect.assertions(1)
 
         return storage.find(category as ICategory).catch((error) => {
@@ -52,41 +50,4 @@ describe('Category testing', () => {
 
     //     })
     // })
-    test("findbyid category:success", () => {
-        return storage.findById(category as ICategory).then((data) => {
-            expect(data).toEqual(category)
-        })
-    })
-
-=======
-        _id: '819c04d0-7d50-405f-9649-d8ae49e1fba7',
-        name: 'oziq-ovqatlar'
-    }
-
-    const fakeId = '819c04d0-7d50-405f-9649-d8ae49e1fba5'
-
-    test('create new category: success', () => {
-        return storage.create(category as ICategory).then((data) => {
-            expect(data.name).toEqual(category.name)
-        })
-    })
-
-    test('get all category: success', () => {
-        return storage.find(category as ICategory).then((data) => {
-            expect(data[0].name).toEqual(category.name)
-        })
-    })
-
-    test('findbyid category:success', () => {
-        return storage.findById(category._id).then((data) => {
-            expect(data.name).toEqual(category.name)
-        })
-    })
-
-    test('findbyid category:fail', () => {
-        return storage.findById(fakeId).catch((error) => {
-            expect(error.statusCode).toEqual(404)
-        })
-    })
->>>>>>> 89dda6e70a30aaff3738e1d872b3740d7399593c
 })

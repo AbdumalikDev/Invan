@@ -16,7 +16,7 @@ describe('Product testing', () => {
     const product = {
         _id: '819c04d0-7d50-405f-9649-d8ae49e1fba3',
         org_id: '819c04d0-7d50-405f-9649-d8ae49e1fba7',
-        employee_id: '819c04d0-7d50-405f-9649-d8ae49e1fba6',
+        emp_id: '819c04d0-7d50-405f-9649-d8ae49e1fba6',
         name: 'Apple'
     }
 
@@ -37,18 +37,6 @@ describe('Product testing', () => {
     test('get product: success', () => {
         return storage.find({}).then((data) => {
             expect(data[0].name).toEqual(product.name)
-        })
-    })
-
-    test('get product by id: success', () => {
-        return storage.findById(product._id).then((data) => {
-            expect(data.name).toEqual(product.name)
-        })
-    })
-
-    test('get product by id: fail', () => {
-        return storage.findById('819c04d0-7d50-405f-9649-d8ae49e1fba2').catch((error) => {
-            expect(error.statusCode).toEqual(404)
         })
     })
 
