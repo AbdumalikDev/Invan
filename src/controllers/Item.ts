@@ -29,7 +29,7 @@ export class ItemContoller {
         res.status(200).json({
             success: true,
             status: 'item',
-            message: 'Product has been successfully created',
+            message: 'Item has been successfully created',
             item
         })
     })
@@ -56,7 +56,7 @@ export class ItemContoller {
         res.status(200).json({
             success: true,
             status: 'item',
-            message: 'Product has been successfully updated',
+            message: 'Item has been successfully updated',
             item
         })
     })
@@ -75,20 +75,20 @@ export class ItemContoller {
         res.status(200).json({
             success: true,
             status: 'item',
-            message: 'Product has been successfully deleted'
+            message: 'Item has been successfully deleted'
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        let products = await storage.item.find({ org_id })
+        let items = await storage.item.find({ org_id })
 
         res.status(200).json({
             success: true,
             status: 'item',
-            message: 'All products',
-            products
+            message: 'All items',
+            items
         })
     })
 }
