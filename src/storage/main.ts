@@ -12,6 +12,7 @@ import { WarehouseStorage } from './mongo/warehouse'
 import { ContractorStorage } from './mongo/contractor'
 import { IncomeStorage } from './mongo/income'
 import { ReceiptStorage } from './mongo/receipt'
+import { ShipmentStorage } from "./mongo/shipment"
 import { OutcomeStorage } from './mongo/outcome'
 
 interface IStorage {
@@ -29,6 +30,7 @@ interface IStorage {
     contractor: ContractorStorage
     income: IncomeStorage
     receipt: ReceiptStorage
+    shipment: ShipmentStorage
     outcome: OutcomeStorage
 }
 
@@ -47,5 +49,6 @@ export let storage: IStorage = {
     contractor: new ContractorStorage(),
     income: new IncomeStorage(),
     receipt: new ReceiptStorage(),
+    shipment: new ShipmentStorage(),
     outcome: new OutcomeStorage()
 }
