@@ -63,4 +63,22 @@ export class CategoryStorage implements CategoryRepo {
             throw error
         }
     }
+
+    async findOne(query: Object): Promise<ICategory> {
+        try {
+            const category = await Category.findOne(query)
+                .populate('sub_categories')
+                .select('_id name sub_categories')
+
+            if (!category) {
+                logger.warn(`${this.scope}.findOne failed to findOne`)
+                throw new AppError(404, 'Category not found', 'category')
+            }
+
+            return category
+        } catch (error) {
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
+            throw error
+        }
+    }
 }
