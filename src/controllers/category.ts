@@ -67,4 +67,17 @@ export class CategoryController {
             categories
         })
     })
+
+    getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
+
+        const category = await storage.category.findOne({ org_id, _id: req.params.id })
+
+        res.status(200).json({
+            success: true,
+            status: 'category',
+            message: 'One category',
+            category
+        })
+    })
 }
