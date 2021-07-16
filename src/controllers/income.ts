@@ -63,7 +63,11 @@ export class IncomeController {
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        await storage.income.delete({ org_id, id: req.params.id })
+        const ids = req.body
+
+        ids.forEach(async (_id: string) => {
+            await storage.income.delete({ org_id, _id })
+        })
 
         await storage.audit.create({
             org_id,
@@ -71,10 +75,13 @@ export class IncomeController {
             events: `${req.params.id} successfully created`
         } as IAudit)
 
+        const incomes = await storage.income.find({ org_id })
+
         res.status(200).json({
             success: true,
             status: 'income',
-            message: 'Income has been successfully deleted'
+            message: 'Income has been successfully deleted',
+            incomes
         })
     })
 

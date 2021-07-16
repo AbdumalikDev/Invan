@@ -1,6 +1,6 @@
 import { EmployeeRepo, IEmployeeAllResponse } from '../repo/employee'
 import Employee, { IEmployee } from '../../models/Employee'
-import  { IOrganization } from '../../models/Organization'
+import { IOrganization } from '../../models/Organization'
 import { logger } from '../../config/logger'
 import AppError from '../../utils/appError'
 
@@ -9,7 +9,7 @@ export class EmployeeStorage implements EmployeeRepo {
 
     async findOne(query: Object): Promise<IEmployee> {
         try {
-            let employee = await Employee.findOne({ ...query })
+            let employee = await Employee.findOne(query)
             if (!employee) {
                 logger.warn(`${this.scope}.get failed to findOne`)
                 throw new AppError(404, 'Employee not found', 'emp')
@@ -22,7 +22,6 @@ export class EmployeeStorage implements EmployeeRepo {
         }
     }
 
-   
     async create(payload: IEmployee): Promise<IEmployee> {
         try {
             let newEmployee = await Employee.create(payload)
@@ -36,7 +35,7 @@ export class EmployeeStorage implements EmployeeRepo {
 
     async userExist(query: Object): Promise<boolean> {
         try {
-            const employee = await Employee.findOne({ ...query })
+            const employee = await Employee.findOne(query)
 
             if (!employee) {
                 return false
@@ -97,7 +96,7 @@ export class EmployeeStorage implements EmployeeRepo {
         }
     }
 
-    async deleteMany(query: Object):Promise<any>{
+    async deleteMany(query: Object): Promise<any> {
         try {
             let employee = await Employee.deleteMany({ ...query })
 
@@ -112,5 +111,4 @@ export class EmployeeStorage implements EmployeeRepo {
             throw error
         }
     }
-
 }

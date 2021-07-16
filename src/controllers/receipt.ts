@@ -8,8 +8,8 @@ import { IAudit } from '../models/Audit'
 export class ReceiptController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { warehouse_id, contractor_id, items, doc_id, is_checked } = req.body
-        const org_id = req.employee.org_id
-        const emp_id = req.employee.id
+        const org_id = req.employee.employee_info.org_id
+        const emp_id = req.employee.employee_info.id
 
         const receipt = await storage.receipt.create({
             org_id,

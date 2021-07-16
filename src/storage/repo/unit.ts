@@ -8,7 +8,7 @@ export interface IUnitAllResponse {
 export interface UnitRepo {
     create(payload: IUnit): Promise<IUnit>
     update(query: Object, payload: IUnit): Promise<IUnit>
-    delete(query: Object): Promise<IUnit>
+    delete(query: Object): Promise<string>
     find(query: Object): Promise<IUnit[]>
     findOne(query: Object): Promise<IUnit>
 }

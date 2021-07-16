@@ -1,48 +1,55 @@
-import mongoose, { Schema, Document } from "mongoose"
+import mongoose, { Schema, Document } from 'mongoose'
+import { v4 as uuidv4 } from 'uuid'
 
 export interface IContractor extends Document {
     _id: string
+    org_id: string
+    emp_id: string
     name: string
     address: string
     contract: string
     email: string
-    phone_number:string
+    phone_number: string
     group: string[]
-    org_id: string
-    emp_id: string
 }
 
-let contractorSchema = new mongoose.Schema({
-    _id: {
-        type: Schema.Types.ObjectId
+let contractorSchema = new mongoose.Schema(
+    {
+        _id: {
+            type: String,
+            default: uuidv4
+        },
+        org_id: {
+            type: String,
+            required: true
+        },
+        emp_id: {
+            type: String,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        address: {
+            type: String
+        },
+        contract: {
+            type: String
+        },
+        email: {
+            type: String
+        },
+        phone_number: {
+            type: String
+        },
+        group: {
+            type: String
+        }
     },
-    name: {
-        type: String,
-        required: true
-    },
-    address: {
-        type: String
-    },
-    contrcat: {
-        type: String
-    },
-    email: {
-        type: String
-    },
-    phone_number: {
-        type: String
-    },
-    group: {
-        type: String
-    },
-    org_id: {
-        type: String,
-        required: true
-    },
-    emp_id: {
-        type: String,
-        required: true
+    {
+        timestamps: true
     }
-})
+)
 
-export default mongoose.model<IContractor>("Contractor", contractorSchema)
+export default mongoose.model<IContractor>('contractors', contractorSchema)

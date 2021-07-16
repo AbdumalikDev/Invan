@@ -20,66 +20,71 @@ export interface IProduct extends Document {
     update_history: IProduct[]
 }
 
-const ProductSchema: Schema<IProduct> = new Schema({
-    _id: {
-        type: String,
-        default: uuidv4
+const ProductSchema: Schema<IProduct> = new Schema(
+    {
+        _id: {
+            type: String,
+            default: uuidv4
+        },
+        org_id: {
+            type: String,
+            required: true
+        },
+        emp_id: {
+            type: String,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        description: {
+            type: String
+        },
+        bar_code: {
+            type: String
+        },
+        SKU: {
+            type: String
+        },
+        image: {
+            data: Buffer,
+            contentType: String
+        },
+        unit: {
+            type: String,
+            ref: 'units'
+        },
+        category: {
+            type: String,
+            ref: 'categories'
+        },
+        vendor_code: {
+            type: String
+        },
+        weight: {
+            type: Number
+        },
+        volume: {
+            type: Number
+        },
+        VAT: {
+            type: Number
+        },
+        is_shared: {
+            type: Boolean,
+            default: true
+        },
+        update_history: [
+            {
+                type: Object,
+                ref: 'products'
+            }
+        ]
     },
-    org_id: {
-        type: String,
-        required: true
-    },
-    emp_id: {
-        type: String,
-        required: true
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String
-    },
-    bar_code: {
-        type: String
-    },
-    SKU: {
-        type: String
-    },
-    image: {
-        data: Buffer,
-        contentType: String
-    },
-    unit: {
-        type: String,
-        ref: 'units'
-    },
-    category: {
-        type: String,
-        ref: 'categories'
-    },
-    vendor_code: {
-        type: String
-    },
-    weight: {
-        type: Number
-    },
-    volume: {
-        type: Number
-    },
-    VAT: {
-        type: Number
-    },
-    is_shared: {
-        type: Boolean,
-        default: true
-    },
-    update_history: [
-        {
-            type: Object,
-            ref: 'products'
-        }
-    ]
-})
+    {
+        timestamps: true
+    }
+)
 
 export default mongoose.model<IProduct>('products', ProductSchema)

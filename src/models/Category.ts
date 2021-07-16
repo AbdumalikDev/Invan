@@ -8,25 +8,30 @@ export interface ICategory extends Document {
     sub_categories: string[]
 }
 
-const CategorySchema: Schema<ICategory> = new Schema({
-    _id: {
-        type: String,
-        default: uuidv4
-    },
-    org_id: {
-        type: String,
-        required: true
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    sub_categories: [
-        {
+const CategorySchema: Schema<ICategory> = new Schema(
+    {
+        _id: {
             type: String,
-            ref: 'categories'
-        }
-    ]
-})
+            default: uuidv4
+        },
+        org_id: {
+            type: String,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        sub_categories: [
+            {
+                type: String,
+                ref: 'categories'
+            }
+        ]
+    },
+    {
+        timestamps: true
+    }
+)
 
 export default mongoose.model<ICategory>('categories', CategorySchema)

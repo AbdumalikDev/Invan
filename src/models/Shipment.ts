@@ -1,54 +1,59 @@
-import mongoose, { Schema, Document } from "mongoose"
+import mongoose, { Schema, Document } from 'mongoose'
+import { v4 as uuidv4 } from 'uuid'
 
 export interface IShipment extends Document {
     _id: string
-    item: string[]
+    org_id: string
+    emp_id: string
+    warehouse_id: string
     contractor_id: string
+    item: string[]
     doc_id: string
     doc_date: string
     is_checked: boolean
-    warehouse_id: string
-    emp_id: string
-    org_id: string
 }
 
-let shipmentSchema = new mongoose.Schema({
-    _id: {
-        type: Schema.Types.ObjectId
+let shipmentSchema = new mongoose.Schema(
+    {
+        _id: {
+            type: String,
+            default: uuidv4
+        },
+        org_id: {
+            type: String,
+            required: true
+        },
+        emp_id: {
+            type: String,
+            required: true
+        },
+        warehouse_id: {
+            type: String,
+            required: true
+        },
+        contractor_id: {
+            type: String,
+            required: true
+        },
+        item: {
+            type: String,
+            required: true
+        },
+        doc_id: {
+            type: String
+        },
+        doc_date: {
+            type: String,
+            required: true
+        },
+        is_checked: {
+            type: Boolean,
+            default: 'false'
+        }
     },
-    item: {
-        type: String,
-        required: true
-    },
-    contractor_id: {
-        type: String,
-        required: true
-    },
-    doc_id: {
-        type: String,
-        required: true
-    },
-    doc_date: {
-        type: String,
-        required: true
-    },
-    is_checked: {
-        type: Boolean,
-        default: "false"
-    },
-    warehouse_id: {
-        type: String,
-        required: true
-    },
-    emp_id: {
-        type: String,
-        required: true
-    },
-    org_id: {
-        type: String,
-        required: true
+    {
+        timestamps: true
     }
+)
 
-})
-
-export default mongoose.model<IShipment>("Shipment", shipmentSchema)
+export default mongoose.model<IShipment>('Shipment', shipmentSchema)

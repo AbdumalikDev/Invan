@@ -35,7 +35,7 @@ export class UnitStorage implements UnitRepo {
         }
     }
 
-    async delete(query: Object): Promise<IUnit> {
+    async delete(query: Object): Promise<string> {
         try {
             const unit = await Unit.findOneAndDelete(query)
 
@@ -44,7 +44,7 @@ export class UnitStorage implements UnitRepo {
                 throw new AppError(404, 'Unit not found', 'unit')
             }
 
-            return unit
+            return 'Unit has been deleted'
         } catch (error) {
             logger.error(`${this.scope}.delete: finished with error: ${error}`)
             throw error
@@ -53,7 +53,7 @@ export class UnitStorage implements UnitRepo {
 
     async find(query: Object): Promise<IUnit[]> {
         try {
-            const units = await Unit.find(query).select('_id name full_name')
+            const units = await Unit.find(query).select('_id name full_name developer')
 
             return units
         } catch (error) {

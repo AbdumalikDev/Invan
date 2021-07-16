@@ -1,32 +1,39 @@
-import mongoose, { Schema, Document } from "mongoose"
+import mongoose, { Schema, Document } from 'mongoose'
+import { v4 as uuidv4 } from 'uuid'
 
 export interface IWarehouse extends Document {
     _id: string
-    name: string
-    group: string[]
     org_id: string
     emp_id: string
+    name: string
+    group: string[]
 }
 
-let warehouseSchema = new mongoose.Schema({
-    _id: {
-        type: Schema.Types.ObjectId
+let warehouseSchema = new mongoose.Schema(
+    {
+        _id: {
+            type: String,
+            default: uuidv4
+        },
+        org_id: {
+            type: String,
+            required: true
+        },
+        emp_id: {
+            type: String,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        group: {
+            type: String
+        }
     },
-    name: {
-        type: String,
-        required: true
-    },
-    group: {
-        type: String
-    },
-    org_id: {
-        type: String,
-        required: true
-    },
-    emp_id: {
-        type: String,
-        required: true
+    {
+        timestamps: true
     }
-})
+)
 
-export default mongoose.model<IWarehouse>("Warehouse", warehouseSchema)
+export default mongoose.model<IWarehouse>('warehouses', warehouseSchema)

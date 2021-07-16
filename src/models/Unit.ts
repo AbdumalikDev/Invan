@@ -6,25 +6,35 @@ export interface IUnit extends Document {
     org_id: string
     name: string
     full_name: string
+    developer: boolean
 }
 
-const UnitSchema: Schema<IUnit> = new Schema({
-    _id: {
-        type: String,
-        default: uuidv4
+const UnitSchema: Schema<IUnit> = new Schema(
+    {
+        _id: {
+            type: String,
+            default: uuidv4
+        },
+        org_id: {
+            type: String,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        full_name: {
+            type: String,
+            required: true
+        },
+        developer: {
+            type: Boolean,
+            default: false
+        }
     },
-    org_id: {
-        type: String,
-        required: true
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    full_name: {
-        type: String,
-        required: true
+    {
+        timestamps: true
     }
-})
+)
 
 export default mongoose.model<IUnit>('units', UnitSchema)

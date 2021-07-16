@@ -4,6 +4,7 @@ import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import AppError from '../utils/appError'
 import { IUnit } from '../models/Unit'
+import { IOrganization } from '../models/Organization'
 
 export class UnitController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
@@ -41,11 +42,14 @@ export class UnitController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        const ids = req.body
+        const { ids } = req.body
 
-        ids.forEach(async (_id: string) => {
+        for (let _id in ids) {
+            console.log(org_id)
+            console.log(_id)
+
             await storage.unit.delete({ org_id, _id })
-        })
+        }
 
         const units = await storage.unit.find({ org_id })
 

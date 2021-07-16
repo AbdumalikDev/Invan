@@ -9,6 +9,7 @@ import moment from 'moment'
 import { IOrganization } from '../models/Organization'
 import { IGetUserAuthInfoRequest } from './auth'
 import { IAudit } from '../models/Audit'
+import { IUnit } from '../models/Unit'
 
 export class OrgController {
     create = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -104,6 +105,31 @@ export class OrgController {
                 action: 'create',
                 events: `${session.user_agent} ${session.ip_address} logged in`
             } as IAudit)
+
+            const units = [
+                {
+                    org_id: org.id,
+                    name: 'kg',
+                    full_name: 'kilogramm',
+                    developer: true
+                },
+                {
+                    org_id: org.id,
+                    name: 'g',
+                    full_name: 'gramm',
+                    developer: true
+                },
+                {
+                    org_id: org.id,
+                    name: 'l',
+                    full_name: 'litr',
+                    developer: true
+                }
+            ]
+
+            units.forEach(async (unit: Object) => {
+                await storage.unit.create(unit as IUnit)
+            })
 
             await storage.attempt.delete({ phone_number })
             await storage.smsAuth.delete({ phone_number })
