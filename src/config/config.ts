@@ -23,14 +23,13 @@ let config: Config = {
     MongoUser: getConf('MONGO_USER', ''),
     MongoAuthDisable: true,
     JwtSecret: getConf('JWT_SECRET', 'mySecret'),
-    NodeEnv: getConf('NODE_ENV', 'development')
+    NodeEnv: getConf('NODE_ENV', 'production')
 }
 
 function getConf(name: string, def: string = ''): string {
     if (process.env[name]) {
         return process.env[name] || ''
     }
-
     return def
 }
 

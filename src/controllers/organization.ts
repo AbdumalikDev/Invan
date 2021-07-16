@@ -69,7 +69,7 @@ export class OrgController {
             const code = await storage.smsAuth.findOne({ phone_number })
 
             if (!code) {
-                return next(new AppError(404, 'User not found', 'user'))
+                return next(new AppError(404, 'Employee not found', 'emp'))
             }
 
             if (code.code !== enteredCode) {
@@ -121,21 +121,14 @@ export class OrgController {
         }
     })
 
-    admin = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        res.status(200).json({
-            success: true,
-            data: req.employee.employee_info
-        })
-    })
-
     logout = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const {
             session_id,
             employee_info: { phone_number, _id, org_id }
         } = req.employee
 
-        if (!session_id) return next(new AppError(401, 'Session not found', 'sesssion'))
-        if (!phone_number) return next(new AppError(401, 'Phone number is not found', 'phone'))
+        if (!session_id) return next(new AppError(404, 'Session not found', 'sesssion'))
+        if (!phone_number) return next(new AppError(404, 'Phone number is not found', 'phone'))
 
         let userPullData = await storage.employee.update(
             { phone_number },

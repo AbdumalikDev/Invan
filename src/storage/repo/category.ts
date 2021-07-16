@@ -7,7 +7,6 @@ export interface ICategoryAllResponse {
 
 export interface CategoryRepo {
     create(payload: ICategory): Promise<ICategory>
-    update(id: string, payload: ICategory): Promise<ICategory>
     find(query: Object): Promise<ICategory[]>
     findById(id: string): Promise<ICategory>
 }

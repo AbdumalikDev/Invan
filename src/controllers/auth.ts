@@ -29,17 +29,14 @@ export const signToken = async (employee_id: string, session_id?: string): Promi
 
 export const decodeToken = async (token: string): Promise<DecodedToken> => {
     const decoded = (await jwt.verify(token, config.JwtSecret)) as DecodedToken
-
     return decoded
 }
 
 export const AuthMiddleware = catchAsync(
     async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const token = req.headers.authorization
+        const token = req.headers.authorization || null
 
-        console.log(token)
-
-        if (!token) return next(new AppError(401, 'Token not found', 'token'))
+        if (!token || token == 'null') return next(new AppError(401, 'Token not found', 'token'))
 
         let { employee_id, session_id } = await decodeToken(token)
 

@@ -17,22 +17,6 @@ export class CategoryStorage implements CategoryRepo {
         }
     }
 
-    async update(id: string, payload: ICategory): Promise<ICategory> {
-        try {
-            const category = await Category.findByIdAndUpdate(id, payload)
-
-            if (!category) {
-                logger.warn(`${this.scope}.update failed to findByIdAndUpdate`)
-                throw new AppError(404, 'Category not found', 'category')
-            }
-
-            return category
-        } catch (error) {
-            logger.error(`${this.scope}.update: finished with error: ${error}`)
-            throw error
-        }
-    }
-
     async find(query: Object): Promise<ICategory[]> {
         try {
             const categories = await Category.find(query)

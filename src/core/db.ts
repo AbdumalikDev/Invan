@@ -27,7 +27,7 @@ function getMongoDBUrl(authDisable: boolean, dbInfo?: mongoDBInfo): string {
     }
 
     url =
-        'mongodb+srv://Samandar:rersamandar123@cluster1.i31hr.mongodb.net/invan?retryWrites=true&w=majority'
+        'mongodb+srv://Samandar:rersamandar123@cluster1.i31hr.mongodb.net/invan-updated?retryWrites=true&w=majority'
     return url
 }
 export default class Database {
