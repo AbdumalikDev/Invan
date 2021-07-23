@@ -35,12 +35,12 @@ export class UnitStorage implements UnitRepo {
         }
     }
 
-    async delete(query: Object): Promise<string> {
+    async deleteMany(query: Object): Promise<string> {
         try {
-            const unit = await Unit.findOneAndDelete(query)
+            const units = await Unit.deleteMany(query)
 
-            if (!unit) {
-                logger.warn(`${this.scope}.delete failed to findOneAndDelete`)
+            if (!units) {
+                logger.warn(`${this.scope}.delete failed to deleteMany`)
                 throw new AppError(404, 'Unit not found', 'unit')
             }
 

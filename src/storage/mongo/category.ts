@@ -17,7 +17,7 @@ export class CategoryStorage implements CategoryRepo {
         }
     }
 
-    async update(query: Object, payload: ICategory): Promise<ICategory> {
+    async update(query: Object, payload: ICategory | Object): Promise<ICategory> {
         try {
             const category = await Category.findOneAndUpdate(query, payload, { new: true }).select(
                 '_id name full_name sub_categories'
@@ -35,16 +35,25 @@ export class CategoryStorage implements CategoryRepo {
         }
     }
 
-    async delete(query: Object): Promise<ICategory> {
-        try {
-            const category = await Category.findOneAndDelete(query)
+    // async updateSub(query: Object): Promise<ICategory> {
+    //     try {
+    //         const category = await Category.findOneAndUpdate(query, { $pull: })
+    //     } catch (error) {
+    //         logger.error(`${this.scope}.updateSub: finished with error: ${error}`)
+    //         throw error
+    //     }
+    // }
 
-            if (!category) {
-                logger.warn(`${this.scope}.delete failed to findOneAndDelete`)
+    async deleteMany(query: Object): Promise<string> {
+        try {
+            const categories = await Category.deleteMany(query)
+
+            if (!categories) {
+                logger.warn(`${this.scope}.delete failed to deleteMany`)
                 throw new AppError(404, 'Category not found', 'category')
             }
 
-            return category
+            return 'Categories have been deleted.'
         } catch (error) {
             logger.error(`${this.scope}.delete: finished with error: ${error}`)
             throw error

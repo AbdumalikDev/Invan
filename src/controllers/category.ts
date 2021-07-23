@@ -43,9 +43,18 @@ export class CategoryController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
+        const { categories, sub_categories } = req.body
 
-        const category = await storage.category.delete({ org_id, _id })
+        await storage.category.deleteMany({ org_id, _id: { $in: categories } })
+
+        sub_categories.map(async (el: { category: string; sub_category: string }) => {
+            await storage.category.update(
+                { org_id, _id: el.category },
+                { $pull: { sub_categories: el.sub_category } }
+            )
+        })
+
+        const category = await storage.category.find({ org_id })
 
         res.status(200).json({
             success: true,

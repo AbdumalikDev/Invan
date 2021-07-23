@@ -55,12 +55,31 @@ export class ProductController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, description, unit, category } = req.body
-        const org_id = req.employee.employee_info.org_id
-
-        const product = await storage.product.update({ org_id, id: req.params.id }, {
+        const {
             name,
             description,
+            bar_code,
+            SKU,
+            vendor_code,
+            weight,
+            volume,
+            VAT,
+            is_shared,
+            unit,
+            category
+        } = req.body
+        const org_id = req.employee.employee_info.org_id
+
+        const product = await storage.product.update({ org_id, _id: req.params.id }, {
+            name,
+            description,
+            bar_code,
+            SKU,
+            vendor_code,
+            weight,
+            volume,
+            VAT,
+            is_shared,
             unit,
             category
         } as IProduct)

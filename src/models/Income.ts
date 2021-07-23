@@ -6,7 +6,7 @@ export interface IIncome extends Document {
     org_id: string
     emp_id: string
     doc_id: string
-    payment_type: string[]
+    payment_type: string
     sum: number
 }
 

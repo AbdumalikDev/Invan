@@ -44,12 +44,7 @@ export class UnitController {
         const org_id = req.employee.employee_info.org_id
         const { ids } = req.body
 
-        for (let _id in ids) {
-            console.log(org_id)
-            console.log(_id)
-
-            await storage.unit.delete({ org_id, _id })
-        }
+        await storage.unit.deleteMany({ org_id, _id: { $in: ids } })
 
         const units = await storage.unit.find({ org_id })
 
