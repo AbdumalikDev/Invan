@@ -22,14 +22,11 @@ export class UnitController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, full_name } = req.body
         const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
 
         const unit = await storage.unit.update({ org_id, _id }, {
-            org_id,
-            name,
-            full_name
+            ...req.body
         } as IUnit)
 
         res.status(200).json({
@@ -43,6 +40,12 @@ export class UnitController {
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
         const { ids } = req.body
+
+        const isExist = await storage.product.find({ org_id, unit: { $in: ids } })
+
+        if (isExist.length !== 0) {
+            return next(new AppError(401, 'Sorry, Unit is being used.', 'unit'))
+        }
 
         await storage.unit.deleteMany({ org_id, developer: 'false', _id: { $in: ids } })
 

@@ -53,11 +53,13 @@ const ProductSchema: Schema<IProduct> = new Schema(
         },
         unit: {
             type: String,
-            ref: 'units'
+            ref: 'units',
+            required: true
         },
         category: {
             type: String,
-            ref: 'categories'
+            ref: 'categories',
+            required: true
         },
         vendor_code: {
             type: String

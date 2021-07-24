@@ -55,33 +55,10 @@ export class ProductController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const {
-            name,
-            description,
-            bar_code,
-            SKU,
-            vendor_code,
-            weight,
-            volume,
-            VAT,
-            is_shared,
-            unit,
-            category
-        } = req.body
         const org_id = req.employee.employee_info.org_id
 
         const product = await storage.product.update({ org_id, _id: req.params.id }, {
-            name,
-            description,
-            bar_code,
-            SKU,
-            vendor_code,
-            weight,
-            volume,
-            VAT,
-            is_shared,
-            unit,
-            category
+            ...req.body
         } as IProduct)
 
         await storage.audit.create({
@@ -100,32 +77,49 @@ export class ProductController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
+        const ids = req.body
 
-        await storage.product.delete({ org_id, id: req.params.id })
+        await storage.product.deleteMany({ org_id, _id: { $in: ids } })
 
         await storage.audit.create({
             org_id,
-            action: 'create',
-            events: `${req.params.id} successfully created`
+            action: 'delete',
+            events: `Products successfully deleted`
         } as IAudit)
+
+        const products = await storage.product.find({ org_id })
 
         res.status(200).json({
             success: true,
             status: 'product',
-            message: 'Product has been successfully deleted'
+            message: 'Product has been successfully deleted',
+            products
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        let products = await storage.product.find({ org_id })
+        const products = await storage.product.find({ org_id })
 
         res.status(200).json({
             success: true,
             status: 'product',
             message: 'All products',
             products
+        })
+    })
+
+    getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
+
+        const product = await storage.product.findOne({ org_id, _id: req.params.id })
+
+        res.status(200).json({
+            success: true,
+            status: 'product',
+            message: 'One product',
+            product
         })
     })
 }

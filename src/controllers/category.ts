@@ -25,13 +25,11 @@ export class CategoryController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, sub_categories } = req.body
         const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
 
         const category = await storage.category.update({ org_id, _id }, {
-            name,
-            sub_categories
+            ...req.body
         } as ICategory)
 
         res.status(200).json({
@@ -46,9 +44,12 @@ export class CategoryController {
         const org_id = req.employee.employee_info.org_id
         const { categories, sub_categories } = req.body
 
-        const exist = await storage.category.find({ org_id, sub_categories: { $in: categories } })
+        const isExist1 = await storage.category.find({
+            org_id,
+            sub_categories: { $in: categories }
+        })
 
-        if (exist.length !== 0) {
+        if (isExist1.length !== 0) {
             return next(new AppError(401, 'Sorry this category is being used', 'category'))
         }
 

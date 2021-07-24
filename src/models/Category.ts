@@ -20,7 +20,8 @@ const CategorySchema: Schema<ICategory> = new Schema(
         },
         name: {
             type: String,
-            required: true
+            required: true,
+            unique: true
         },
         sub_categories: [
             {

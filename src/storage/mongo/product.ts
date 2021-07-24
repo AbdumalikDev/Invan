@@ -35,9 +35,9 @@ export class ProductStorage implements ProductRepo {
         }
     }
 
-    async delete(query: Object): Promise<string> {
+    async deleteMany(query: Object): Promise<string> {
         try {
-            const product = await Product.findOneAndDelete(query)
+            const product = await Product.deleteMany(query)
 
             if (!product) {
                 logger.warn(`${this.scope}.delete failed to findOneAndDelete`)
@@ -53,11 +53,27 @@ export class ProductStorage implements ProductRepo {
 
     async find(query: Object): Promise<IProduct[]> {
         try {
-            const products = await Product.find(query)
+            const products = await Product.find(query).populate('unit category')
 
             return products
         } catch (error) {
             logger.error(`${this.scope}.find: finished with error: ${error}`)
+            throw error
+        }
+    }
+
+    async findOne(query: Object): Promise<IProduct> {
+        try {
+            const product = await Product.findOne(query).populate('unit category')
+
+            if (!product) {
+                logger.warn(`${this.scope}.findOne failed to findOne`)
+                throw new AppError(404, 'Product not found', 'product')
+            }
+
+            return product
+        } catch (error) {
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
             throw error
         }
     }
