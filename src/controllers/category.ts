@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
+import AppError from '../utils/appError'
 import { ICategory } from '../models/Category'
 
 export class CategoryController {
@@ -45,9 +46,15 @@ export class CategoryController {
         const org_id = req.employee.employee_info.org_id
         const { categories, sub_categories } = req.body
 
+        const exist = await storage.category.find({ org_id, sub_categories: { $in: categories } })
+
+        if (exist.length !== 0) {
+            return next(new AppError(401, 'Sorry this category is being used', 'category'))
+        }
+
         await storage.category.deleteMany({ org_id, _id: { $in: categories } })
 
-        sub_categories.map(async (el: { category: string; sub_category: string }) => {
+        await sub_categories.forEach(async (el: { category: string; sub_category: string }) => {
             await storage.category.update(
                 { org_id, _id: el.category },
                 { $pull: { sub_categories: el.sub_category } }
