@@ -186,6 +186,14 @@ export class EmployeeController {
             employee_info: { org_id, _id }
         } = req.employee
 
+<<<<<<< HEAD
+        // if(status!='super_admin') return next(new AppError(405,"You do not have permission.",'emp'))
+
+        console.log('2')
+        console.log(req.body)
+
+=======
+>>>>>>> 2ca3dbe4e394d4ea2846f812c625b540ad7df7c2
         let { first_name, last_name, age, gender, phone_number, email, allow_sessions } = req.body
 
         let employee = await storage.employee.userExist({ phone_number })
@@ -227,16 +235,21 @@ export class EmployeeController {
 
         let newEmployee = await storage.employee.create({
             org_id,
-            owner_id: _id,
+            owner_id,
             name: {
                 first_name,
-                last_name: last_name ? last_name : null
+                last_name
             },
-            age: age ? age : null,
-            gender: gender ? gender : null,
+            age,
+            gender,
             phone_number,
+<<<<<<< HEAD
+            email,
+            allow_sessions,
+=======
             email: email ? email : null,
             allow_sessions: allow_sessions ? allow_sessions : 2,
+>>>>>>> 2ca3dbe4e394d4ea2846f812c625b540ad7df7c2
             avatar: employeeAvatar
         } as IEmployee)
 
@@ -305,6 +318,14 @@ export class EmployeeController {
                 employee_info: { status }
             } = req.employee
 
+<<<<<<< HEAD
+            let employeeIsExist = await storage.employee.userExist({
+                phone_number: req.body.phone_number
+            })
+
+            if (employeeIsExist)
+                return next(new AppError(400, 'Employee phone already exist', 'phone'))
+=======
             let employee = await storage.employee.findAndPopulate({ _id: id })
 
             if (status == 'admin' && employee.status == 'super_admin')
@@ -320,6 +341,7 @@ export class EmployeeController {
     editEmployee = catchAsync(
         async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
             const { id } = req.params
+>>>>>>> 2ca3dbe4e394d4ea2846f812c625b540ad7df7c2
 
             let employeeInfo = await storage.employee.findAndPopulate({ _id: id })
 
@@ -359,6 +381,9 @@ export class EmployeeController {
                 ? `/employee/image/${employeeOrg.org_name}/${employeeImgId}.png`
                 : null
 
+<<<<<<< HEAD
+            let { first_name, last_name, avatar, email, gender, allow_sessions } = req.body
+=======
             let { first_name, last_name, email, gender, age, allow_sessions } = req.body
 
             // let { phone_number: empOldPhone } = employeeInfo
@@ -367,6 +392,7 @@ export class EmployeeController {
             // if (empOldPhone != phone_number && isPhoneNumberExist)
             // return next(new AppError(400, 'Phone number already exist', 'phone number'))
 
+>>>>>>> 2ca3dbe4e394d4ea2846f812c625b540ad7df7c2
             let edit_employee = await storage.employee.update(
                 { _id: id },
                 {
