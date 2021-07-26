@@ -21,13 +21,11 @@ const UnitSchema: Schema<IUnit> = new Schema(
         },
         name: {
             type: String,
-            required: true,
-            unique: true
+            required: true
         },
         full_name: {
             type: String,
-            required: true,
-            unique: true
+            required: true
         },
         developer: {
             type: Boolean,

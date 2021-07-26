@@ -43,7 +43,7 @@ export class ProductController {
         await storage.audit.create({
             org_id,
             action: 'create',
-            events: `${product.id} successfully created`
+            events: `${product._id} successfully created`
         } as IAudit)
 
         res.status(200).json({
@@ -56,8 +56,9 @@ export class ProductController {
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
+        const _id = req.params.id
 
-        const product = await storage.product.update({ org_id, _id: req.params.id }, {
+        const product = await storage.product.update({ org_id, _id }, {
             ...req.body
         } as IProduct)
 

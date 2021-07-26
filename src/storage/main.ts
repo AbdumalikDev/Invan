@@ -7,12 +7,12 @@ import { AuditStorage } from './mongo/audit'
 import { ProductStorage } from './mongo/product'
 import { UnitStorage } from './mongo/unit'
 import { CategoryStorage } from './mongo/category'
-import { ItemStorage } from './mongo/Item'
+import { ItemStorage } from './mongo/item'
 import { WarehouseStorage } from './mongo/warehouse'
 import { ContractorStorage } from './mongo/contractor'
 import { IncomeStorage } from './mongo/income'
 import { ReceiptStorage } from './mongo/receipt'
-import { ShipmentStorage } from "./mongo/shipment"
+import { ShipmentStorage } from './mongo/shipment'
 import { OutcomeStorage } from './mongo/outcome'
 
 interface IStorage {

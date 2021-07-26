@@ -20,8 +20,6 @@ export class ProductStorage implements ProductRepo {
     async update(query: Object, payload: IProduct): Promise<IProduct> {
         try {
             const product = await Product.findOneAndUpdate(query, payload, { new: true })
-                .populate('unit')
-                .populate('category')
 
             if (!product) {
                 logger.warn(`${this.scope}.get failed to findOneAndUpdate`)
@@ -53,7 +51,7 @@ export class ProductStorage implements ProductRepo {
 
     async find(query: Object): Promise<IProduct[]> {
         try {
-            const products = await Product.find(query).populate('unit category')
+            const products = await Product.find(query).populate('unit').populate('category')
 
             return products
         } catch (error) {
