@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose'
-import { IContractor } from './Contractor'
 import { v4 as uuidv4 } from 'uuid'
 
 export interface IGroup extends Document {
@@ -26,7 +25,7 @@ const GroupSchema: Schema<IGroup> = new Schema(
         contractor: [
             {
                 type: String,
-                ref: 'contractor'
+                ref: 'contractors'
             }
         ]
     },
