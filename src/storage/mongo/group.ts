@@ -1,5 +1,6 @@
 import { GroupRepo } from '../../storage/repo/group'
 import Group, { IGroup } from '../../models/Group'
+import contractor, { IContractor } from '../../models/Contractor'
 import { logger } from '../../config/logger'
 import AppError from '../../utils/appError'
 
@@ -20,7 +21,7 @@ export class GroupStorage implements GroupRepo {
     async update(query: Object, payload: IGroup): Promise<IGroup> {
         try {
             const group = await Group.findOneAndUpdate(query, payload, { new: true }).select(
-                '_id name full_name sub_groups'
+                '_id name full_name contractor'
             )
 
             if (!group) {
@@ -34,12 +35,12 @@ export class GroupStorage implements GroupRepo {
             throw error
         }
     }
-    
+
     async findOne(query: Object): Promise<IGroup> {
         try {
             const group = await Group.findOne(query)
-                .populate('sub_groups')
-                .select('_id name sub_groups')
+                .populate('contractor')
+                .select('_id name contractor')
 
             if (!group) {
                 logger.warn(`${this.scope}.findOne failed to findOne`)
@@ -69,15 +70,17 @@ export class GroupStorage implements GroupRepo {
         }
     }
 
-    async find(query: Object): Promise<IGroup[]> {
+    async findAndPopulate(query: Object): Promise<IGroup> {
         try {
-            const groups = await Group.find(query)
-                .populate('sub_groups')
-                .select('_id name sub_groups')
+            let group = await Group.findOne({ ...query }).populate('contractor')
+            if (!group) {
+                logger.warn(`${this.scope}.get failed to findOne`)
+                throw new AppError(404, 'Group not found', 'emp')
+            }
 
-            return groups
+            return group
         } catch (error) {
-            logger.error(`${this.scope}.find: finished with error: ${error}`)
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
             throw error
         }
     }

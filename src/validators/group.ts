@@ -9,7 +9,6 @@ export class GroupValidator {
     }
     GroupSchema = Joi.object({
         name: Joi.string().required(),
-        sub_groups: Joi.string()
     })
 
     group = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
