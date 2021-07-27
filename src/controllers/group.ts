@@ -6,13 +6,13 @@ import { IGroup } from '../models/Group'
 
 export class GroupController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, sub_groups } = req.body
+        const { name, contractor } = req.body
         const org_id = req.employee.employee_info.org_id
 
         const group = await storage.group.create({
             org_id,
             name,
-            sub_groups
+            contractor
         } as IGroup)
 
         res.status(200).json({
@@ -24,13 +24,13 @@ export class GroupController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, sub_groups } = req.body
+        const { name, contractor } = req.body
         const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
 
         const group = await storage.group.update({ org_id, _id }, {
             name,
-            sub_groups
+            contractor
         } as IGroup)
 
         res.status(200).json({
@@ -57,7 +57,7 @@ export class GroupController {
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        const groups = await storage.group.find({ org_id })
+        const groups = await storage.group.findAndPopulate({ org_id })
 
         res.status(200).json({
             success: true,
