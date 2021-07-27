@@ -1,4 +1,4 @@
-import { IItem } from "../../models/Item"
+import { IItem } from '../../models/Item'
 
 export interface IItemAllResponse {
     payloads: IItem[]
@@ -8,8 +8,7 @@ export interface IItemAllResponse {
 export interface ItemRepo {
     create(payload: IItem): Promise<IItem>
     update(query: Object, payload: IItem): Promise<IItem>
-    delete(query: Object): Promise<any>
+    deleteMany(query: Object): Promise<string>
     find(query: Object): Promise<IItem[]>
     findOne(query: Object): Promise<IItem>
-    findById(id: string): Promise<IItem>
 }

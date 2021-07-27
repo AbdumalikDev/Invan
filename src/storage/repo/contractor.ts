@@ -1,4 +1,4 @@
-import { IContractor } from "../../models/Contractor"
+import { IContractor } from '../../models/Contractor'
 
 export interface IContractorAllResponse {
     payloads: IContractor[]
@@ -8,8 +8,7 @@ export interface IContractorAllResponse {
 export interface ContractorRepo {
     create(payload: IContractor): Promise<IContractor>
     update(query: Object, payload: IContractor): Promise<IContractor>
-    delete(query: Object): Promise<any>
+    deleteMany(query: Object): Promise<string>
     find(query: Object): Promise<IContractor[]>
     findOne(query: Object): Promise<IContractor>
-    findById(id: string): Promise<IContractor>
 }

@@ -7,7 +7,7 @@ export interface IContractor extends Document {
     emp_id: string
     name: string
     address: string
-    contract: string
+    comment: string
     email: string
     phone_number: string
     group: string[]
@@ -34,7 +34,7 @@ let contractorSchema = new mongoose.Schema(
         address: {
             type: String
         },
-        contract: {
+        comment: {
             type: String
         },
         email: {

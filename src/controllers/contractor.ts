@@ -8,7 +8,7 @@ import { IAudit } from '../models/Audit'
 
 export class ContractorController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, address, phone_number, contract, email, group } = req.body
+        const { name, address, phone_number, comment, email, group } = req.body
         const emp_id = req.employee.employee_info.id
         const org_id = req.employee.employee_info.org_id
 
@@ -16,7 +16,7 @@ export class ContractorController {
             name,
             address,
             phone_number,
-            contract,
+            comment,
             email,
             group,
             org_id,
@@ -38,19 +38,11 @@ export class ContractorController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, address, phone_number, contract, email, group } = req.body
         const org_id = req.employee.employee_info.org_id
-        const emp_id = req.employee.employee_info.id
+        const _id = req.params.id
 
-        const contractor = await storage.contractor.update({ org_id, id: req.params.id }, {
-            name,
-            address,
-            phone_number,
-            contract,
-            email,
-            group,
-            org_id,
-            emp_id
+        const contractor = await storage.contractor.update({ org_id, _id }, {
+            ...req.body
         } as IContractor)
 
         await storage.audit.create({
@@ -69,8 +61,9 @@ export class ContractorController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
+        const ids = req.body
 
-        await storage.contractor.delete({ org_id, id: req.params.id })
+        await storage.contractor.deleteMany({ org_id, _id: { $in: ids } })
 
         await storage.audit.create({
             org_id,
@@ -78,23 +71,40 @@ export class ContractorController {
             events: `${req.params.id} successfully created`
         } as IAudit)
 
+        const contractors = await storage.contractor.find({ org_id })
+
         res.status(200).json({
             success: true,
             status: 'contractor',
-            message: 'Contractor has been successfully deleted'
+            message: 'Contractor has been successfully deleted',
+            contractors
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        let contracts = await storage.contractor.find({ org_id })
+        const contracts = await storage.contractor.find({ org_id })
 
         res.status(200).json({
             success: true,
             status: 'contractor',
             message: 'All contracts',
             contracts
+        })
+    })
+
+    getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
+        const _id = req.params.id
+
+        const contract = await storage.contractor.findOne({ org_id, _id })
+
+        res.status(200).json({
+            success: true,
+            status: 'contractor',
+            message: 'All contracts',
+            contract
         })
     })
 }

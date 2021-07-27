@@ -35,15 +35,6 @@ export class CategoryStorage implements CategoryRepo {
         }
     }
 
-    // async updateSub(query: Object): Promise<ICategory> {
-    //     try {
-    //         const category = await Category.findOneAndUpdate(query, { $pull: })
-    //     } catch (error) {
-    //         logger.error(`${this.scope}.updateSub: finished with error: ${error}`)
-    //         throw error
-    //     }
-    // }
-
     async deleteMany(query: Object): Promise<string> {
         try {
             const categories = await Category.deleteMany(query)
