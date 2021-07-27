@@ -6,6 +6,7 @@ export interface IWarehouse extends Document {
     org_id: string
     emp_id: string
     name: string
+    address: string
     group: string[]
 }
 
@@ -27,9 +28,15 @@ let warehouseSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        group: {
-            type: String
-        }
+        address: {
+            type: String,
+            required: true
+        },
+        group: [
+            {
+                type: String
+            }
+        ]
     },
     {
         timestamps: true

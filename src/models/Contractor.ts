@@ -43,9 +43,11 @@ let contractorSchema = new mongoose.Schema(
         phone_number: {
             type: String
         },
-        group: {
-            type: String
-        }
+        group: [
+            {
+                type: String
+            }
+        ]
     },
     {
         timestamps: true
