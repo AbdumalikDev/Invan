@@ -6,13 +6,17 @@ import AppError from "../../utils/appError"
 export class WarehouseStorage implements WarehouseRepo {
     private scope = "storage.warehouse"
 
-    async find(query: Object): Promise<IWarehouse[]> {
+    async findAndPopulate(query: Object): Promise<IWarehouse> {
         try {
-            let dbObj = await Warehouse.find({ ...query })
+            let dbObj = await Warehouse.findOne({ ...query }).populate('warehouse')
+            if (!dbObj) {
+                logger.warn(`${this.scope}.get failed to findOne`)
+                throw new AppError(404, 'Warehouse not found', 'emp')
+            }
 
             return dbObj
         } catch (error) {
-            logger.error(`${this.scope}.find: finished with error: ${error}`)
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
             throw error
         }
     }

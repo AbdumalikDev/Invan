@@ -27,9 +27,10 @@ let warehouseSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        group: {
-            type: String
-        }
+        group: [{
+            type: String,
+            ref:"warehouse"
+        }]
     },
     {
         timestamps: true
