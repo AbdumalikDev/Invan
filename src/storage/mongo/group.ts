@@ -20,9 +20,7 @@ export class GroupStorage implements GroupRepo {
 
     async update(query: Object, payload: IGroup): Promise<IGroup> {
         try {
-            const group = await Group.findOneAndUpdate(query, payload, { new: true }).select(
-                '_id name full_name contractor'
-            )
+            const group = await Group.findOneAndUpdate(query, payload, { new: true })
 
             if (!group) {
                 logger.warn(`${this.scope}.update failed to findOneAndUpdate`)
@@ -36,46 +34,40 @@ export class GroupStorage implements GroupRepo {
         }
     }
 
-    async findOne(query: Object): Promise<IGroup> {
+    async deleteMany(query: Object): Promise<string> {
         try {
-            const group = await Group.findOne(query)
-                .populate('contractor')
-                .select('_id name contractor')
+            const groups = await Group.deleteMany(query)
 
-            if (!group) {
-                logger.warn(`${this.scope}.findOne failed to findOne`)
-                throw new AppError(404, 'Group not found', 'group')
-            }
-
-            return group
-        } catch (error) {
-            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
-            throw error
-        }
-    }
-
-    async delete(query: Object): Promise<IGroup> {
-        try {
-            const group = await Group.findOneAndDelete(query)
-
-            if (!group) {
+            if (!groups) {
                 logger.warn(`${this.scope}.delete failed to findOneAndDelete`)
                 throw new AppError(404, 'Group not found', 'group')
             }
 
-            return group
+            return 'Groups have been successfully deleted'
         } catch (error) {
             logger.error(`${this.scope}.delete: finished with error: ${error}`)
             throw error
         }
     }
 
-    async findAndPopulate(query: Object): Promise<IGroup> {
+    async find(query: Object): Promise<IGroup[]> {
         try {
-            let group = await Group.findOne({ ...query }).populate('contractor')
+            const groups = await Group.find(query).populate('contractors')
+
+            return groups
+        } catch (error) {
+            logger.error(`${this.scope}.find: finished with error: ${error}`)
+            throw error
+        }
+    }
+
+    async findOne(query: Object): Promise<IGroup> {
+        try {
+            const group = await Group.findOne(query).populate('contractors')
+
             if (!group) {
-                logger.warn(`${this.scope}.get failed to findOne`)
-                throw new AppError(404, 'Group not found', 'emp')
+                logger.warn(`${this.scope}.findOne failed to findOne`)
+                throw new AppError(404, 'Group not found', 'group')
             }
 
             return group

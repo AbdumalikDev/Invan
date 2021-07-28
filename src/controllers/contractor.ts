@@ -7,7 +7,7 @@ import { IAudit } from '../models/Audit'
 
 export class ContractorController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, address, phone_number, comment, email, group } = req.body
+        const { name, address, phone_number, comment, email, groups } = req.body
         const emp_id = req.employee.employee_info.id
         const org_id = req.employee.employee_info.org_id
 
@@ -17,7 +17,7 @@ export class ContractorController {
             phone_number,
             comment,
             email,
-            group,
+            groups,
             org_id,
             emp_id
         } as IContractor)

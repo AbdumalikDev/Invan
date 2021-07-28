@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import { ICategory } from './Category'
+import { IUnit } from './Unit'
 
 export interface IProduct extends Document {
     _id: string
@@ -10,8 +12,8 @@ export interface IProduct extends Document {
     bar_code: string
     SKU: string
     image: any
-    unit: string
-    category: string
+    unit: string | IUnit
+    category: string | ICategory
     vendor_code: string
     weight: number
     volume: number

@@ -6,13 +6,13 @@ import { IGroup } from '../models/Group'
 
 export class GroupController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, sub_groups } = req.body
+        const { name, contractors } = req.body
         const org_id = req.employee.employee_info.org_id
 
         const group = await storage.group.create({
             org_id,
             name,
-            sub_groups
+            contractors
         } as IGroup)
 
         res.status(200).json({
@@ -24,13 +24,13 @@ export class GroupController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, sub_groups } = req.body
+        const { name, contractors } = req.body
         const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
 
         const group = await storage.group.update({ org_id, _id }, {
             name,
-            sub_groups
+            contractors
         } as IGroup)
 
         res.status(200).json({
@@ -41,16 +41,19 @@ export class GroupController {
         })
     })
 
-    getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+    delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
+        const ids = req.body
 
-        const group = await storage.group.findOne({ org_id, _id: req.params.id })
+        await storage.group.deleteMany({ org_id, _id: { $in: ids } })
+
+        const groups = await storage.group.find({ org_id })
 
         res.status(200).json({
             success: true,
             status: 'group',
-            message: 'One group',
-            group
+            message: 'Group has been successfully deleted',
+            groups
         })
     })
 
@@ -67,16 +70,15 @@ export class GroupController {
         })
     })
 
-    delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+    getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
 
-        const group = await storage.group.delete({ org_id, _id })
+        const group = await storage.group.findOne({ org_id, _id: req.params.id })
 
         res.status(200).json({
             success: true,
             status: 'group',
-            message: 'Group has been successfully deleted',
+            message: 'One group',
             group
         })
     })

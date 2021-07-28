@@ -2,7 +2,6 @@ import { Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
-import AppError from '../utils/appError'
 import { IUnit } from '../models/Unit'
 import { IAudit } from '../models/Audit'
 
@@ -52,16 +51,26 @@ export class UnitController {
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
         const { ids } = req.body
+        let filteredIds: string[] = []
+        const unDeleted: string[] = []
 
         const isExist = await storage.product.find({ org_id, unit: { $in: ids } })
 
-        if (isExist.length !== 0) {
-            return next(new AppError(401, 'Sorry, Unit is being used.', 'unit'))
+        if (isExist.length) {
+            for (const { unit } of isExist) {
+                const { _id, name } = unit as IUnit
+
+                filteredIds = ids.filter((id: string) => {
+                    if (id === _id) {
+                        unDeleted.push(name)
+                    }
+
+                    return id === _id
+                })
+            }
         }
 
-        await storage.unit.deleteMany({ org_id, developer: 'false', _id: { $in: ids } })
-
-        const units = await storage.unit.find({ org_id })
+        await storage.unit.deleteMany({ org_id, _id: { $in: filteredIds } })
 
         await storage.audit.create({
             org_id,
@@ -69,11 +78,14 @@ export class UnitController {
             events: ` Units successfully deleted`
         } as IAudit)
 
+        const units = await storage.unit.find({ org_id })
+
         res.status(200).json({
             success: true,
             status: 'unit',
             message: 'Units has been deleted',
-            units
+            units,
+            unDeleted
         })
     })
 

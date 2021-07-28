@@ -59,10 +59,17 @@ export class CategoryController {
 
         const isExist = await storage.product.find({ org_id, category: { $in: categories } })
 
-        if (isExist.length !== 0) {
-            return next(
-                new AppError(401, 'Sorry this category is being used in products', 'category')
-            )
+        let categoryisExistMsg: string[] = []
+        if (isExist.length) {
+            for (let { category } of isExist) {
+                let { _id, name } = category as ICategory
+                categories.findIndex((cat: string, index: number) => {
+                    if (cat == _id) {
+                        categories.splice(index, 1)
+                        categoryisExistMsg.push(name)
+                    }
+                })
+            }
         }
 
         const isExist1 = await storage.category.find({
@@ -85,7 +92,11 @@ export class CategoryController {
             )
         })
 
+        console.log(sub_categories)
+
         const category = await storage.category.find({ org_id })
+
+        console.log(category)
 
         await storage.audit.create({
             org_id,
@@ -95,8 +106,10 @@ export class CategoryController {
 
         res.status(200).json({
             success: true,
-            status: 'category',
-            message: 'Category has been successfully deleted',
+            status: isExist.length ? 'category used' : 'category',
+            message: isExist.length
+                ? `${categoryisExistMsg.join(',')} is being used in products`
+                : 'Category has been successfully deleted',
             category
         })
     })

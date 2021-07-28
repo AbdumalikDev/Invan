@@ -10,7 +10,7 @@ export interface IContractor extends Document {
     comment: string
     email: string
     phone_number: string
-    group: string[]
+    groups: string[]
 }
 
 let contractorSchema = new mongoose.Schema(
@@ -43,7 +43,7 @@ let contractorSchema = new mongoose.Schema(
         phone_number: {
             type: String
         },
-        group: [
+        groups: [
             {
                 type: String
             }

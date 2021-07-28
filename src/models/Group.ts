@@ -5,7 +5,7 @@ export interface IGroup extends Document {
     _id: string
     org_id: string
     name: string
-    contractor: string[]
+    contractors: string[]
 }
 
 const GroupSchema: Schema<IGroup> = new Schema(
@@ -22,7 +22,7 @@ const GroupSchema: Schema<IGroup> = new Schema(
             type: String,
             required: true
         },
-        contractor: [
+        contractors: [
             {
                 type: String,
                 ref: 'contractors'
