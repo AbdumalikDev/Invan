@@ -15,7 +15,7 @@ import { ReceiptStorage } from './mongo/receipt'
 import { ShipmentStorage } from "./mongo/shipment"
 import { OutcomeStorage } from './mongo/outcome'
 import { GroupStorage } from './mongo/group'
-import { GroupWarehouseStorage } from './mongo/group_warehouse'
+
 
 interface IStorage {
     employee: EmployeeStorage
@@ -35,7 +35,6 @@ interface IStorage {
     shipment: ShipmentStorage
     outcome: OutcomeStorage
     group: GroupStorage
-    groupWarehouse: GroupWarehouseStorage
 }
 
 export let storage: IStorage = {
@@ -55,6 +54,5 @@ export let storage: IStorage = {
     receipt: new ReceiptStorage(),
     shipment: new ShipmentStorage(),
     outcome: new OutcomeStorage(),
-    group: new GroupStorage(),
-    groupWarehouse: new GroupWarehouseStorage()
+    group: new GroupStorage() 
 }
