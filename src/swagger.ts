@@ -293,6 +293,20 @@ export default {
                     status: 'self delete',
                     message: 'You can not delete your self'
                 }
+            },
+            'cant-delete-sub-cat': {
+                value: {
+                    success: false,
+                    message: 'Sorry this category is being used in sub_categories',
+                    status: 'category'
+                }
+            },
+            'cant-delete-product-cat': {
+                value: {
+                    success: false,
+                    message: 'Sorry this category is being used in products',
+                    status: 'category'
+                }
             }
         },
         responses: {
@@ -408,7 +422,7 @@ export default {
                 }
             },
             'cant-delete-self-owner': {
-                desciption: 'Forbidden',
+                description: 'Forbidden',
                 content: {
                     'application/json': {
                         schema: {
@@ -424,10 +438,28 @@ export default {
                         }
                     }
                 }
+            },
+            'category-is-beingused': {
+                description: 'Bad request',
+                content: {
+                    'application/json': {
+                        schema: {
+                            $ref: '#/components/schemas/common-error'
+                        },
+                        examples: {
+                            'cant-delete-product-cat': {
+                                $ref: '#/components/examples/cant-delete-product-cat'
+                            },
+                            'cant-delete-sub-cat': {
+                                $ref: '#/components/examples/cant-delete-sub-cat'
+                            }
+                        }
+                    }
+                }
             }
         }
     },
-    tags: ['Employee', 'Product'],
+    tags: ['Employee', 'Product', 'Unit', 'Category', 'Item'],
     apis: ['**/*Route.js'],
     paths: {
         '/employee/register': {
@@ -2218,7 +2250,7 @@ export default {
                 }
             }
         },
-        '/product/delete/{id}': {
+        '/product/delete': {
             delete: {
                 summary: 'Delete Product',
                 security: [
@@ -2227,16 +2259,7 @@ export default {
                     }
                 ],
                 tags: ['Product'],
-                parameters: [
-                    {
-                        in: 'path',
-                        name: 'id',
-                        required: true,
-                        schema: {
-                            type: 'string'
-                        }
-                    }
-                ],
+                requestBody: {},
                 responses: {
                     '200': {
                         description: 'OK',
@@ -2278,6 +2301,1275 @@ export default {
                                     success: false,
                                     message: 'Product not found',
                                     status: 'product'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/unit/create': {
+            post: {
+                summary: 'Create Unit',
+                tags: ['Unit'],
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    name: {
+                                        type: 'string',
+                                        required: true
+                                    },
+                                    full_name: {
+                                        type: 'string',
+                                        required: true
+                                    }
+                                }
+                            },
+                            example: {
+                                name: 'kg',
+                                full_name: 'kilogram'
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        unit: {
+                                            type: 'object',
+                                            properties: {
+                                                developer: {
+                                                    type: 'boolean',
+                                                    default: false
+                                                },
+                                                org_id: {
+                                                    type: 'string'
+                                                },
+                                                name: {
+                                                    type: 'string'
+                                                },
+                                                full_name: {
+                                                    type: 'string'
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                createdAt: {
+                                                    type: 'string'
+                                                },
+                                                updatedAt: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'unit',
+                                    message: 'Unit has been successfully created',
+                                    unit: {
+                                        developer: false,
+                                        org_id: 'ed95f144-a1c6-492b-b5b1-d2d70f8f026b',
+                                        name: 'kg',
+                                        full_name: 'kilogram',
+                                        _id: 'f283664a-ccdb-4ff6-ad4a-97e489600f8e',
+                                        createdAt: '2021-07-24T05:05:55.913Z',
+                                        updatedAt: '2021-07-24T05:05:55.913Z'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    }
+                }
+            }
+        },
+        '/unit/{id}': {
+            get: {
+                summary: 'Get Specific Unit',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Unit'],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        unit: {
+                                            type: 'object',
+                                            properties: {
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                name: {
+                                                    type: 'string'
+                                                },
+                                                full_name: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    example: {
+                                        success: true,
+                                        status: 'unit',
+                                        message: 'Unit found',
+                                        unit: {
+                                            _id: 'f283664a-ccdb-4ff6-ad4a-97e489600f8e',
+                                            name: 'kg',
+                                            full_name: 'kilogram'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '404': {
+                        description: 'Not Found',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        message: 'Unit not found',
+                                        status: 'unit'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/unit/update/{id}': {
+            patch: {
+                summary: 'Update Unit',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Unit'],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    name: {
+                                        type: 'string'
+                                    },
+                                    full_name: {
+                                        type: 'string'
+                                    }
+                                }
+                            },
+                            example: {
+                                name: 'kg',
+                                full_name: 'kilogramm'
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        unit: {
+                                            type: 'object',
+                                            properties: {
+                                                _id: {
+                                                    type: 'boolean'
+                                                },
+                                                name: {
+                                                    type: 'array',
+                                                    default: []
+                                                },
+                                                full_name: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'unit',
+                                    message: 'Unit has been updated',
+                                    unit: {
+                                        _id: 'f283664a-ccdb-4ff6-ad4a-97e489600f8e',
+                                        name: 'kg',
+                                        full_name: 'kilogramm'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '404': {
+                        description: 'Not Found',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/common-error'
+                                },
+                                example: {
+                                    success: false,
+                                    message: 'Product not found',
+                                    status: 'product'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/unit/delete': {
+            delete: {
+                summary: 'Delete Unit(s)',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Unit'],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    ids: {
+                                        type: 'array',
+                                        default: [
+                                            {
+                                                type: 'string'
+                                            }
+                                        ]
+                                    }
+                                },
+                                example: {
+                                    ids: ['25437aba-73d2-4d68-b212-9603a7ec220b']
+                                }
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'object'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        units: {
+                                            type: 'array',
+                                            default: [
+                                                {
+                                                    type: 'object',
+                                                    properties: {
+                                                        developer: {
+                                                            type: 'boolean'
+                                                        },
+                                                        _id: {
+                                                            type: 'string'
+                                                        },
+                                                        name: {
+                                                            type: 'string'
+                                                        },
+                                                        full_name: {
+                                                            type: 'string'
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'unit',
+                                    message: 'Units has been deleted',
+                                    units: [
+                                        {
+                                            developer: true,
+                                            _id: 'da0f1a2a-2dc5-45d8-b977-73a217647905',
+                                            name: 'kg',
+                                            full_name: 'kilogramm'
+                                        },
+                                        {
+                                            developer: true,
+                                            _id: 'b1a336a1-168d-425a-b7aa-a0179244685e',
+                                            name: 'g',
+                                            full_name: 'gramm'
+                                        },
+                                        {
+                                            developer: true,
+                                            _id: 'cf330e73-81cf-44a9-bcab-a7f98061eba0',
+                                            name: 'l',
+                                            full_name: 'litr'
+                                        },
+                                        {
+                                            developer: false,
+                                            _id: '08271309-7218-430b-b9c7-b306c89047bd',
+                                            name: 't',
+                                            full_name: 'tonna'
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    }
+                }
+            }
+        },
+        '/unit/all': {
+            get: {
+                summary: 'Get All Units',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Unit'],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        units: [
+                                            {
+                                                type: 'object',
+                                                properties: {
+                                                    developer: {
+                                                        type: 'boolean'
+                                                    },
+                                                    _id: {
+                                                        type: 'string'
+                                                    },
+                                                    name: {
+                                                        type: 'string'
+                                                    },
+                                                    full_name: {
+                                                        type: 'string'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'unit',
+                                    message: 'All units',
+                                    units: [
+                                        {
+                                            developer: true,
+                                            _id: 'da0f1a2a-2dc5-45d8-b977-73a217647905',
+                                            name: 'kg',
+                                            full_name: 'kilogramm'
+                                        },
+                                        {
+                                            developer: true,
+                                            _id: 'b1a336a1-168d-425a-b7aa-a0179244685e',
+                                            name: 'g',
+                                            full_name: 'gramm'
+                                        },
+                                        {
+                                            developer: true,
+                                            _id: 'cf330e73-81cf-44a9-bcab-a7f98061eba0',
+                                            name: 'l',
+                                            full_name: 'litr'
+                                        },
+                                        {
+                                            developer: false,
+                                            _id: '08271309-7218-430b-b9c7-b306c89047bd',
+                                            name: 't',
+                                            full_name: 'tonna'
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    }
+                }
+            }
+        },
+        '/category/create': {
+            post: {
+                summary: 'Create category',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Category'],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {}
+                            },
+                            example: {
+                                name: 'Muzqaymoqlar',
+                                sub_categories: 'vazira'
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        category: {
+                                            type: 'object',
+                                            properties: {
+                                                sub_categories: {
+                                                    type: 'array',
+                                                    default: []
+                                                },
+                                                org_id: {
+                                                    type: 'string'
+                                                },
+                                                name: {
+                                                    type: 'string'
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                createdAt: {
+                                                    type: 'string'
+                                                },
+                                                updatedAt: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'category',
+                                    message: 'Category has been successfully created',
+                                    category: {
+                                        sub_categories: [],
+                                        org_id: '50653f3d-bcef-458a-83cb-2e9f1ed62517',
+                                        name: 'Muzqaymoqlar',
+                                        _id: 'ccf5d1dd-3d2a-4422-b9fb-6f5a5cbe226e',
+                                        createdAt: '2021-07-24T11:06:13.910Z',
+                                        updatedAt: '2021-07-24T11:06:13.910Z'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    }
+                }
+            }
+        },
+        '/category/{id}': {
+            get: {
+                summary: 'Get Specific Category',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Category'],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        category: {
+                                            type: 'object',
+                                            properties: {
+                                                sub_categories: {
+                                                    type: 'array',
+                                                    default: []
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                name: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    example: {
+                                        success: true,
+                                        status: 'category',
+                                        message: 'One category',
+                                        category: {
+                                            sub_categories: [],
+                                            _id: 'ccf5d1dd-3d2a-4422-b9fb-6f5a5cbe226e',
+                                            name: 'Muzqaymoqlar'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '404': {
+                        description: 'Not Found',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        message: 'Category not found',
+                                        status: 'category'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/category/all': {
+            get: {
+                summary: 'Get All Categories',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Category'],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        categories: [
+                                            {
+                                                type: 'array',
+                                                default: [
+                                                    {
+                                                        type: 'object',
+                                                        properties: {
+                                                            sub_categories: {
+                                                                type: 'array',
+                                                                default: []
+                                                            },
+                                                            _id: {
+                                                                type: 'string'
+                                                            },
+                                                            name: {
+                                                                type: 'string'
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'category',
+                                    message: 'All categories',
+                                    categories: [
+                                        {
+                                            sub_categories: [],
+                                            _id: 'ccf5d1dd-3d2a-4422-b9fb-6f5a5cbe226e',
+                                            name: 'Muzqaymoqlar'
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    }
+                }
+            }
+        },
+        '/category/update/{id}': {
+            patch: {
+                summary: 'Update Category',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Category'],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    name: {
+                                        type: 'string'
+                                    }
+                                }
+                            },
+                            example: {
+                                name: 'Muzqaymoqlar(Ice Creams)'
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        category: {
+                                            type: 'object',
+                                            properties: {
+                                                sub_categories: {
+                                                    type: 'array',
+                                                    default: []
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                name: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'category',
+                                    message: 'Category has been successfully updated',
+                                    category: {
+                                        sub_categories: null,
+                                        _id: 'ccf5d1dd-3d2a-4422-b9fb-6f5a5cbe226e',
+                                        name: 'Muzqaymoqlar(Ice Creams)'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '404': {
+                        description: 'Not Found',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/common-error'
+                                },
+                                example: {
+                                    success: false,
+                                    message: 'Category not found',
+                                    status: 'category'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/category/delete': {
+            delete: {
+                summary: 'Delete Unit(s)',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Category'],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    sub_categories: {
+                                        type: 'array',
+                                        default: [
+                                            {
+                                                type: 'string'
+                                            }
+                                        ]
+                                    },
+                                    categories: {
+                                        type: 'array',
+                                        default: [
+                                            {
+                                                type: 'string'
+                                            }
+                                        ]
+                                    }
+                                },
+                                example: {
+                                    categories: ['37794c39-d275-4ee9-b561-67177e8baea9'],
+                                    sub_categories: ['a6867f88-4147-47d7-af17-869eaea494f6']
+                                }
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'object'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        category: {
+                                            type: 'array',
+                                            default: [
+                                                {
+                                                    type: 'object',
+                                                    properties: {
+                                                        sub_categories: {
+                                                            type: 'array',
+                                                            default: []
+                                                        },
+                                                        _id: {
+                                                            type: 'string'
+                                                        },
+                                                        name: {
+                                                            type: 'string'
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'category',
+                                    message: 'Category has been successfully deleted',
+                                    category: [
+                                        {
+                                            sub_categories: [],
+                                            _id: 'a6867f88-4147-47d7-af17-869eaea494f6',
+                                            name: 'Vazira'
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '400': {
+                        $ref: '#/components/responses/category-is-beingused'
+                    }
+                }
+            }
+        },
+        '/item/create': {
+            post: {
+                summary: 'Create Item',
+                tags: ['Item'],
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    cost: {
+                                        type: 'number',
+                                        required: true
+                                    },
+                                    product: {
+                                        type: 'string',
+                                        required: true
+                                    },
+                                    quantity: {
+                                        type: 'number',
+                                        required: true
+                                    }
+                                }
+                            },
+                            example: {
+                                product: 'Tarvuz',
+                                cost: 20000,
+                                quantity: 10
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'object'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        item: {
+                                            type: 'object',
+                                            properties: {
+                                                product: {
+                                                    type: 'string'
+                                                },
+                                                cost: {
+                                                    type: 'number'
+                                                },
+                                                quantity: {
+                                                    type: 'number'
+                                                },
+                                                org_id: {
+                                                    type: 'string'
+                                                },
+                                                emp_id: {
+                                                    type: 'string'
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                createdAt: {
+                                                    type: 'string'
+                                                },
+                                                updatedAt: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'item',
+                                    message: 'Item has been successfully created',
+                                    item: {
+                                        product: 'Tarvuz',
+                                        cost: 20000,
+                                        quantity: 10,
+                                        org_id: '54116a9a-5d7b-42fb-9fd7-035744e631b6',
+                                        emp_id: '6101c61c-a300-4bee-aacf-c8a79154b5d6',
+                                        _id: '70787b8a-6b98-4a61-9e44-214864c33dae',
+                                        createdAt: '2021-07-27T11:05:09.680Z',
+                                        updatedAt: '2021-07-27T11:05:09.680Z'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    }
+                }
+            }
+        },
+        '/item/all': {
+            get: {
+                summary: 'Get All Items',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Item'],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        units: [
+                                            {
+                                                type: 'object',
+                                                properties: {
+                                                    developer: {
+                                                        type: 'boolean'
+                                                    },
+                                                    _id: {
+                                                        type: 'string'
+                                                    },
+                                                    name: {
+                                                        type: 'string'
+                                                    },
+                                                    full_name: {
+                                                        type: 'string'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'unit',
+                                    message: 'All units',
+                                    units: [
+                                        {
+                                            developer: true,
+                                            _id: 'da0f1a2a-2dc5-45d8-b977-73a217647905',
+                                            name: 'kg',
+                                            full_name: 'kilogramm'
+                                        },
+                                        {
+                                            developer: true,
+                                            _id: 'b1a336a1-168d-425a-b7aa-a0179244685e',
+                                            name: 'g',
+                                            full_name: 'gramm'
+                                        },
+                                        {
+                                            developer: true,
+                                            _id: 'cf330e73-81cf-44a9-bcab-a7f98061eba0',
+                                            name: 'l',
+                                            full_name: 'litr'
+                                        },
+                                        {
+                                            developer: false,
+                                            _id: '08271309-7218-430b-b9c7-b306c89047bd',
+                                            name: 't',
+                                            full_name: 'tonna'
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    }
+                }
+            }
+        },
+        '/item/{id}': {
+            get: {
+                summary: 'Get Specific Item',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Item'],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        category: {
+                                            type: 'object',
+                                            properties: {
+                                                sub_categories: {
+                                                    type: 'array',
+                                                    default: []
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                name: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    example: {
+                                        success: true,
+                                        status: 'category',
+                                        message: 'One category',
+                                        category: {
+                                            sub_categories: [],
+                                            _id: 'ccf5d1dd-3d2a-4422-b9fb-6f5a5cbe226e',
+                                            name: 'Muzqaymoqlar'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '404': {
+                        description: 'Not Found',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        message: 'Category not found',
+                                        status: 'category'
+                                    }
                                 }
                             }
                         }
