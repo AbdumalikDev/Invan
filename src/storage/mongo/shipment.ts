@@ -16,6 +16,20 @@ export class ShipmentStorage implements ShipmentRepo {
             throw error
         }
     }
+    async findAndPopulate(query: Object): Promise<IShipment> {
+        try {
+            let shipment = await Shipment.findOne({ ...query }).populate('item')
+            if (!shipment) {
+                logger.warn(`${this.scope}.get failed to findOne`)
+                throw new AppError(404, 'Shipment not found', 'emp')
+            }
+
+            return shipment
+        } catch (error) {
+            logger.error(`${this.scope}.findOne: finished with error: ${error}`)
+            throw error
+        }
+    }
 
     async findOne(query: Object): Promise<IShipment> {
         try {

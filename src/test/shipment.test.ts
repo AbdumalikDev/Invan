@@ -14,13 +14,15 @@ afterAll(async () => {
 
 describe('Shipment testing', () => {
     const shipment = {
-        _id: '819c04d0-7d50-405f-9649-d8ae49e1fba3',
-        org_id: '819c04d0-7d50-405f-9649-d8ae49e1fba7',
-        emp_id: '819c04d0-7d50-405f-9649-d8ae49e1fba6',
-        warehouse_id: '819c04d0-7d50-405f-9649-d8ae49e1fba6',
-        contractor_id: '819c04d0-7d50-405f-9649-d8ae49e1fba6',
-        doc_date: '12/12/2021',
-        item: 'olma'
+        _id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
+        org_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
+        emp_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
+        warehouse_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
+        contractor_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
+        item: ["nok","olma"],
+        doc_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
+        doc_date: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
+        is_checked: true
     }
 
     test('get one shipment: success', () => {
@@ -68,7 +70,7 @@ describe('Shipment testing', () => {
     test('update shipment by id: success', () => {
         return storage
             .update(shipment._id, {
-                item: "nok"
+                item: ["nok"]
             } as IShipment)
             .then((data) => {
                 expect(data).toEqual('nok')
@@ -80,7 +82,7 @@ describe('Shipment testing', () => {
 
         return storage
             .update('819c04d0-7d50-405f-9649-d8ae49e1fba7', {
-                item: "nok"
+                item: ["nok"]
             } as IShipment)
             .catch((error) => {
                 expect(error.statusCode).toEqual(404)

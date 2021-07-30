@@ -35,10 +35,11 @@ let shipmentSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        item: {
+        item: [{
             type: String,
-            required: true
-        },
+            required: true,
+            ref:"item"
+        }],
         doc_id: {
             type: String
         },
