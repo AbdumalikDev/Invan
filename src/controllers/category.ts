@@ -100,9 +100,11 @@ export class CategoryController {
 
         res.status(200).json({
             success: true,
-            status: isExist.length ? 'category used' : 'category',
+            status: isExist.length ? 'category-used' : 'category',
             message: isExist.length
-                ? `${categoryisExistMsg.join(',')} is being used in products`
+                ? `${categoryisExistMsg.join(',')} ${
+                      isExist.length > 1 ? 'are' : 'is'
+                  } being used in products`
                 : 'Category has been successfully deleted',
             category
         })

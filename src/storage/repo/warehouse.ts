@@ -1,4 +1,4 @@
-import { IWarehouse } from "../../models/Warehouse"
+import { IWarehouse } from '../../models/Warehouse'
 
 export interface IWarehouseAllResponse {
     payloads: IWarehouse[]
@@ -8,8 +8,7 @@ export interface IWarehouseAllResponse {
 export interface WarehouseRepo {
     create(payload: IWarehouse): Promise<IWarehouse>
     update(query: Object, payload: IWarehouse): Promise<IWarehouse>
-    delete(query: Object): Promise<any>
+    deleteMany(query: Object): Promise<string>
     find(query: Object): Promise<IWarehouse[]>
     findOne(query: Object): Promise<IWarehouse>
-    findById(id: string): Promise<IWarehouse>
 }

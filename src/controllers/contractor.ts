@@ -2,23 +2,20 @@ import { Request, Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
-import AppError from '../utils/appError'
 import { IContractor } from '../models/Contractor'
 import { IAudit } from '../models/Audit'
 
 export class ContractorController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, address, phone_number, comment, email, group } = req.body
-        const emp_id = req.employee.employee_info.id
-        const org_id = req.employee.employee_info.org_id
-
+        const { name, address, phone_number, comment, email, groups } = req.body
+        const { id: emp_id, org_id } = req.employee.employee_info
         const contractor = await storage.contractor.create({
             name,
             address,
             phone_number,
             comment,
             email,
-            group,
+            groups,
             org_id,
             emp_id
         } as IContractor)
@@ -84,13 +81,13 @@ export class ContractorController {
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        const contracts = await storage.contractor.find({ org_id })
+        const contractors = await storage.contractor.find({ org_id })
 
         res.status(200).json({
             success: true,
             status: 'contractor',
-            message: 'All contracts',
-            contracts
+            message: 'All contractors',
+            contractors
         })
     })
 
@@ -98,13 +95,13 @@ export class ContractorController {
         const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
 
-        const contract = await storage.contractor.findOne({ org_id, _id })
+        const contractor = await storage.contractor.findOne({ org_id, _id })
 
         res.status(200).json({
             success: true,
             status: 'contractor',
-            message: 'All contracts',
-            contract
+            message: 'One contractor',
+            contractor
         })
     })
 }

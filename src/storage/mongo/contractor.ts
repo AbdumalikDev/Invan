@@ -53,7 +53,7 @@ export class ContractorStorage implements ContractorRepo {
 
     async find(query: Object): Promise<IContractor[]> {
         try {
-            const contractors = await Contractor.find(query)
+            const contractors = await Contractor.find(query).populate('groups')
 
             return contractors
         } catch (error) {
@@ -64,7 +64,7 @@ export class ContractorStorage implements ContractorRepo {
 
     async findOne(query: Object): Promise<IContractor> {
         try {
-            const contractor = await Contractor.findOne(query)
+            const contractor = await Contractor.findOne(query).populate('groups')
 
             if (!contractor) {
                 logger.warn(`${this.scope}.get failed to findOne`)

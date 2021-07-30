@@ -9,6 +9,7 @@ import auditRouter from './audit'
 import receiptRouter from './receipt'
 import itemRouter from './item'
 import contractorRouter from './contractor'
+import groupRouter from './group'
 import incomeRouter from './income'
 import outcomeRouter from './outcome'
 import shipmentRouter from './shipment'
@@ -24,6 +25,7 @@ router.use('/audit', auditRouter)
 router.use('/receipt', receiptRouter)
 router.use('/item', itemRouter)
 router.use('/contractor', contractorRouter)
+router.use('/contractor-group', groupRouter)
 router.use('/income', incomeRouter)
 router.use('/outcome', outcomeRouter)
 router.use('/shipment', shipmentRouter)

@@ -6,7 +6,8 @@ export interface IWarehouse extends Document {
     org_id: string
     emp_id: string
     name: string
-    group: string[]
+    address: string
+    sub_warehouses: string[]
 }
 
 let warehouseSchema = new mongoose.Schema(
@@ -27,13 +28,20 @@ let warehouseSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        group: {
-            type: String
-        }
+        address: {
+            type: String,
+            required: true
+        },
+        sub_warehouses: [
+            {
+                type: String,
+                ref: 'Warehouse'
+            }
+        ]
     },
     {
         timestamps: true
     }
 )
 
-export default mongoose.model<IWarehouse>('warehouses', warehouseSchema)
+export default mongoose.model<IWarehouse>('Warehouse', warehouseSchema)

@@ -230,10 +230,10 @@ export class EmployeeController {
             owner_id: _id,
             name: {
                 first_name,
-                last_name: last_name ? last_name : null
+                last_name
             },
-            age: age ? age : null,
-            gender: gender ? gender : null,
+            age,
+            gender,
             phone_number,
             email: email ? email : null,
             allow_sessions: allow_sessions ? allow_sessions : 2,

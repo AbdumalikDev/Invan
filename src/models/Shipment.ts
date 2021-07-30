@@ -37,7 +37,7 @@ let shipmentSchema = new mongoose.Schema(
         },
         item: {
             type: String,
-            required: true
+            ref: 'items'
         },
         doc_id: {
             type: String

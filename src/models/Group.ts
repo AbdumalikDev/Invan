@@ -1,14 +1,14 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 
-export interface ICategory extends Document {
+export interface IGroup extends Document {
     _id: string
     org_id: string
     name: string
-    sub_categories: string[]
+    contractors: string[]
 }
 
-const CategorySchema: Schema<ICategory> = new Schema(
+const GroupSchema: Schema<IGroup> = new Schema(
     {
         _id: {
             type: String,
@@ -22,10 +22,10 @@ const CategorySchema: Schema<ICategory> = new Schema(
             type: String,
             required: true
         },
-        sub_categories: [
+        contractors: [
             {
                 type: String,
-                ref: 'categories'
+                ref: 'contractors'
             }
         ]
     },
@@ -34,4 +34,4 @@ const CategorySchema: Schema<ICategory> = new Schema(
     }
 )
 
-export default mongoose.model<ICategory>('categories', CategorySchema)
+export default mongoose.model<IGroup>('Group', GroupSchema)

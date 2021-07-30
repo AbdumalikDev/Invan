@@ -459,7 +459,7 @@ export default {
             }
         }
     },
-    tags: ['Employee', 'Product', 'Unit', 'Category', 'Item'],
+    tags: ['Employee', 'Product', 'Unit', 'Category', 'Item', 'Contractor'],
     apis: ['**/*Route.js'],
     paths: {
         '/employee/register': {
@@ -2569,7 +2569,7 @@ export default {
                                             type: 'object',
                                             properties: {
                                                 _id: {
-                                                    type: 'boolean'
+                                                    type: 'string'
                                                 },
                                                 name: {
                                                     type: 'array',
@@ -3312,7 +3312,7 @@ export default {
                                 }
                             },
                             example: {
-                                product: 'Tarvuz',
+                                product: 'c02eba9b-2cf1-4a2b-93ac-d125f5f47900',
                                 cost: 20000,
                                 quantity: 10
                             }
@@ -3372,7 +3372,7 @@ export default {
                                     status: 'item',
                                     message: 'Item has been successfully created',
                                     item: {
-                                        product: 'Tarvuz',
+                                        product: 'c02eba9b-2cf1-4a2b-93ac-d125f5f47900',
                                         cost: 20000,
                                         quantity: 10,
                                         org_id: '54116a9a-5d7b-42fb-9fd7-035744e631b6',
@@ -3514,17 +3514,81 @@ export default {
                                         message: {
                                             type: 'string'
                                         },
-                                        category: {
+                                        item: {
                                             type: 'object',
                                             properties: {
-                                                sub_categories: {
-                                                    type: 'array',
-                                                    default: []
+                                                product: {
+                                                    type: 'object',
+                                                    properties: {
+                                                        is_shared: {
+                                                            type: 'boolean'
+                                                        },
+                                                        update_history: {
+                                                            type: 'string'
+                                                        },
+                                                        _id: {
+                                                            type: 'string'
+                                                        },
+                                                        org_id: {
+                                                            type: 'string'
+                                                        },
+                                                        emp_id: {
+                                                            type: 'string'
+                                                        },
+                                                        name: {
+                                                            type: 'string'
+                                                        },
+                                                        description: {
+                                                            type: 'string'
+                                                        },
+                                                        first_name: {
+                                                            type: 'string'
+                                                        },
+                                                        bar_code: {
+                                                            type: 'string'
+                                                        },
+                                                        SKU: {
+                                                            type: 'string'
+                                                        },
+                                                        unit: {
+                                                            type: 'string'
+                                                        },
+                                                        category: {
+                                                            type: 'string'
+                                                        },
+                                                        weight: {
+                                                            type: 'number'
+                                                        },
+                                                        volume: {
+                                                            type: 'number'
+                                                        },
+                                                        VAT: {
+                                                            type: 'number'
+                                                        }
+                                                    }
                                                 },
                                                 _id: {
                                                     type: 'string'
                                                 },
                                                 name: {
+                                                    type: 'string'
+                                                },
+                                                cost: {
+                                                    type: 'number'
+                                                },
+                                                quantity: {
+                                                    type: 'number'
+                                                },
+                                                org_id: {
+                                                    type: 'string'
+                                                },
+                                                emp_id: {
+                                                    type: 'string'
+                                                },
+                                                createdAt: {
+                                                    type: 'string'
+                                                },
+                                                updatedAt: {
                                                     type: 'string'
                                                 }
                                             }
@@ -3532,12 +3596,35 @@ export default {
                                     },
                                     example: {
                                         success: true,
-                                        status: 'category',
-                                        message: 'One category',
-                                        category: {
-                                            sub_categories: [],
-                                            _id: 'ccf5d1dd-3d2a-4422-b9fb-6f5a5cbe226e',
-                                            name: 'Muzqaymoqlar'
+                                        status: 'item',
+                                        message: 'One item',
+                                        item: {
+                                            _id: '751fab04-d3fb-4b2b-b1d9-c3db9b89d66e',
+                                            product: {
+                                                is_shared: true,
+                                                update_history: [],
+                                                _id: 'c02eba9b-2cf1-4a2b-93ac-d125f5f47900',
+                                                org_id: 'be94642d-33c3-467f-814f-5ffd4e77c2af',
+                                                emp_id: '86eb57e1-e5c7-4c49-afe2-ed5128f3fd28',
+                                                name: 'Cola',
+                                                description: '',
+                                                bar_code: '',
+                                                SKU: '',
+                                                vendor_code: '',
+                                                weight: null,
+                                                volume: null,
+                                                VAT: null,
+                                                unit: '135b20f0-081b-44a4-9b3c-6e917607b4ae',
+                                                category: '73d537f7-1604-40a6-8bda-281c895089d3',
+                                                createdAt: '2021-07-28T11:22:36.314Z',
+                                                updatedAt: '2021-07-29T04:53:19.949Z'
+                                            },
+                                            cost: 10000,
+                                            quantity: 10,
+                                            org_id: 'be94642d-33c3-467f-814f-5ffd4e77c2af',
+                                            emp_id: '86eb57e1-e5c7-4c49-afe2-ed5128f3fd28',
+                                            createdAt: '2021-07-29T04:55:10.110Z',
+                                            updatedAt: '2021-07-29T04:55:10.110Z'
                                         }
                                     }
                                 }
@@ -3567,9 +3654,727 @@ export default {
                                     },
                                     example: {
                                         success: false,
-                                        message: 'Category not found',
-                                        status: 'category'
+                                        message: 'Item not found',
+                                        status: 'item'
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/item/update/{id}': {
+            patch: {
+                summary: 'Update Item',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Item'],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    quantity: {
+                                        type: 'number'
+                                    }
+                                },
+                                example: {
+                                    quantity: 15
+                                }
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        item: {
+                                            type: 'object',
+                                            properties: {
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                product: {
+                                                    type: 'string'
+                                                },
+                                                cost: {
+                                                    type: 'number'
+                                                },
+                                                quantity: {
+                                                    type: 'number'
+                                                },
+                                                org_id: {
+                                                    type: 'string'
+                                                },
+                                                emp_id: {
+                                                    type: 'string'
+                                                },
+                                                createdAt: {
+                                                    type: 'string'
+                                                },
+                                                updatedAt: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'item',
+                                    message: 'Item has been successfully updated',
+                                    item: {
+                                        _id: '751fab04-d3fb-4b2b-b1d9-c3db9b89d66e',
+                                        product: 'c02eba9b-2cf1-4a2b-93ac-d125f5f47900',
+                                        cost: 10000,
+                                        quantity: 15,
+                                        org_id: 'be94642d-33c3-467f-814f-5ffd4e77c2af',
+                                        emp_id: '86eb57e1-e5c7-4c49-afe2-ed5128f3fd28',
+                                        createdAt: '2021-07-29T04:55:10.110Z',
+                                        updatedAt: '2021-07-29T05:05:51.845Z'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '404': {
+                        description: 'Not Found',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/common-error'
+                                },
+                                example: {
+                                    success: false,
+                                    message: 'Item not found',
+                                    status: 'item'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/item/delete': {
+            delete: {
+                summary: 'Delete Unit(s)',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Unit'],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    ids: {
+                                        type: 'array',
+                                        default: [
+                                            {
+                                                type: 'string'
+                                            }
+                                        ]
+                                    }
+                                },
+                                example: {
+                                    ids: ['25437aba-73d2-4d68-b212-9603a7ec220b']
+                                }
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'object'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        items: {
+                                            type: 'array',
+                                            default: [
+                                                {
+                                                    type: 'object',
+                                                    properties: {
+                                                        product: {
+                                                            type: 'object',
+                                                            properties: {
+                                                                is_shared: {
+                                                                    type: 'boolean'
+                                                                },
+                                                                update_history: {
+                                                                    type: 'string'
+                                                                },
+                                                                _id: {
+                                                                    type: 'string'
+                                                                },
+                                                                org_id: {
+                                                                    type: 'string'
+                                                                },
+                                                                emp_id: {
+                                                                    type: 'string'
+                                                                },
+                                                                name: {
+                                                                    type: 'string'
+                                                                },
+                                                                description: {
+                                                                    type: 'string'
+                                                                },
+                                                                first_name: {
+                                                                    type: 'string'
+                                                                },
+                                                                bar_code: {
+                                                                    type: 'string'
+                                                                },
+                                                                SKU: {
+                                                                    type: 'string'
+                                                                },
+                                                                unit: {
+                                                                    type: 'string'
+                                                                },
+                                                                category: {
+                                                                    type: 'string'
+                                                                },
+                                                                weight: {
+                                                                    type: 'number'
+                                                                },
+                                                                volume: {
+                                                                    type: 'number'
+                                                                },
+                                                                VAT: {
+                                                                    type: 'number'
+                                                                }
+                                                            }
+                                                        },
+                                                        _id: {
+                                                            type: 'string'
+                                                        },
+                                                        name: {
+                                                            type: 'string'
+                                                        },
+                                                        cost: {
+                                                            type: 'number'
+                                                        },
+                                                        quantity: {
+                                                            type: 'number'
+                                                        },
+                                                        org_id: {
+                                                            type: 'string'
+                                                        },
+                                                        emp_id: {
+                                                            type: 'string'
+                                                        },
+                                                        createdAt: {
+                                                            type: 'string'
+                                                        },
+                                                        updatedAt: {
+                                                            type: 'string'
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'item',
+                                    message: 'Item has been successfully deleted',
+                                    items: []
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '404': {
+                        description: 'Not Found',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        message: 'Items not found',
+                                        status: 'item'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/contractor/create': {
+            post: {
+                summary: 'Create Contractor',
+                tags: ['Contractor'],
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                requestBody: {
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    name: {
+                                        type: 'string',
+                                        required: true
+                                    },
+                                    address: {
+                                        type: 'string'
+                                    },
+                                    comment: {
+                                        type: 'string'
+                                    },
+                                    email: {
+                                        type: 'string'
+                                    },
+                                    phone_number: {
+                                        type: 'string'
+                                    },
+                                    groups: {
+                                        type: 'array'
+                                    }
+                                },
+                                example: {
+                                    name: 'Samandar'
+                                }
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        contractor: {
+                                            type: 'object',
+                                            properties: {
+                                                groups: {
+                                                    type: 'array',
+                                                    default: []
+                                                },
+                                                update_history: {
+                                                    type: 'array',
+                                                    default: []
+                                                },
+                                                org_id: {
+                                                    type: 'string'
+                                                },
+                                                emp_id: {
+                                                    type: 'string'
+                                                },
+                                                name: {
+                                                    type: 'string'
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                createdAt: {
+                                                    type: 'string'
+                                                },
+                                                updatedAt: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'contractor',
+                                    message: 'Contractor has been successfully created',
+                                    contractor: {
+                                        groups: [],
+                                        name: 'Samandar',
+                                        org_id: 'be94642d-33c3-467f-814f-5ffd4e77c2af',
+                                        emp_id: '86eb57e1-e5c7-4c49-afe2-ed5128f3fd28',
+                                        _id: '10f51b26-236b-4423-a9e2-c330a7f841c2',
+                                        createdAt: '2021-07-29T05:35:20.211Z',
+                                        updatedAt: '2021-07-29T05:35:20.211Z'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    }
+                }
+            }
+        },
+        '/contractor/all': {
+            get: {
+                summary: 'Get All Contractors',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Contractor'],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        contractors: [
+                                            {
+                                                type: 'object',
+                                                properties: {
+                                                    groups: {
+                                                        type: 'array',
+                                                        default: []
+                                                    },
+                                                    _id: {
+                                                        type: 'string'
+                                                    },
+                                                    name: {
+                                                        type: 'string'
+                                                    },
+                                                    org_id: {
+                                                        type: 'string'
+                                                    },
+                                                    emp_id: {
+                                                        type: 'string'
+                                                    },
+                                                    createdAt: {
+                                                        type: 'string'
+                                                    },
+                                                    updatedAt: {
+                                                        type: 'string'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'contractor',
+                                    message: 'All contractors',
+                                    contractors: [
+                                        {
+                                            groups: [],
+                                            _id: '10f51b26-236b-4423-a9e2-c330a7f841c2',
+                                            name: 'Samandar',
+                                            org_id: 'be94642d-33c3-467f-814f-5ffd4e77c2af',
+                                            emp_id: '86eb57e1-e5c7-4c49-afe2-ed5128f3fd28',
+                                            createdAt: '2021-07-29T05:35:20.211Z',
+                                            updatedAt: '2021-07-29T05:35:20.211Z'
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    }
+                }
+            }
+        },
+        '/contractor/{id}': {
+            get: {
+                summary: 'Get Specific Contractor',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Contractor'],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        contractor: {
+                                            type: 'object',
+                                            properties: {
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                name: {
+                                                    type: 'string'
+                                                },
+                                                org_id: {
+                                                    type: 'string'
+                                                },
+                                                emp_id: {
+                                                    type: 'string'
+                                                },
+                                                createdAt: {
+                                                    type: 'string'
+                                                },
+                                                updatedAt: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    example: {
+                                        success: true,
+                                        status: 'contractor',
+                                        message: 'One contractor',
+                                        contractor: {
+                                            groups: [],
+                                            _id: '10f51b26-236b-4423-a9e2-c330a7f841c2',
+                                            name: 'Samandar',
+                                            org_id: 'be94642d-33c3-467f-814f-5ffd4e77c2af',
+                                            emp_id: '86eb57e1-e5c7-4c49-afe2-ed5128f3fd28',
+                                            createdAt: '2021-07-29T05:35:20.211Z',
+                                            updatedAt: '2021-07-29T05:35:20.211Z'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '404': {
+                        description: 'Not Found',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean',
+                                            default: false
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        }
+                                    },
+                                    example: {
+                                        success: false,
+                                        message: 'Contractor is not found',
+                                        status: 'contractor'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        '/contractor/update/{id}': {
+            patch: {
+                summary: 'Update Contractor',
+                security: [
+                    {
+                        JWT: []
+                    }
+                ],
+                tags: ['Contractor'],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    name: {
+                                        type: 'string'
+                                    }
+                                }
+                            },
+                            example: {
+                                name: 'Muzqaymoqlar(Ice Creams)'
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        success: {
+                                            type: 'boolean'
+                                        },
+                                        status: {
+                                            type: 'string'
+                                        },
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        category: {
+                                            type: 'object',
+                                            properties: {
+                                                sub_categories: {
+                                                    type: 'array',
+                                                    default: []
+                                                },
+                                                _id: {
+                                                    type: 'string'
+                                                },
+                                                name: {
+                                                    type: 'string'
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                example: {
+                                    success: true,
+                                    status: 'contractor',
+                                    message: 'Contractor has been successfully updated',
+                                    contractor: {
+                                        groups: [],
+                                        _id: '10f51b26-236b-4423-a9e2-c330a7f841c2',
+                                        name: 'Dilmurod',
+                                        org_id: 'be94642d-33c3-467f-814f-5ffd4e77c2af',
+                                        emp_id: '86eb57e1-e5c7-4c49-afe2-ed5128f3fd28',
+                                        createdAt: '2021-07-29T05:35:20.211Z',
+                                        updatedAt: '2021-07-29T06:46:59.274Z',
+                                        __v: 0
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '401': {
+                        $ref: '#/components/responses/unauthorized-user'
+                    },
+                    '404': {
+                        description: 'Not Found',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/common-error'
+                                },
+                                example: {
+                                    success: false,
+                                    message: 'Category not found',
+                                    status: 'category'
                                 }
                             }
                         }

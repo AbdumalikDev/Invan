@@ -2,15 +2,26 @@ import { Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
-import AppError from '../utils/appError'
 import { IUnit } from '../models/Unit'
+import AppError from '../utils/appError'
 import { IAudit } from '../models/Audit'
+import { exist } from 'joi'
 
 export class UnitController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, full_name } = req.body
         const org_id = req.employee.employee_info.org_id
 
+        const isUnitExist = await storage.unit.find({ org_id, name })
+        if (isUnitExist.length) {
+            return next(
+                new AppError(
+                    400,
+                    `${isUnitExist.map((unit) => unit.name).join('')} is already exist`,
+                    'unit'
+                )
+            )
+        }
         const unit = await storage.unit.create({ org_id, name, full_name } as IUnit)
 
         await storage.audit.create({
@@ -52,16 +63,23 @@ export class UnitController {
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
         const { ids } = req.body
+        const unDeleted: string[] = []
 
         const isExist = await storage.product.find({ org_id, unit: { $in: ids } })
 
-        if (isExist.length !== 0) {
-            return next(new AppError(401, 'Sorry, Unit is being used.', 'unit'))
+        if (isExist.length) {
+            for (const { unit } of isExist) {
+                const { _id, name } = unit as IUnit
+                ids.findIndex((unitId: string, index: number) => {
+                    if (unitId == _id) {
+                        ids.splice(index, 1)
+                        unDeleted.push(name)
+                    }
+                })
+            }
         }
 
-        await storage.unit.deleteMany({ org_id, developer: 'false', _id: { $in: ids } })
-
-        const units = await storage.unit.find({ org_id })
+        await storage.unit.deleteMany({ org_id, _id: { $in: ids } })
 
         await storage.audit.create({
             org_id,
@@ -69,10 +87,14 @@ export class UnitController {
             events: ` Units successfully deleted`
         } as IAudit)
 
+        const units = await storage.unit.find({ org_id })
+
         res.status(200).json({
             success: true,
-            status: 'unit',
-            message: 'Units has been deleted',
+            status: isExist.length ? 'unit-used' : 'unit',
+            message: isExist.length
+                ? `${unDeleted.join(',')} ${isExist.length > 1 ? 'are' : 'is'} used in products`
+                : 'Units has been deleted',
             units
         })
     })
