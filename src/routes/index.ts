@@ -3,8 +3,6 @@ import userRouter from './employee'
 import productRouter from './product'
 import unitRouter from './unit'
 import categoryRouter from './category'
-import express from 'express'
-import path from 'path'
 import auditRouter from './audit'
 import receiptRouter from './receipt'
 import itemRouter from './item'
@@ -24,7 +22,6 @@ router.use('/category', categoryRouter)
 router.use('/audit', auditRouter)
 router.use('/receipt', receiptRouter)
 router.use('/item', itemRouter)
-router.use('/image', express.static(path.join(__dirname, '../', 'assets', 'images')))
 router.use('/contractor', contractorRouter)
 router.use('/contractor-group', groupRouter)
 router.use('/income', incomeRouter)

@@ -14,6 +14,8 @@ const validator = new UserValidator()
 router.route('/register').post(validator.register, orgController.create)
 router.route('/login').post(validator.login, empController.login)
 router.route('/activate/:token').get(empController.activate)
+router.use('/image', express.static(path.join(__dirname, '../', 'assets', 'images')))
+
 router.use(AuthMiddleware)
 router.route('/app').get(orgController.admin)
 router.route('/logout').get(orgController.logout)
