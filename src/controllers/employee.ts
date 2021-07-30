@@ -406,7 +406,6 @@ export class EmployeeController {
             let employees
 
             if (status == 'super_admin') {
-                console.log('hello')
                 employees = await storage.employee.findAllandPopulate({ org_id: orgInfo._id })
             } else {
                 employees = await storage.employee.findAllandPopulate({ owner_id: _id })
