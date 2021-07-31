@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import { Response, NextFunction } from 'express'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import { IGetUserAuthInfoRequest } from './auth'

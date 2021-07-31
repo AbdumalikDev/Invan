@@ -5,7 +5,6 @@ import catchAsync from '../utils/catchAsync'
 import { IUnit } from '../models/Unit'
 import AppError from '../utils/appError'
 import { IAudit } from '../models/Audit'
-import { exist } from 'joi'
 
 export class UnitController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {

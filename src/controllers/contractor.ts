@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import { Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
@@ -9,7 +9,7 @@ export class ContractorController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, address, phone_number, comment, email, groups } = req.body
         const { id: emp_id, org_id } = req.employee.employee_info
-        
+
         const contractor = await storage.contractor.create({
             name,
             address,

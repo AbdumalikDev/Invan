@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import { Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { IShipment } from '../models/Shipment'
 import { storage } from '../storage/main'
@@ -96,5 +96,4 @@ export class ShipmentController {
             message: 'Shipment has been successfully deleted'
         })
     })
-
 }

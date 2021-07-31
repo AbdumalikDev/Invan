@@ -1,7 +1,6 @@
 import { SmsAuthRepo, ISmsAuthAllResponse } from '../repo/smsAuth'
 import SmsAuth, { ISmsAuth } from '../../models/SmsAuth'
 import { logger } from '../../config/logger'
-import AppError from '../../utils/appError'
 
 export class SmsAuthStorage implements SmsAuthRepo {
     private scope = 'storage.sample'
