@@ -63,6 +63,7 @@ export class UnitController {
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
         const { ids } = req.body
+        let filteredIds: string[] = []
         const unDeleted: string[] = []
 
         const isExist = await storage.product.find({ org_id, unit: { $in: ids } })
@@ -70,16 +71,18 @@ export class UnitController {
         if (isExist.length) {
             for (const { unit } of isExist) {
                 const { _id, name } = unit as IUnit
-                ids.findIndex((unitId: string, index: number) => {
-                    if (unitId == _id) {
-                        ids.splice(index, 1)
+
+                filteredIds = ids.filter((id: string) => {
+                    if (id === _id) {
                         unDeleted.push(name)
                     }
+
+                    return id !== _id
                 })
             }
         }
 
-        await storage.unit.deleteMany({ org_id, _id: { $in: ids } })
+        await storage.unit.deleteMany({ org_id, _id: { $in: filteredIds } })
 
         await storage.audit.create({
             org_id,
@@ -91,10 +94,10 @@ export class UnitController {
 
         res.status(200).json({
             success: true,
-            status: isExist.length ? 'unit-used' : 'unit',
-            message: isExist.length
-                ? `${unDeleted.join(',')} ${isExist.length > 1 ? 'are' : 'is'} used in products`
-                : 'Units has been deleted',
+            status: 'unit',
+            message: unDeleted.length
+                ? `${unDeleted} units cannot be deleted`
+                : 'Units have been deleted',
             units
         })
     })

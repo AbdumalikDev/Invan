@@ -92,6 +92,8 @@ export class CategoryController {
         }
         const category = await storage.category.find({ org_id })
 
+        console.log(category)
+
         await storage.audit.create({
             org_id,
             action: 'delete',
