@@ -14,14 +14,14 @@ afterAll(async () => {
 
 describe('Shipment testing', () => {
     const shipment = {
-        _id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
+        _id: "919c04d0-7d50-405f-9649-d8ae49e1fba3",
         org_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
         emp_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
         warehouse_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
         contractor_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
-        item: ["nok","olma"],
+        item: ["noks"],
         doc_id: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
-        doc_date: "819c04d0-7d50-405f-9649-d8ae49e1fba3",
+        doc_date: "12/12/2021",
         is_checked: true
     }
 
@@ -90,7 +90,7 @@ describe('Shipment testing', () => {
     })
 
     test('delete shipment: success', () => {
-        return storage.delete(shipment._id).then((data) => {
+        return storage.delete({shipment:shipment}).then((data) => {
             expect(data).toEqual('Successfully deleted')
         })
     })
