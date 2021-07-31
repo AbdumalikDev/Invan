@@ -54,7 +54,7 @@ describe('Shipment testing', () => {
     })
 
     test('get shipment: success', () => {
-        return storage.find({}).then((data) => {
+        return storage.findAndPopulate({}).then((data) => {
             expect(data).toEqual(shipment)
         })
     })
@@ -62,7 +62,7 @@ describe('Shipment testing', () => {
     test('get shipment:fail', () => {
         expect.assertions(1)
 
-        return storage.find({}).catch((error) => {
+        return storage.findAndPopulate({}).catch((error) => {
             expect(error.code).toEqual(11000)
         })
     })
