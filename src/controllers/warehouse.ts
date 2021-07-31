@@ -4,17 +4,18 @@ import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import { IWarehouse } from '../models/Warehouse'
 import { IAudit } from '../models/Audit'
+import AppError from '../utils/appError'
 
 export class WarehouseController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, address, group } = req.body
+        const { name, address, sub_warehouses } = req.body
         const emp_id = req.employee.employee_info.id
         const org_id = req.employee.employee_info.org_id
 
         const warehouse = await storage.warehouse.create({
             name,
             address,
-            group,
+            sub_warehouses,
             org_id,
             emp_id
         } as IWarehouse)
@@ -57,23 +58,45 @@ export class WarehouseController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        const ids = req.body
+        const { warehouses, sub_warehouses } = req.body
 
-        await storage.warehouse.deleteMany({ org_id, _id: { $in: ids } })
+        const isExist1 = await storage.warehouse.find({
+            org_id,
+            sub_warehouses: { $in: warehouses }
+        })
+
+        if (isExist1.length !== 0) {
+            return next(
+                new AppError(
+                    401,
+                    'Sorry this warehouse is being used in sub_warehouses',
+                    'warehouse'
+                )
+            )
+        }
+
+        await storage.warehouse.deleteMany({ org_id, _id: { $in: warehouses } })
+
+        await sub_warehouses.forEach(async (el: { warehouse: string; sub_warehouse: string }) => {
+            await storage.warehouse.update(
+                { org_id, _id: el.warehouse },
+                { $pull: { sub_warehouses: el.sub_warehouse } }
+            )
+        })
 
         await storage.audit.create({
             org_id,
             action: 'create',
-            events: `${req.params.id} successfully created`
+            events: `Warehouses successfully deleted`
         } as IAudit)
 
-        const warehouses = await storage.warehouse.find({ org_id })
+        const warehouse = await storage.warehouse.find({ org_id })
 
         res.status(200).json({
             success: true,
             status: 'warehouse',
             message: 'Warehouse has been successfully deleted',
-            warehouses
+            warehouse
         })
     })
 

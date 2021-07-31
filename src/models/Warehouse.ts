@@ -7,7 +7,7 @@ export interface IWarehouse extends Document {
     emp_id: string
     name: string
     address: string
-    group: string[]
+    sub_warehouses: string[]
 }
 
 let warehouseSchema = new mongoose.Schema(
@@ -32,9 +32,10 @@ let warehouseSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        group: [
+        sub_warehouses: [
             {
-                type: String
+                type: String,
+                ref: 'warehouses'
             }
         ]
     },

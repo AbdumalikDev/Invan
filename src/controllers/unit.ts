@@ -65,7 +65,7 @@ export class UnitController {
                         unDeleted.push(name)
                     }
 
-                    return id === _id
+                    return id !== _id
                 })
             }
         }
@@ -83,9 +83,10 @@ export class UnitController {
         res.status(200).json({
             success: true,
             status: 'unit',
-            message: 'Units has been deleted',
-            units,
-            unDeleted
+            message: unDeleted.length
+                ? `${unDeleted} units cannot be deleted`
+                : 'Units have been deleted',
+            units
         })
     })
 

@@ -17,7 +17,7 @@ export class WarehouseStorage implements WarehouseRepo {
         }
     }
 
-    async update(query: Object, payload: IWarehouse): Promise<IWarehouse> {
+    async update(query: Object, payload: IWarehouse | Object): Promise<IWarehouse> {
         try {
             const warehouse = await Warehouse.findOneAndUpdate(query, payload, {
                 new: true
@@ -53,7 +53,7 @@ export class WarehouseStorage implements WarehouseRepo {
 
     async find(query: Object): Promise<IWarehouse[]> {
         try {
-            const warehouses = await Warehouse.find(query)
+            const warehouses = await Warehouse.find(query).populate('sub_warehouses')
 
             return warehouses
         } catch (error) {
@@ -64,7 +64,7 @@ export class WarehouseStorage implements WarehouseRepo {
 
     async findOne(query: Object): Promise<IWarehouse> {
         try {
-            const warehouse = await Warehouse.findOne(query)
+            const warehouse = await Warehouse.findOne(query).populate('sub_warehouses')
 
             if (!warehouse) {
                 logger.warn(`${this.scope}.get failed to findOne`)

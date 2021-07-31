@@ -1,11 +1,12 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import { IProduct } from './Product'
 
 export interface IItem extends Document {
     _id: string
     org_id: string
     emp_id: string
-    product: string
+    product: string | IProduct
     cost: number
     quantity: number
 }
