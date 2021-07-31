@@ -52,7 +52,6 @@ export class UserValidator {
     })
 
     register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        console.log(req.body)
         const { error } = this.registerSchema.validate(req.body)
         if (error) return next(error)
 

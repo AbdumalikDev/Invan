@@ -23,7 +23,7 @@ export class ItemStorage implements ItemRepo {
 
             if (!item) {
                 logger.warn(`${this.scope}.get failed to findOne`)
-                throw new AppError(404, 'Db object is not found', 'item')
+                throw new AppError(404, 'Item not found', 'item')
             }
 
             return item
@@ -52,7 +52,7 @@ export class ItemStorage implements ItemRepo {
 
             if (!item) {
                 logger.warn(`${this.scope}.update failed to findByIdAndUpdate`)
-                throw new AppError(404, 'Db object is not found', 'item')
+                throw new AppError(404, 'Item not found', 'item')
             }
 
             return item

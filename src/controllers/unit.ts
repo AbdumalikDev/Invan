@@ -3,13 +3,25 @@ import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import { IUnit } from '../models/Unit'
+import AppError from '../utils/appError'
 import { IAudit } from '../models/Audit'
+import { exist } from 'joi'
 
 export class UnitController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, full_name } = req.body
         const org_id = req.employee.employee_info.org_id
 
+        const isUnitExist = await storage.unit.find({ org_id, name })
+        if (isUnitExist.length) {
+            return next(
+                new AppError(
+                    400,
+                    `${isUnitExist.map((unit) => unit.name).join('')} is already exist`,
+                    'unit'
+                )
+            )
+        }
         const unit = await storage.unit.create({ org_id, name, full_name } as IUnit)
 
         await storage.audit.create({

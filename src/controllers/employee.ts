@@ -369,17 +369,7 @@ export class EmployeeController {
 
             let edit_employee = await storage.employee.update(
                 { _id: id },
-                {
-                    age: age ? age : null,
-                    gender: gender ? gender : null,
-                    email: email ? email : null,
-                    allow_sessions: allow_sessions ? allow_sessions : 2,
-                    name: {
-                        first_name: first_name,
-                        last_name: last_name
-                    },
-                    avatar: employeeAvatar
-                }
+                { ...req.body, avatar: employeeAvatar }
             )
 
             await storage.audit.create({
@@ -406,7 +396,6 @@ export class EmployeeController {
             let employees
 
             if (status == 'super_admin') {
-                console.log('hello')
                 employees = await storage.employee.findAllandPopulate({ org_id: orgInfo._id })
             } else {
                 employees = await storage.employee.findAllandPopulate({ owner_id: _id })

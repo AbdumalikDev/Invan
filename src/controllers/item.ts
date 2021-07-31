@@ -56,7 +56,7 @@ export class ItemController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        const ids = req.body
+        const { ids } = req.body
 
         await storage.item.deleteMany({ org_id, _id: { $in: ids } })
 

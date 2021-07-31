@@ -44,4 +44,4 @@ let warehouseSchema = new mongoose.Schema(
     }
 )
 
-export default mongoose.model<IWarehouse>('warehouses', warehouseSchema)
+export default mongoose.model<IWarehouse>('Warehouse', warehouseSchema)

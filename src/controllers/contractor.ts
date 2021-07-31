@@ -8,9 +8,8 @@ import { IAudit } from '../models/Audit'
 export class ContractorController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, address, phone_number, comment, email, groups } = req.body
-        const emp_id = req.employee.employee_info.id
-        const org_id = req.employee.employee_info.org_id
-
+        const { id: emp_id, org_id } = req.employee.employee_info
+        
         const contractor = await storage.contractor.create({
             name,
             address,
@@ -102,7 +101,7 @@ export class ContractorController {
         res.status(200).json({
             success: true,
             status: 'contractor',
-            message: 'All contractors',
+            message: 'One contractor',
             contractor
         })
     })

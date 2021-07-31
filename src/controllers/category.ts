@@ -56,7 +56,6 @@ export class CategoryController {
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
         const { categories, sub_categories } = req.body
-
         const isExist = await storage.product.find({ org_id, category: { $in: categories } })
 
         let categoryisExistMsg: string[] = []
@@ -79,21 +78,18 @@ export class CategoryController {
 
         if (isExist1.length !== 0) {
             return next(
-                new AppError(401, 'Sorry this category is being used in sub_categories', 'category')
+                new AppError(400, 'Sorry this category is being used in sub_categories', 'category')
             )
         }
 
         await storage.category.deleteMany({ org_id, _id: { $in: categories } })
 
-        await sub_categories.forEach(async (el: { category: string; sub_category: string }) => {
+        for (let { category, sub_category } of sub_categories) {
             await storage.category.update(
-                { org_id, _id: el.category },
-                { $pull: { sub_categories: el.sub_category } }
+                { org_id, _id: category },
+                { $pull: { sub_categories: sub_category } }
             )
-        })
-
-        console.log(sub_categories)
-
+        }
         const category = await storage.category.find({ org_id })
 
         console.log(category)
@@ -106,9 +102,11 @@ export class CategoryController {
 
         res.status(200).json({
             success: true,
-            status: isExist.length ? 'category used' : 'category',
+            status: isExist.length ? 'category-used' : 'category',
             message: isExist.length
-                ? `${categoryisExistMsg.join(',')} is being used in products`
+                ? `${categoryisExistMsg.join(',')} ${
+                      isExist.length > 1 ? 'are' : 'is'
+                  } being used in products`
                 : 'Category has been successfully deleted',
             category
         })
