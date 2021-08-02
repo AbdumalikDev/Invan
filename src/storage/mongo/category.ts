@@ -35,16 +35,16 @@ export class CategoryStorage implements CategoryRepo {
         }
     }
 
-    async deleteMany(query: Object): Promise<string> {
+    async delete(query: Object): Promise<string> {
         try {
-            const categories = await Category.deleteMany(query)
+            const category = await Category.findOneAndDelete(query)
 
-            if (!categories) {
-                logger.warn(`${this.scope}.delete failed to deleteMany`)
+            if (!category) {
+                logger.warn(`${this.scope}.delete failed to findOneAndDelete`)
                 throw new AppError(404, 'Category not found', 'category')
             }
 
-            return 'Categories have been deleted.'
+            return 'Category has been deleted.'
         } catch (error) {
             logger.error(`${this.scope}.delete: finished with error: ${error}`)
             throw error
@@ -53,9 +53,20 @@ export class CategoryStorage implements CategoryRepo {
 
     async find(query: Object): Promise<ICategory[]> {
         try {
-            const categories = await Category.find(query)
-                .populate('sub_categories')
-                .select('_id name sub_categories')
+            const categories = await Category.find(query).populate([
+                {
+                    path: 'sub_categories',
+                    model: 'categories',
+                    populate: {
+                        path: 'sub_categories',
+                        model: 'categories',
+                        populate: {
+                            path: 'sub_categories',
+                            model: 'categories'
+                        }
+                    }
+                }
+            ])
 
             return categories
         } catch (error) {
@@ -66,9 +77,7 @@ export class CategoryStorage implements CategoryRepo {
 
     async findOne(query: Object): Promise<ICategory> {
         try {
-            const category = await Category.findOne(query)
-                .populate('sub_categories')
-                .select('_id name sub_categories')
+            const category = await Category.findOne(query).populate('sub_categories')
 
             if (!category) {
                 logger.warn(`${this.scope}.findOne failed to findOne`)

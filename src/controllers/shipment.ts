@@ -66,23 +66,10 @@ export class ShipmentController {
         })
     })
 
-    getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-
-        let shipments = await storage.shipment.find({ org_id })
-
-        res.status(200).json({
-            success: true,
-            status: 'shipment',
-            message: 'All shipments',
-            shipments
-        })
-    })
-
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        await storage.shipment.delete({ org_id, id: req.params.id })
+        await storage.shipment.deleteMany({ org_id, id: req.params.id })
 
         await storage.audit.create({
             org_id,
@@ -95,5 +82,25 @@ export class ShipmentController {
             status: 'shipment',
             message: 'Shipment has been successfully deleted'
         })
+    })
+
+    getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
+
+        const shipments = await storage.shipment.find({ org_id })
+
+        res.status(200).json({
+            success: true,
+            status: 'shipment',
+            message: 'All shipments',
+            shipments
+        })
+    })
+
+    getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
+        const _id = req.params.id
+
+        const shipment = await storage.shipment.findOne({ org_id })
     })
 }

@@ -6,6 +6,7 @@ const router = Router({ mergeParams: true })
 const controller = new ShipmentController()
 
 router.route('/all').get(AuthMiddleware, controller.getAll)
+router.route('/:id').get(AuthMiddleware, controller.getOne)
 router.route('/create').post(AuthMiddleware, controller.create)
 router.route('/update/:id').patch(AuthMiddleware, controller.update)
 router.route('/delete').delete(AuthMiddleware, controller.delete)
