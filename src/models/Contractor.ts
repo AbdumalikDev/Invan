@@ -46,7 +46,7 @@ let contractorSchema = new mongoose.Schema(
         groups: [
             {
                 type: String,
-                ref: 'Group'
+                ref: 'groups'
             }
         ]
     },

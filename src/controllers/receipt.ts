@@ -8,8 +8,7 @@ import { IAudit } from '../models/Audit'
 export class ReceiptController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { warehouse_id, contractor_id, items, doc_id, is_checked } = req.body
-        const org_id = req.employee.employee_info.org_id
-        const emp_id = req.employee.employee_info.id
+        const { org_id, id: emp_id } = req.employee.employee_info
 
         const receipt = await storage.receipt.create({
             org_id,
@@ -37,8 +36,7 @@ export class ReceiptController {
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { warehouse_id, contractor_id, items, doc_id, is_checked } = req.body
-        const org_id = req.employee.org_id
-        const emp_id = req.employee.id
+        const { org_id, id: emp_id } = req.employee
 
         const receipt = await storage.receipt.update({ org_id, id: req.params.id }, {
             emp_id,
@@ -64,7 +62,7 @@ export class ReceiptController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.org_id
+        const { org_id } = req.employee
 
         const dbRes = await storage.receipt.delete({ org_id, id: req.params.id })
 
@@ -82,7 +80,7 @@ export class ReceiptController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.id
+        const { id: org_id } = req.employee
 
         const receipts = await storage.receipt.find({ org_id })
 

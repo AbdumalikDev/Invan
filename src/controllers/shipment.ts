@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import { Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { IShipment } from '../models/Shipment'
 import { storage } from '../storage/main'
@@ -8,8 +8,7 @@ import { IAudit } from '../models/Audit'
 export class ShipmentController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { item, contractor_id, doc_id, doc_date, is_checked, warehouse_id } = req.body
-        const emp_id = req.employee.employee_info.id
-        const org_id = req.employee.employee_info.org_id
+        const { id: emp_id, org_id } = req.employee.employee_info
 
         const shipment = await storage.shipment.create({
             item,
@@ -38,8 +37,7 @@ export class ShipmentController {
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { item, contractor_id, doc_id, doc_date, is_checked, warehouse_id } = req.body
-        const org_id = req.employee.employee_info.org_id
-        const emp_id = req.employee.employee_info.id
+        const { org_id, id: emp_id } = req.employee.employee_info
 
         const shipment = await storage.shipment.update({ org_id, id: req.params.id }, {
             item,
@@ -66,23 +64,10 @@ export class ShipmentController {
         })
     })
 
-    getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-
-        let shipments = await storage.shipment.find({ org_id })
-
-        res.status(200).json({
-            success: true,
-            status: 'shipment',
-            message: 'All shipments',
-            shipments
-        })
-    })
-
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
-        await storage.shipment.delete({ org_id, id: req.params.id })
+        await storage.shipment.deleteMany({ org_id, id: req.params.id })
 
         await storage.audit.create({
             org_id,
@@ -97,4 +82,22 @@ export class ShipmentController {
         })
     })
 
+    getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const { org_id } = req.employee.employee_info
+
+        const shipments = await storage.shipment.find({ org_id })
+
+        res.status(200).json({
+            success: true,
+            status: 'shipment',
+            message: 'All shipments',
+            shipments
+        })
+    })
+
+    getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const { org_id } = req.employee.employee_info
+        const { id: _id } = req.params
+        const shipment = await storage.shipment.findOne({ org_id })
+    })
 }

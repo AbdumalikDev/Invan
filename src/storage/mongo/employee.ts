@@ -1,6 +1,5 @@
 import { EmployeeRepo, IEmployeeAllResponse } from '../repo/employee'
 import Employee, { IEmployee } from '../../models/Employee'
-import { IOrganization } from '../../models/Organization'
 import { logger } from '../../config/logger'
 import AppError from '../../utils/appError'
 

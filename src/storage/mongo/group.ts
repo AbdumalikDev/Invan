@@ -1,6 +1,5 @@
 import { GroupRepo } from '../../storage/repo/group'
 import Group, { IGroup } from '../../models/Group'
-import contractor, { IContractor } from '../../models/Contractor'
 import { logger } from '../../config/logger'
 import AppError from '../../utils/appError'
 

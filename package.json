@@ -38,6 +38,7 @@
         "loglevel": "^1.7.1",
         "moment": "^2.29.1",
         "mongoose": "^5.12.9",
+        "mongoose-autopopulate": "^0.14.0",
         "mongoose-deep-populate": "^3.2.0",
         "mongoose-mpath": "^2.4.10",
         "node": "14.16.0",
@@ -52,6 +53,7 @@
     "devDependencies": {
         "@types/bluebird": "^3.5.36",
         "@types/mongoose": "^5.11.97",
+        "@types/mongoose-autopopulate": "^0.10.2",
         "@types/mongoose-deep-populate": "^2.0.36",
         "winston": "^3.3.3"
     }

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import { Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
@@ -21,8 +21,7 @@ export class ProductController {
             category
         } = req.body
 
-        const emp_id = req.employee.employee_info.id
-        const org_id = req.employee.employee_info.org_id
+        const { id: emp_id, org_id } = req.employee.employee_info
 
         const product = await storage.product.create({
             org_id,
@@ -55,8 +54,8 @@ export class ProductController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
+        const { org_id } = req.employee.employee_info
+        const { id: _id } = req.params
 
         const product = await storage.product.update({ org_id, _id }, {
             ...req.body
@@ -78,9 +77,27 @@ export class ProductController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        const ids = req.body
+        const ids: string[] = req.body
+        let filteredIds: string[] = []
+        const unDeleted: string[] = []
 
-        await storage.product.deleteMany({ org_id, _id: { $in: ids } })
+        const isExist = await storage.item.find({ org_id, product: { $in: ids } })
+
+        if (isExist.length) {
+            for (const { product } of isExist) {
+                const { _id, name } = product as IProduct
+
+                filteredIds = ids.filter((id: string) => {
+                    if (id === _id) {
+                        unDeleted.push(id)
+                    }
+
+                    return id !== _id
+                })
+            }
+        }
+
+        await storage.product.deleteMany({ org_id, _id: { $in: filteredIds } })
 
         await storage.audit.create({
             org_id,
@@ -93,7 +110,9 @@ export class ProductController {
         res.status(200).json({
             success: true,
             status: 'product',
-            message: 'Product has been successfully deleted',
+            message: unDeleted.length
+                ? `${unDeleted} products being used in item`
+                : 'Product has been successfully deleted',
             products
         })
     })

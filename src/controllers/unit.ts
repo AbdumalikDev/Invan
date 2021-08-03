@@ -5,12 +5,11 @@ import catchAsync from '../utils/catchAsync'
 import { IUnit } from '../models/Unit'
 import AppError from '../utils/appError'
 import { IAudit } from '../models/Audit'
-import { exist } from 'joi'
 
 export class UnitController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, full_name } = req.body
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const isUnitExist = await storage.unit.find({ org_id, name })
         if (isUnitExist.length) {
@@ -39,8 +38,8 @@ export class UnitController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
+        const { org_id } = req.employee.employee_info
+        const { id: _id } = req.params
 
         const unit = await storage.unit.update({ org_id, _id }, {
             ...req.body
@@ -61,8 +60,9 @@ export class UnitController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
         const { ids } = req.body
+        let filteredIds: string[] = []
         const unDeleted: string[] = []
 
         const isExist = await storage.product.find({ org_id, unit: { $in: ids } })
@@ -70,16 +70,18 @@ export class UnitController {
         if (isExist.length) {
             for (const { unit } of isExist) {
                 const { _id, name } = unit as IUnit
-                ids.findIndex((unitId: string, index: number) => {
-                    if (unitId == _id) {
-                        ids.splice(index, 1)
+
+                filteredIds = ids.filter((id: string) => {
+                    if (id === _id) {
                         unDeleted.push(name)
                     }
+
+                    return id !== _id
                 })
             }
         }
 
-        await storage.unit.deleteMany({ org_id, _id: { $in: ids } })
+        await storage.unit.deleteMany({ org_id, _id: { $in: filteredIds } })
 
         await storage.audit.create({
             org_id,
@@ -91,16 +93,16 @@ export class UnitController {
 
         res.status(200).json({
             success: true,
-            status: isExist.length ? 'unit-used' : 'unit',
-            message: isExist.length
-                ? `${unDeleted.join(',')} ${isExist.length > 1 ? 'are' : 'is'} used in products`
-                : 'Units has been deleted',
+            status: 'unit',
+            message: unDeleted.length
+                ? `${unDeleted} units cannot be deleted`
+                : 'Units have been deleted',
             units
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const units = await storage.unit.find({ org_id })
 
@@ -113,7 +115,7 @@ export class UnitController {
     })
 
     getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const unit = await storage.unit.findOne({ org_id, _id: req.params.id })
 

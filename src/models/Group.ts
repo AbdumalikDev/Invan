@@ -34,4 +34,4 @@ const GroupSchema: Schema<IGroup> = new Schema(
     }
 )
 
-export default mongoose.model<IGroup>('Group', GroupSchema)
+export default mongoose.model<IGroup>('groups', GroupSchema)

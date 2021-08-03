@@ -1,6 +1,8 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
-import MongooseDeepPopulate from 'mongoose-deep-populate'
+import MongooseAutoPopulate from 'mongoose-autopopulate'
+
+let autoPopulate: any = MongooseAutoPopulate
 
 export interface ICategory extends Document {
     _id: string
@@ -27,7 +29,8 @@ const CategorySchema: Schema<ICategory> = new Schema(
         sub_categories: [
             {
                 type: String,
-                ref: 'categories'
+                ref: 'categories',
+                autopopulate: true
             }
         ],
         parent_category: {
@@ -38,5 +41,6 @@ const CategorySchema: Schema<ICategory> = new Schema(
         timestamps: true
     }
 )
+CategorySchema.plugin(autoPopulate)
 
 export default mongoose.model<ICategory>('categories', CategorySchema)

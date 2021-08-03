@@ -1,7 +1,6 @@
 import { BanRepo, IBanAllResponse } from '../repo/ban'
 import Ban, { IBan } from '../../models/Ban'
 import { logger } from '../../config/logger'
-import AppError from '../../utils/appError'
 
 export class BanStorage implements BanRepo {
     private scope = 'storage.ban'

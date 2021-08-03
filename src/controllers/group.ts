@@ -7,7 +7,7 @@ import { IGroup } from '../models/Group'
 export class GroupController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, contractors } = req.body
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const group = await storage.group.create({
             org_id,
@@ -25,8 +25,8 @@ export class GroupController {
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, contractors } = req.body
-        const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
+        const { org_id } = req.employee.employee_info
+        const { id: _id } = req.params
 
         const group = await storage.group.update({ org_id, _id }, {
             name,
@@ -42,7 +42,7 @@ export class GroupController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
         const ids = req.body
 
         await storage.group.deleteMany({ org_id, _id: { $in: ids } })
@@ -58,7 +58,7 @@ export class GroupController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const groups = await storage.group.find({ org_id })
 
@@ -71,7 +71,7 @@ export class GroupController {
     })
 
     getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const group = await storage.group.findOne({ org_id, _id: req.params.id })
 

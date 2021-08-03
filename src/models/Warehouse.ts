@@ -35,7 +35,7 @@ let warehouseSchema = new mongoose.Schema(
         sub_warehouses: [
             {
                 type: String,
-                ref: 'Warehouse'
+                ref: 'warehouses'
             }
         ]
     },

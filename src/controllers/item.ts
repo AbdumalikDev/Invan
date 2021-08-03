@@ -8,8 +8,7 @@ import { IAudit } from '../models/Audit'
 export class ItemController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { product, cost, quantity } = req.body
-        const emp_id = req.employee.employee_info.id
-        const org_id = req.employee.employee_info.org_id
+        const { id: emp_id, org_id } = req.employee.employee_info.id
 
         const item = await storage.item.create({
             product,
@@ -34,7 +33,7 @@ export class ItemController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const item = await storage.item.update({ org_id, _id: req.params.id }, {
             ...req.body
@@ -55,7 +54,7 @@ export class ItemController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
         const { ids } = req.body
 
         await storage.item.deleteMany({ org_id, _id: { $in: ids } })
@@ -77,7 +76,7 @@ export class ItemController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         let items = await storage.item.find({ org_id })
 
@@ -90,8 +89,8 @@ export class ItemController {
     })
 
     getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
+        const { org_id } = req.employee.employee_info
+        const { id: _id } = req.params
 
         const item = await storage.item.findOne({ org_id, _id })
 

@@ -1,4 +1,4 @@
-import { IShipment } from "../../models/Shipment"
+import { IShipment } from '../../models/Shipment'
 
 export interface IShipmentAllResponse {
     payloads: IShipment[]
@@ -8,8 +8,7 @@ export interface IShipmentAllResponse {
 export interface ShipmentRepo {
     create(payload: IShipment): Promise<IShipment>
     update(query: Object, payload: IShipment): Promise<IShipment>
-    delete(query: Object): Promise<any>
+    deleteMany(query: Object): Promise<string>
     find(query: Object): Promise<IShipment[]>
     findOne(query: Object): Promise<IShipment>
-    findById(id: string): Promise<IShipment>
 }
