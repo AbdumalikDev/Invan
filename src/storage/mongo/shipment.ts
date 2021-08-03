@@ -6,15 +6,15 @@ import AppError from "../../utils/appError"
 export class ShipmentStorage implements ShipmentRepo {
     private scope = "storage.shipment"
 
-    async findAndPopulate(query: Object): Promise<IShipment> {
+    async find(query: Object): Promise<IShipment[]> {
         try {
-            let shipment = await Shipment.findOne({ ...query }).populate('item')
-            if (!shipment) {
+            let shipments = await Shipment.find(query).populate('products')
+            if (!shipments) {
                 logger.warn(`${this.scope}.get failed to findOne`)
                 throw new AppError(404, 'Shipment not found', 'emp')
             }
 
-            return shipment
+            return shipments
         } catch (error) {
             logger.error(`${this.scope}.findOne: finished with error: ${error}`)
             throw error

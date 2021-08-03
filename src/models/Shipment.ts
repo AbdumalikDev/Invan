@@ -7,7 +7,7 @@ export interface IShipment extends Document {
     emp_id: string
     warehouse_id: string
     contractor_id: string
-    item: string[]
+    products: Object[]
     doc_id: string
     doc_date: string
     is_checked: boolean
@@ -35,10 +35,19 @@ let shipmentSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        item: [{
-            type: String,
-            required: true,
-            ref:"item"
+        products: [{
+            product: {
+                type: String,
+                ref: 'products'
+            },
+            quantity: {
+                type: Number,
+                required: true
+            },
+            cost: {
+                type: Number,
+                required: true
+            }
         }],
         doc_id: {
             type: String
