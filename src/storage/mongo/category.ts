@@ -53,20 +53,7 @@ export class CategoryStorage implements CategoryRepo {
 
     async find(query: Object): Promise<ICategory[]> {
         try {
-            const categories = await Category.find(query).populate([
-                {
-                    path: 'sub_categories',
-                    model: 'categories',
-                    populate: {
-                        path: 'sub_categories',
-                        model: 'categories',
-                        populate: {
-                            path: 'sub_categories',
-                            model: 'categories'
-                        }
-                    }
-                }
-            ])
+            const categories = await Category.find(query)
 
             return categories
         } catch (error) {
@@ -77,7 +64,7 @@ export class CategoryStorage implements CategoryRepo {
 
     async findOne(query: Object): Promise<ICategory> {
         try {
-            const category = await Category.findOne(query).populate('sub_categories')
+            const category = await Category.findOne(query)
 
             if (!category) {
                 logger.warn(`${this.scope}.findOne failed to findOne`)

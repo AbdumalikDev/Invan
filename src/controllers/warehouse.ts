@@ -8,17 +8,24 @@ import AppError from '../utils/appError'
 
 export class WarehouseController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, address, sub_warehouses } = req.body
+        const { name, address, parent_warehouse } = req.body
         const emp_id = req.employee.employee_info.id
         const org_id = req.employee.employee_info.org_id
 
         const warehouse = await storage.warehouse.create({
+            org_id,
+            emp_id,
             name,
             address,
-            sub_warehouses,
-            org_id,
-            emp_id
+            parent_warehouse
         } as IWarehouse)
+
+        if (parent_warehouse) {
+            await storage.warehouse.update(
+                { org_id, _id: parent_warehouse },
+                { $push: { sub_warehouses: warehouse.id } }
+            )
+        }
 
         await storage.audit.create({
             org_id,
@@ -37,10 +44,29 @@ export class WarehouseController {
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
+        const { name, address, parent_warehouse } = req.body
 
-        const warehouse = await storage.warehouse.update({ org_id, _id }, {
-            ...req.body
+        let warehouse = await storage.warehouse.findOne({ org_id, _id })
+
+        if (warehouse.parent_warehouse) {
+            await storage.warehouse.update(
+                { org_id, _id: warehouse.parent_warehouse },
+                { $pull: { sub_warehouses: warehouse.id } }
+            )
+        }
+
+        warehouse = await storage.warehouse.update({ org_id, _id }, {
+            ...name,
+            address,
+            parent_warehouse
         } as IWarehouse)
+
+        if (parent_warehouse) {
+            await storage.warehouse.update(
+                { org_id, _id: parent_warehouse },
+                { $push: { sub_warehouses: warehouse } }
+            )
+        }
 
         await storage.audit.create({
             org_id,
@@ -58,31 +84,27 @@ export class WarehouseController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        const { warehouses, sub_warehouses } = req.body
+        const _id = req.params.id
 
-        const isExist1 = await storage.warehouse.find({
-            org_id,
-            sub_warehouses: { $in: warehouses }
-        })
+        const warehouse = await storage.warehouse.findOne({ org_id, _id })
 
-        if (isExist1.length !== 0) {
-            return next(
-                new AppError(
-                    401,
-                    'Sorry this warehouse is being used in sub_warehouses',
-                    'warehouse'
-                )
-            )
+        const isExist = await storage.shipment.find({ org_id, warehouse: warehouse.id })
+        const isExist1 = await storage.receipt.find({ org_id, warehouse: warehouse.id })
+        let isExistStatus: boolean = true
+        let isExistMessage: string = ''
+
+        if (!isExist.length && !isExist1.length) {
+            isExistStatus = false
+            await storage.warehouse.delete({ org_id, _id })
         }
 
-        await storage.warehouse.deleteMany({ org_id, _id: { $in: warehouses } })
+        if (isExist.length) {
+            isExistMessage = 'shipment'
+        }
 
-        await sub_warehouses.forEach(async (el: { warehouse: string; sub_warehouse: string }) => {
-            await storage.warehouse.update(
-                { org_id, _id: el.warehouse },
-                { $pull: { sub_warehouses: el.sub_warehouse } }
-            )
-        })
+        if (isExist1.length) {
+            isExistMessage = 'receipt'
+        }
 
         await storage.audit.create({
             org_id,
@@ -90,20 +112,25 @@ export class WarehouseController {
             events: `Warehouses successfully deleted`
         } as IAudit)
 
-        const warehouse = await storage.warehouse.find({ org_id })
+        const warehouses = await storage.warehouse.find({ org_id })
 
         res.status(200).json({
             success: true,
             status: 'warehouse',
-            message: 'Warehouse has been successfully deleted',
-            warehouse
+            message: isExistStatus
+                ? isExistMessage === 'receipt'
+                    ? `${isExist1[0].doc_id} is using this warehouse`
+                    : `${isExist[0].doc_id} is using this warehouse`
+                : 'Warehouse has been successfully deleted',
+            warehouses
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        const warehouses = await storage.warehouse.find({ org_id })
+        let warehouses = await storage.warehouse.find({ org_id })
+        warehouses = warehouses.filter((warehouse: IWarehouse) => !warehouse.parent_warehouse)
 
         res.status(200).json({
             success: true,

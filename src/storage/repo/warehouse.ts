@@ -8,7 +8,7 @@ export interface IWarehouseAllResponse {
 export interface WarehouseRepo {
     create(payload: IWarehouse): Promise<IWarehouse>
     update(query: Object, payload: IWarehouse | Object): Promise<IWarehouse>
-    deleteMany(query: Object): Promise<string>
+    delete(query: Object): Promise<string>
     find(query: Object): Promise<IWarehouse[]>
     findOne(query: Object): Promise<IWarehouse>
 }

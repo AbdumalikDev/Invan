@@ -2,7 +2,6 @@ import { Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
-import AppError from '../utils/appError'
 import { ICategory } from '../models/Category'
 import { IAudit } from '../models/Audit'
 
@@ -94,10 +93,12 @@ export class CategoryController {
                 await storage.category.delete({ org_id, _id })
             })
 
-            await storage.category.update(
-                { org_id, _id: category.parent_category },
-                { $pull: { sub_categories: category.id } }
-            )
+            if (category.parent_category) {
+                await storage.category.update(
+                    { org_id, _id: category.parent_category },
+                    { $pull: { sub_categories: category.id } }
+                )
+            }
 
             await storage.category.delete({ org_id, _id })
         }

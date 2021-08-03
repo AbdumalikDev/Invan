@@ -48,7 +48,7 @@ let shipmentSchema = new mongoose.Schema(
         },
         is_checked: {
             type: Boolean,
-            default: 'false'
+            default: 'true'
         }
     },
     {
