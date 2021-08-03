@@ -4,6 +4,7 @@ import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import { ICategory } from '../models/Category'
 import { IAudit } from '../models/Audit'
+import AppError from '../utils/appError'
 
 export class CategoryController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
@@ -57,6 +58,10 @@ export class CategoryController {
         } as ICategory)
 
         if (parent_category) {
+            if (parent_category === category.id) {
+                return next(new AppError(401, 'You cannot save in itself', 'category'))
+            }
+
             await storage.category.update(
                 { org_id, _id: parent_category },
                 { $push: { sub_categories: category.id } }
@@ -82,28 +87,45 @@ export class CategoryController {
         const _id = req.params.id
 
         const is_exist = await storage.product.find({ org_id, category: _id })
-        let is_exist_status: boolean = true
-
-        if (!is_exist.length) {
-            is_exist_status = false
-
-            const category = await storage.category.findOne({ org_id, _id })
-
-            category.sub_categories.forEach(async (_id: string) => {
-                await storage.category.delete({ org_id, _id })
-            })
-
-            if (category.parent_category) {
-                await storage.category.update(
-                    { org_id, _id: category.parent_category },
-                    { $pull: { sub_categories: category.id } }
+        const category = await storage.category.findOne({ org_id, _id })
+        if (is_exist.length) {
+            return next(
+                new AppError(
+                    401,
+                    `${is_exist[0].name} is using ${category.name} category`,
+                    'category'
                 )
-            }
-
-            await storage.category.delete({ org_id, _id })
+            )
         }
 
-        const categories = await storage.category.find({ org_id })
+        category.sub_categories.forEach(async (_id: string) => {
+            const is_exist = await storage.category.find({ org_id })
+
+            if (is_exist.length) {
+                return next(
+                    new AppError(
+                        401,
+                        `${is_exist[0].name} is using ${await (
+                            await storage.category.findOne({ org_id, _id })
+                        ).name}`,
+                        'category'
+                    )
+                )
+            }
+            await storage.category.delete({ org_id, _id })
+        })
+
+        if (category.parent_category) {
+            await storage.category.update(
+                { org_id, _id: category.parent_category },
+                { $pull: { sub_categories: category.id } }
+            )
+        }
+
+        await storage.category.delete({ org_id, _id })
+
+        let categories = await storage.category.find({ org_id })
+        categories = categories.filter((category: ICategory) => !category.parent_category)
 
         await storage.audit.create({
             org_id,
@@ -114,9 +136,7 @@ export class CategoryController {
         res.status(200).json({
             success: true,
             status: 'category',
-            message: is_exist_status
-                ? `Category is being used in ${is_exist[0].name}`
-                : 'Category has been deleted',
+            message: 'Category has been deleted',
             categories
         })
     })

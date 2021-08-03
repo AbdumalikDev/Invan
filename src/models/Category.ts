@@ -32,7 +32,8 @@ const CategorySchema = new Schema(
             }
         ],
         parent_category: {
-            type: String
+            type: String,
+            ref: 'categories'
         }
     },
     {

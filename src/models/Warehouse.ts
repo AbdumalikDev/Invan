@@ -42,7 +42,8 @@ let warehouseSchema = new mongoose.Schema(
             }
         ],
         parent_warehouse: {
-            type: String
+            type: String,
+            ref: 'warehouses'
         }
     },
     {
@@ -52,4 +53,4 @@ let warehouseSchema = new mongoose.Schema(
 
 warehouseSchema.plugin(autopopulate)
 
-export default mongoose.model<IWarehouse>('Warehouse', warehouseSchema)
+export default mongoose.model<IWarehouse>('warehouses', warehouseSchema)

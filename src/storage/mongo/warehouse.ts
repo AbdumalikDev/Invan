@@ -64,7 +64,7 @@ export class WarehouseStorage implements WarehouseRepo {
 
     async findOne(query: Object): Promise<IWarehouse> {
         try {
-            const warehouse = await Warehouse.findOne(query)
+            const warehouse = await Warehouse.findOne(query).populate('parent_warehouse')
 
             if (!warehouse) {
                 logger.warn(`${this.scope}.get failed to findOne`)
