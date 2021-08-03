@@ -3,19 +3,27 @@ import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import AppError from '../utils/appError'
-import { ICategory } from '../models/Category'
+import Category, { ICategory } from '../models/Category'
 import { IAudit } from '../models/Audit'
 
 export class CategoryController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { name, sub_categories } = req.body
+        const { name, sub_categories, parent_category } = req.body
         const org_id = req.employee.employee_info.org_id
-
         const category = await storage.category.create({
             org_id,
             name,
-            sub_categories
+            sub_categories,
+            parent_category
         } as ICategory)
+        let id = category._id
+
+        if (parent_category) {
+            await storage.category.update(
+                { org_id, _id: parent_category },
+                { $push: { sub_categories: id } }
+            )
+        }
 
         await storage.audit.create({
             org_id,
@@ -34,10 +42,27 @@ export class CategoryController {
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
+        const { parent_category } = req.body
 
-        const category = await storage.category.update({ org_id, _id }, {
+        let category = await storage.category.findOne({ org_id, _id })
+
+        if (category.parent_category) {
+            await storage.category.update(
+                { org_id, _id: category.parent_category },
+                { $pull: { sub_categories: category.id } }
+            )
+        }
+
+        category = await storage.category.update({ org_id, _id }, {
             ...req.body
         } as ICategory)
+
+        if (parent_category) {
+            await storage.category.update(
+                { org_id, _id: parent_category },
+                { $push: { sub_categories: category.id } }
+            )
+        }
 
         await storage.audit.create({
             org_id,
@@ -55,42 +80,29 @@ export class CategoryController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        const { categories, sub_categories } = req.body
-        const isExist = await storage.product.find({ org_id, category: { $in: categories } })
+        const _id = req.params.id
 
-        let categoryisExistMsg: string[] = []
-        if (isExist.length) {
-            for (let { category } of isExist) {
-                let { _id, name } = category as ICategory
-                categories.findIndex((cat: string, index: number) => {
-                    if (cat == _id) {
-                        categories.splice(index, 1)
-                        categoryisExistMsg.push(name)
-                    }
-                })
-            }
-        }
+        const is_exist = await storage.product.find({ org_id, category: _id })
+        let is_exist_status: boolean = true
 
-        const isExist1 = await storage.category.find({
-            org_id,
-            sub_categories: { $in: categories }
-        })
+        if (!is_exist.length) {
+            is_exist_status = false
 
-        if (isExist1.length !== 0) {
-            return next(
-                new AppError(400, 'Sorry this category is being used in sub_categories', 'category')
-            )
-        }
+            const category = await storage.category.findOne({ org_id, _id })
 
-        await storage.category.deleteMany({ org_id, _id: { $in: categories } })
+            category.sub_categories.forEach(async (_id: string) => {
+                await storage.category.delete({ org_id, _id })
+            })
 
-        for (let { category, sub_category } of sub_categories) {
             await storage.category.update(
-                { org_id, _id: category },
-                { $pull: { sub_categories: sub_category } }
+                { org_id, _id: category.parent_category },
+                { $pull: { sub_categories: category.id } }
             )
+
+            await storage.category.delete({ org_id, _id })
         }
-        const category = await storage.category.find({ org_id })
+
+        const categories = await storage.category.find({ org_id })
 
         await storage.audit.create({
             org_id,
@@ -100,26 +112,26 @@ export class CategoryController {
 
         res.status(200).json({
             success: true,
-            status: isExist.length ? 'category-used' : 'category',
-            message: isExist.length
-                ? `${categoryisExistMsg.join(',')} ${
-                      isExist.length > 1 ? 'are' : 'is'
-                  } being used in products`
-                : 'Category has been successfully deleted',
-            category
+            status: 'category',
+            message: is_exist_status
+                ? `Category is being used in ${is_exist[0].name}`
+                : 'Category has been deleted',
+            categories
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        const categories = await storage.category.find({ org_id })
+        const categories = await storage.category.find({ org_id, parent_category: null })
+
+        // console.log(categories)
 
         res.status(200).json({
             success: true,
             status: 'category',
             message: 'All categories',
-            categories
+            categories: categories
         })
     })
 

@@ -1,11 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import MongooseDeepPopulate from 'mongoose-deep-populate'
 
 export interface ICategory extends Document {
     _id: string
     org_id: string
     name: string
     sub_categories: string[]
+    parent_category: string
 }
 
 const CategorySchema: Schema<ICategory> = new Schema(
@@ -27,7 +29,10 @@ const CategorySchema: Schema<ICategory> = new Schema(
                 type: String,
                 ref: 'categories'
             }
-        ]
+        ],
+        parent_category: {
+            type: String
+        }
     },
     {
         timestamps: true
