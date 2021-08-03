@@ -88,10 +88,11 @@ export class CategoryController {
 
         const is_exist = await storage.product.find({ org_id, category: _id })
         const category = await storage.category.findOne({ org_id, _id })
+
         if (is_exist.length) {
             return next(
                 new AppError(
-                    401,
+                    400,
                     `${is_exist[0].name} is using ${category.name} category`,
                     'category'
                 )
@@ -99,12 +100,12 @@ export class CategoryController {
         }
 
         category.sub_categories.forEach(async (_id: string) => {
-            const is_exist = await storage.category.find({ org_id })
+            const is_exist = await storage.product.find({ org_id, category: _id })
 
             if (is_exist.length) {
                 return next(
                     new AppError(
-                        401,
+                        400,
                         `${is_exist[0].name} is using ${await (
                             await storage.category.findOne({ org_id, _id })
                         ).name}`,
