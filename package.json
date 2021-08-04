@@ -36,6 +36,7 @@
         "loglevel": "^1.7.1",
         "moment": "^2.29.1",
         "mongoose": "^5.12.9",
+        "nodemon": "^2.0.12",
         "npmlog": "^4.1.2",
         "swagger-ui-express": "^4.1.6",
         "ts-jest": "^27.0.3",

@@ -11,7 +11,7 @@ export class ShipmentStorage implements ShipmentRepo {
             let shipments = await Shipment.find(query).populate('products')
             if (!shipments) {
                 logger.warn(`${this.scope}.get failed to findOne`)
-                throw new AppError(404, 'Shipment not found', 'emp')
+                throw new AppError(404, 'Shipment not found', 'shipment')
             }
 
             return shipments

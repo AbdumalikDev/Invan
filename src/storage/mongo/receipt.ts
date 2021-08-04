@@ -51,7 +51,11 @@ export class ReceiptStorage implements ReceiptRepo {
 
     async find(query: Object): Promise<IReceipt[]> {
         try {
-            const receipts = await Receipt.find({ query })
+            const receipts = await Receipt.find(query).populate('items')
+            if (!receipts) {
+                logger.warn(`${this.scope}.get failed to Find One`)
+                throw new AppError(404, "Receipt not found", "receipt")
+            }
 
             return receipts
         } catch (error) {
