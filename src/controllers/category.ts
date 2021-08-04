@@ -99,7 +99,8 @@ export class CategoryController {
             )
         }
 
-        category.sub_categories.forEach(async (_id: string) => {
+        for (let i = 0; i < category.sub_categories.length; i++) {
+            let _id = category.sub_categories[i]
             const is_exist = await storage.product.find({ org_id, category: _id })
 
             if (is_exist.length) {
@@ -114,7 +115,7 @@ export class CategoryController {
                 )
             }
             await storage.category.delete({ org_id, _id })
-        })
+        }
 
         if (category.parent_category) {
             await storage.category.update(
@@ -169,4 +170,19 @@ export class CategoryController {
             category
         })
     })
+
+    getAllParents = catchAsync(
+        async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+            const org_id = req.employee.employee_info.org_id
+
+            const categories = await storage.category.find({ org_id })
+
+            res.status(200).json({
+                success: true,
+                status: 'category',
+                message: 'All Category',
+                categories
+            })
+        }
+    )
 }

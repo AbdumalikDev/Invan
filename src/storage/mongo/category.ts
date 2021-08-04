@@ -64,7 +64,7 @@ export class CategoryStorage implements CategoryRepo {
 
     async findOne(query: Object): Promise<ICategory> {
         try {
-            const category = await Category.findOne(query).populate('parent_category')
+            const category = await Category.findOne(query)
 
             if (!category) {
                 logger.warn(`${this.scope}.findOne failed to findOne`)
