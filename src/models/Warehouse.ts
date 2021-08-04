@@ -43,7 +43,8 @@ let warehouseSchema = new mongoose.Schema(
         ],
         parent_warehouse: {
             type: String,
-            ref: 'warehouses'
+            ref: 'warehouses',
+            autopopulate: true
         }
     },
     {
