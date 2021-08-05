@@ -6,7 +6,6 @@ const router = Router({ mergeParams: true })
 const controller = new CategoryController()
 
 router.route('/all').get(AuthMiddleware, controller.getAll)
-router.route('/all/parents').get(AuthMiddleware, controller.getAllParents)
 router.route('/:id').get(AuthMiddleware, controller.getOne)
 router.route('/create').post(AuthMiddleware, controller.create)
 router.route('/update/:id').patch(AuthMiddleware, controller.update)

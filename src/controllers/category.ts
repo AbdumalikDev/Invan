@@ -99,24 +99,28 @@ export class CategoryController {
             )
         }
 
-        for (let i = 0; i < category.sub_categories.length; i++) {
-            let _id = category.sub_categories[i]
-            const is_exist = await storage.product.find({ org_id, category: _id })
-
-            if (is_exist.length) {
-                return next(
-                    new AppError(
-                        400,
-                        `${is_exist[0].name} is using ${await (
-                            await storage.category.findOne({ org_id, _id })
-                        ).name}`,
-                        'category'
-                    )
-                )
+        async function catInProduct(arr: any): Promise<any> {
+            for (let i = 0; i < arr.length; i++) {
+                let product = await storage.product.find({ org_id, category: arr[i]._id })
+                if (product.length) {
+                    return product
+                } else if (arr[i].sub_categories && arr[i].sub_categories.length) {
+                    const result = await catInProduct(arr[i].sub_categories)
+                    if (result) return result
+                }
             }
-            await storage.category.delete({ org_id, _id })
         }
 
+        let result = await catInProduct(category.sub_categories)
+        if (result) {
+            return next(
+                new AppError(
+                    400,
+                    `${result[0].name} is using ${result[0].category.name}`,
+                    'category'
+                )
+            )
+        }
         if (category.parent_category) {
             await storage.category.update(
                 { org_id, _id: category.parent_category },
@@ -127,33 +131,19 @@ export class CategoryController {
         await storage.category.delete({ org_id, _id })
 
         let categories = await storage.category.find({ org_id })
+
         categories = categories.filter((category: ICategory) => !category.parent_category)
 
         await storage.audit.create({
             org_id,
             action: 'delete',
-            events: `Categories successfully deleted`
+            events: 'Categories successfully deleted'
         } as IAudit)
 
         res.status(200).json({
             success: true,
             status: 'category',
             message: 'Category has been deleted',
-            categories
-        })
-    })
-
-    getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-
-        let categories = await storage.category.find({ org_id })
-
-        categories = categories.filter((el: ICategory) => !el.parent_category)
-
-        res.status(200).json({
-            success: true,
-            status: 'category',
-            message: 'All categories',
             categories
         })
     })
@@ -171,18 +161,16 @@ export class CategoryController {
         })
     })
 
-    getAllParents = catchAsync(
-        async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-            const org_id = req.employee.employee_info.org_id
+    getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
 
-            const categories = await storage.category.find({ org_id })
+        const categories = await storage.category.find({ org_id })
 
-            res.status(200).json({
-                success: true,
-                status: 'category',
-                message: 'All Category',
-                categories
-            })
-        }
-    )
+        res.status(200).json({
+            success: true,
+            status: 'category',
+            message: 'All Category',
+            categories
+        })
+    })
 }

@@ -86,42 +86,69 @@ export class WarehouseController {
         const org_id = req.employee.employee_info.org_id
         const _id = req.params.id
 
+        const is_exist = await storage.receipt.find({ org_id, warehouse_id: _id })
+        const is_exist1 = await storage.shipment.find({ org_id, warehouse_id: _id })
         const warehouse = await storage.warehouse.findOne({ org_id, _id })
 
-        const isExist = await storage.shipment.find({ org_id, warehouse: warehouse.id })
-        const isExist1 = await storage.receipt.find({ org_id, warehouse: warehouse.id })
-        let isExistStatus: boolean = true
-        let isExistMessage: string = ''
-
-        if (!isExist.length && !isExist1.length) {
-            isExistStatus = false
-            await storage.warehouse.delete({ org_id, _id })
+        if (is_exist.length) {
+            return next(
+                new AppError(
+                    400,
+                    `${is_exist[0].doc_id} is using ${warehouse.name} warehouse`,
+                    'warehouse'
+                )
+            )
         }
 
-        if (isExist.length) {
-            isExistMessage = 'shipment'
+        if (is_exist1.length) {
+            return next(
+                new AppError(
+                    400,
+                    `${is_exist1[0].doc_id} is using ${warehouse.name} warehouse`,
+                    'warehouse'
+                )
+            )
         }
 
-        if (isExist1.length) {
-            isExistMessage = 'receipt'
+        async function check(arr: any): Promise<any> {
+            for (let i = 0; i < arr.length; i++) {
+                let receipt = await storage.receipt.find({ org_id, warehouse_id: arr[i]._id })
+                if (receipt.length) {
+                    return receipt
+                } else if (arr[i].sub_warehouses && arr[i].warehouses.length) {
+                    const result = await check(arr[i].sub_warehouses)
+                    if (result) return result
+                }
+            }
         }
 
-        await storage.audit.create({
-            org_id,
-            action: 'create',
-            events: `Warehouses successfully deleted`
-        } as IAudit)
+        let result = await check(warehouse.sub_warehouses)
+        if (result) {
+            return next(
+                new AppError(
+                    400,
+                    `${result[0].name} is using ${result[0].category.name}`,
+                    'category'
+                )
+            )
+        }
+        if (warehouse.parent_warehouse) {
+            await storage.warehouse.update(
+                { org_id, _id: warehouse.parent_warehouse },
+                { $pull: { sub_warehouses: warehouse.id } }
+            )
+        }
 
-        const warehouses = await storage.warehouse.find({ org_id })
+        await storage.warehouse.delete({ org_id, _id })
+
+        let warehouses = await storage.warehouse.find({ org_id })
+
+        warehouses = warehouses.filter((warehouse: IWarehouse) => !warehouse.parent_warehouse)
 
         res.status(200).json({
             success: true,
             status: 'warehouse',
-            message: isExistStatus
-                ? isExistMessage === 'receipt'
-                    ? `${isExist1[0].doc_id} is using this warehouse`
-                    : `${isExist[0].doc_id} is using this warehouse`
-                : 'Warehouse has been successfully deleted',
+            message: 'Warehouse has been successfully deleted',
             warehouses
         })
     })
@@ -130,7 +157,6 @@ export class WarehouseController {
         const org_id = req.employee.employee_info.org_id
 
         let warehouses = await storage.warehouse.find({ org_id })
-        warehouses = warehouses.filter((warehouse: IWarehouse) => !warehouse.parent_warehouse)
 
         res.status(200).json({
             success: true,
