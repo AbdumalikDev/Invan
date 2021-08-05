@@ -79,7 +79,7 @@ export class WarehouseController {
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
 
-        let warehouses = await storage.warehouse.find({ org_id })
+        let warehouses = await storage.warehouse.findAndPopulate({ org_id })
 
         res.status(200).json({
             success: true,
