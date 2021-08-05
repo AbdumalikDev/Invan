@@ -2,14 +2,15 @@ import { Response, NextFunction } from 'express'
 import { IGetUserAuthInfoRequest } from './auth'
 import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
-import AppError from '../utils/appError'
 import { ICategory } from '../models/Category'
 import { IAudit } from '../models/Audit'
+import AppError from '../utils/appError'
+import { IProduct } from '../models/Product'
 
 export class CategoryController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, parent_category } = req.body
-        const { org_id } = req.employee.employee_info
+        const org_id = req.employee.employee_info.org_id
 
         const category = await storage.category.create({
             org_id,
@@ -20,7 +21,7 @@ export class CategoryController {
         if (parent_category) {
             await storage.category.update(
                 { org_id, _id: parent_category },
-                { $push: { sub_categories: category._id } }
+                { $push: { sub_categories: category.id } }
             )
         }
 
@@ -39,14 +40,11 @@ export class CategoryController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { org_id } = req.employee.employee_info
-        const { id: _id } = req.params
+        const org_id = req.employee.employee_info.org_id
+        const _id = req.params.id
         const { name, parent_category } = req.body
 
         let category = await storage.category.findOne({ org_id, _id })
-
-        if (_id == parent_category)
-            return next(new AppError(400, 'You can not update it', 'category'))
 
         if (category.parent_category) {
             await storage.category.update(
@@ -56,10 +54,15 @@ export class CategoryController {
         }
 
         category = await storage.category.update({ org_id, _id }, {
-            ...req.body
+            name,
+            parent_category
         } as ICategory)
 
         if (parent_category) {
+            if (parent_category === category.id) {
+                return next(new AppError(401, 'You cannot save in itself', 'category'))
+            }
+
             await storage.category.update(
                 { org_id, _id: parent_category },
                 { $push: { sub_categories: category.id } }
@@ -81,54 +84,57 @@ export class CategoryController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { org_id } = req.employee.employee_info
-        const { id: _id } = req.params
+        const org_id = req.employee.employee_info.org_id
+        const _id = req.params.id
 
         const is_exist = await storage.product.find({ org_id, category: _id })
-        // const is_sub_Exist = await storage.category.find({ org_id, sub_categories: _id })
-        // console.log(is_sub_Exist)
-        let category = await storage.category.findOne({ org_id, _id })
+        const category = await storage.category.findOne({ org_id, _id })
 
-        let is_exist_status: boolean = true
+        if (is_exist.length) {
+            return next(
+                new AppError(
+                    400,
+                    `${is_exist[0].name} is using ${category.name} category`,
+                    'category'
+                )
+            )
+        }
 
-        if (!is_exist.length) {
-            is_exist_status = false
+        async function catInProduct(arr: ICategory[]): Promise<IProduct[] | undefined> {
+            for (let i = 0; i < arr.length; i++) {
+                let product = await storage.product.find({ org_id, category: arr[i]._id })
+                if (product.length) {
+                    return product
+                } else if (arr[i].sub_categories && arr[i].sub_categories.length) {
+                    const result = await catInProduct(arr[i].sub_categories as ICategory[])
+                    if (result) return result
+                }
+            }
+        }
 
-            const category = await storage.category.findOne({ org_id, _id })
+        let result = await catInProduct(category.sub_categories as ICategory[])
 
-            category.sub_categories.forEach(async (_id: string) => {
-                await storage.category.delete({ org_id, _id })
-            })
-
+        if (result) {
+            return next(
+                new AppError(
+                    400,
+                    `${result[0].name} is using ${(result[0].category as ICategory).name}`,
+                    'category'
+                )
+            )
+        }
+        if (category.parent_category) {
             await storage.category.update(
                 { org_id, _id: category.parent_category },
                 { $pull: { sub_categories: category.id } }
             )
-
-            await storage.category.delete({ org_id, _id })
         }
 
-        category.sub_categories.forEach(async (_id: string) => {
-            let isSubExist = await storage.category.find({ _id })
-
-            if (isSubExist.length) {
-                return next(
-                    new AppError(
-                        400,
-                        `${isSubExist[0].name} is using ${
-                            (await storage.category.findOne({ _id, org_id })).name
-                        }`,
-                        'category'
-                    )
-                )
-            }
-            await storage.category.delete({ org_id, _id })
-        })
+        await storage.category.delete({ org_id, _id })
 
         let categories = await storage.category.find({ org_id })
-        categories = categories.filter((el: ICategory) => !el.parent_category)
 
-        await storage.category.delete({ org_id, _id })
+        categories = categories.filter((category: ICategory) => !category.parent_category)
 
         await storage.audit.create({
             org_id,
@@ -139,9 +145,7 @@ export class CategoryController {
         res.status(200).json({
             success: true,
             status: 'category',
-            message: is_exist_status
-                ? `Category is being used in ${is_exist[0].name}`
-                : 'Category has been deleted',
+            message: 'Category has been deleted',
             categories
         })
     })

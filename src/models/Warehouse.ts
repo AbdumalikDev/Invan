@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import autopopulate from 'mongoose-autopopulate'
 
 export interface IWarehouse extends Document {
     _id: string
@@ -8,6 +9,7 @@ export interface IWarehouse extends Document {
     name: string
     address: string
     sub_warehouses: string[]
+    parent_warehouse: string
 }
 
 let warehouseSchema = new mongoose.Schema(
@@ -35,13 +37,20 @@ let warehouseSchema = new mongoose.Schema(
         sub_warehouses: [
             {
                 type: String,
-                ref: 'warehouses'
+                ref: 'warehouses',
+                autopopulate: true
             }
-        ]
+        ],
+        parent_warehouse: {
+            type: String,
+            ref: 'warehouses'
+        }
     },
     {
         timestamps: true
     }
 )
 
-export default mongoose.model<IWarehouse>('Warehouse', warehouseSchema)
+warehouseSchema.plugin(autopopulate)
+
+export default mongoose.model<IWarehouse>('warehouses', warehouseSchema)

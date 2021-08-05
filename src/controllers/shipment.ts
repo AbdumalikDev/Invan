@@ -65,7 +65,7 @@ export class ShipmentController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { org_id } = req.employee.employee_info
+        const org_id = req.employee.employee_info.org_id
 
         await storage.shipment.deleteMany({ org_id, id: req.params.id })
 
@@ -83,7 +83,7 @@ export class ShipmentController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { org_id } = req.employee.employee_info
+        const org_id = req.employee.employee_info.org_id
 
         const shipments = await storage.shipment.find({ org_id })
 
@@ -96,8 +96,9 @@ export class ShipmentController {
     })
 
     getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { org_id } = req.employee.employee_info
-        const { id: _id } = req.params
+        const org_id = req.employee.employee_info.org_id
+        const _id = req.params.id
+
         const shipment = await storage.shipment.findOne({ org_id })
     })
 }

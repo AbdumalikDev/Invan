@@ -1,18 +1,16 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
-import MongooseAutoPopulate from 'mongoose-autopopulate'
-
-let autoPopulate: any = MongooseAutoPopulate
+import autopopulate from 'mongoose-autopopulate'
 
 export interface ICategory extends Document {
     _id: string
     org_id: string
     name: string
-    sub_categories: string[]
+    sub_categories: string[] | ICategory[]
     parent_category: string
 }
 
-const CategorySchema: Schema<ICategory> = new Schema(
+const CategorySchema = new Schema(
     {
         _id: {
             type: String,
@@ -34,13 +32,15 @@ const CategorySchema: Schema<ICategory> = new Schema(
             }
         ],
         parent_category: {
-            type: String
+            type: String,
+            ref: 'categories'
         }
     },
     {
         timestamps: true
     }
 )
-CategorySchema.plugin(autoPopulate)
+
+CategorySchema.plugin(autopopulate)
 
 export default mongoose.model<ICategory>('categories', CategorySchema)

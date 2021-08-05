@@ -35,16 +35,16 @@ export class WarehouseStorage implements WarehouseRepo {
         }
     }
 
-    async deleteMany(query: Object): Promise<string> {
+    async delete(query: Object): Promise<string> {
         try {
-            const warehouses = await Warehouse.deleteMany(query)
+            const warehouse = await Warehouse.findOneAndDelete(query)
 
-            if (!warehouses) {
+            if (!warehouse) {
                 logger.warn(`${this.scope}.delete failed to deleteMany`)
                 throw new AppError(404, 'Warehouses not found', 'warehouse')
             }
 
-            return 'Warehouses have been deleted successfully'
+            return 'Warehouse have been deleted successfully'
         } catch (error) {
             logger.error(`${this.scope}.delete: finished with error: ${error}`)
             throw error
@@ -53,7 +53,7 @@ export class WarehouseStorage implements WarehouseRepo {
 
     async find(query: Object): Promise<IWarehouse[]> {
         try {
-            const warehouses = await Warehouse.find(query).populate('sub_warehouses')
+            const warehouses = await Warehouse.find(query)
 
             return warehouses
         } catch (error) {
@@ -64,7 +64,7 @@ export class WarehouseStorage implements WarehouseRepo {
 
     async findOne(query: Object): Promise<IWarehouse> {
         try {
-            const warehouse = await Warehouse.findOne(query).populate('sub_warehouses')
+            const warehouse = await Warehouse.findOne(query).populate('parent_warehouse')
 
             if (!warehouse) {
                 logger.warn(`${this.scope}.get failed to findOne`)
