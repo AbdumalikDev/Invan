@@ -51,6 +51,13 @@ export class CategoryController {
                 { $pull: { sub_categories: category.id } }
             )
         }
+        const check = category.sub_categories.some(async (el) => {
+            const cat = await storage.category.findOne({ org_id, _id: el })
+            return cat.id === parent_category
+        })
+        if (check) {
+            return next(new AppError(400, 'You cannot save in its sub_category', 'category'))
+        }
 
         category = await storage.category.update({ org_id, _id }, {
             name,
@@ -59,7 +66,7 @@ export class CategoryController {
 
         if (parent_category) {
             if (parent_category === category.id) {
-                return next(new AppError(401, 'You cannot save in itself', 'category'))
+                return next(new AppError(400, 'You cannot save in itself', 'category'))
             }
 
             await storage.category.update(
@@ -104,7 +111,7 @@ export class CategoryController {
                 let product = await storage.product.find({ org_id, category: arr[i]._id })
                 if (product.length) {
                     return product
-                } else if (arr[i].sub_categories && arr[i].sub_categories.length) {
+                } else if (arr[i].sub_categories.length) {
                     const result = await catInProduct(arr[i].sub_categories)
                     if (result) return result
                 }

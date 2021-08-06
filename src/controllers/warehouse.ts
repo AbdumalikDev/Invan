@@ -55,6 +55,14 @@ export class WarehouseController {
             )
         }
 
+        const check = warehouse.sub_warehouses.some(async (el) => {
+            const ware = await storage.warehouse.findOne({ org_id, _id: el })
+            return ware.id === parent_warehouse
+        })
+        if (check) {
+            return next(new AppError(400, 'You cannot save in its sub_category', 'category'))
+        }
+
         warehouse = await storage.warehouse.update({ org_id, _id }, {
             ...name,
             address,
@@ -62,6 +70,10 @@ export class WarehouseController {
         } as IWarehouse)
 
         if (parent_warehouse) {
+            if (parent_warehouse === warehouse.id) {
+                return next(new AppError(400, 'You cannot save in itself', 'warehouse'))
+            }
+
             await storage.warehouse.update(
                 { org_id, _id: parent_warehouse },
                 { $push: { sub_warehouses: warehouse } }
@@ -115,7 +127,7 @@ export class WarehouseController {
                 let receipt = await storage.receipt.find({ org_id, warehouse_id: arr[i]._id })
                 if (receipt.length) {
                     return receipt
-                } else if (arr[i].sub_warehouses && arr[i].warehouses.length) {
+                } else if (arr[i].sub_warehouses.length) {
                     const result = await check(arr[i].sub_warehouses)
                     if (result) return result
                 }

@@ -10,4 +10,5 @@ export interface ReceiptRepo {
     update(query: Object, payload: IReceipt): Promise<IReceipt>
     delete(query: Object): Promise<string>
     find(query: Object): Promise<IReceipt[]>
+    findOne(query: Object): Promise<IReceipt>
 }
