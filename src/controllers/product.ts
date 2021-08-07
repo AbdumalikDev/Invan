@@ -84,8 +84,8 @@ export class ProductController {
         const isExist = await storage.item.find({ org_id, product: { $in: ids } })
 
         if (isExist.length) {
-            for (const { product } of isExist) {
-                const { _id, name } = product as IProduct
+            for (const { product_id } of isExist) {
+                const { _id, name } = product_id as IProduct
 
                 filteredIds = ids.filter((id: string) => {
                     if (id === _id) {
@@ -140,6 +140,25 @@ export class ProductController {
             status: 'product',
             message: 'One product',
             product
+        })
+    })
+
+    search = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const org_id = req.employee.employee_info.org_id
+        const search = req.params.search
+        let products
+
+        if (isNaN(search as any)) {
+            products = await storage.product.find({ org_id, name: new RegExp(search, 'i') })
+        } else {
+            products = await storage.product.find({ org_id, SKU: new RegExp(search, 'i') })
+        }
+
+        res.status(200).json({
+            success: true,
+            status: 'product',
+            message: 'Searched products',
+            products
         })
     })
 }

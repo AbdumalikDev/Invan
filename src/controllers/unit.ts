@@ -79,9 +79,10 @@ export class UnitController {
                     return id !== _id
                 })
             }
+            await storage.unit.deleteMany({ org_id, _id: { $in: filteredIds } })
+        } else {
+            await storage.unit.deleteMany({ org_id, _id: { $in: ids } })
         }
-
-        await storage.unit.deleteMany({ org_id, _id: { $in: filteredIds } })
 
         await storage.audit.create({
             org_id,

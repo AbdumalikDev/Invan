@@ -7,7 +7,11 @@ export interface IReceipt extends Document {
     emp_id: string
     warehouse_id: string
     contractor_id: string
-    items: string[]
+    items: {
+        product_id: string
+        quantity: number
+        cost: number
+    }[]
     doc_id: string
     is_checked: boolean
 }
@@ -38,8 +42,16 @@ const ReceiptSchema = new Schema(
         },
         items: [
             {
-                type: String,
-                ref: 'items'
+                product_id: {
+                    type: String,
+                    ref: 'products'
+                },
+                quantity: {
+                    type: Number
+                },
+                cost: {
+                    type: Number
+                }
             }
         ],
         doc_id: {

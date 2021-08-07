@@ -52,6 +52,13 @@ export class CategoryController {
                 { $pull: { sub_categories: category.id } }
             )
         }
+        const check = category.sub_categories.some(async (el: any) => {
+            const cat = await storage.category.findOne({ org_id, _id: el })
+            return cat.id === parent_category
+        })
+        if (check) {
+            return next(new AppError(400, 'You cannot save in its sub_category', 'category'))
+        }
 
         category = await storage.category.update({ org_id, _id }, {
             name,
@@ -60,7 +67,7 @@ export class CategoryController {
 
         if (parent_category) {
             if (parent_category === category.id) {
-                return next(new AppError(401, 'You cannot save in itself', 'category'))
+                return next(new AppError(400, 'You cannot save in itself', 'category'))
             }
 
             await storage.category.update(
@@ -123,6 +130,18 @@ export class CategoryController {
                 )
             )
         }
+
+        async function deleteCategorySubs(arr: ICategory[]): Promise<void> {
+            for (let i = 0; i < arr.length; i++) {
+                await storage.category.delete({ _id: arr[i]._id })
+                if (arr[i].sub_categories.length) {
+                    await deleteCategorySubs(arr[i].sub_categories as ICategory[])
+                }
+            }
+        }
+
+        await deleteCategorySubs(category.sub_categories as ICategory[])
+
         if (category.parent_category) {
             await storage.category.update(
                 { org_id, _id: category.parent_category },
@@ -139,7 +158,7 @@ export class CategoryController {
         await storage.audit.create({
             org_id,
             action: 'delete',
-            events: `Categories successfully deleted`
+            events: 'Categories successfully deleted'
         } as IAudit)
 
         res.status(200).json({
@@ -150,31 +169,29 @@ export class CategoryController {
         })
     })
 
-    getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { org_id } = req.employee.employee_info
-
-        let categories = await storage.category.find({ org_id })
-
-        categories = categories.filter((el: ICategory) => !el.parent_category)
-
-        res.status(200).json({
-            success: true,
-            status: 'category',
-            message: 'All categories',
-            categories: categories
-        })
-    })
-
     getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { org_id } = req.employee.employee_info
+        const org_id = req.employee.employee_info.org_id
 
         const category = await storage.category.findOne({ org_id, _id: req.params.id })
 
         res.status(200).json({
             success: true,
             status: 'category',
-            message: 'One category',
+            message: 'All categories',
             category
+        })
+    })
+
+    getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+        const { org_id } = req.employee.employee_info
+
+        const categories = await storage.category.find({ org_id })
+
+        res.status(200).json({
+            success: true,
+            status: 'category',
+            message: 'All Category',
+            categories
         })
     })
 }

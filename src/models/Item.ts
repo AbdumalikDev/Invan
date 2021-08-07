@@ -6,7 +6,7 @@ export interface IItem extends Document {
     _id: string
     org_id: string
     emp_id: string
-    product: string | IProduct
+    product_id: string | IProduct
     cost: number
     quantity: number
 }
@@ -25,7 +25,7 @@ let itemSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        product: {
+        product_id: {
             type: String,
             required: true,
             ref: 'products'

@@ -7,11 +7,12 @@ import { IAudit } from '../models/Audit'
 
 export class ItemController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { product, cost, quantity } = req.body
-        const { id: emp_id, org_id } = req.employee.employee_info.id
+        const { product_id, cost, quantity } = req.body
+        const emp_id = req.employee.employee_info.id
+        const org_id = req.employee.employee_info.org_id
 
         const item = await storage.item.create({
-            product,
+            product_id,
             cost,
             quantity,
             org_id,
