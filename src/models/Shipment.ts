@@ -35,10 +35,22 @@ let shipmentSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        item: {
-            type: String,
-            ref: 'items'
-        },
+        products: [
+            {
+                product_id: {
+                    type: String,
+                    ref: 'products'
+                },
+                quantity: {
+                    type: Number,
+                    required: true
+                },
+                cost: {
+                    type: Number,
+                    required: true
+                }
+            }
+        ],
         doc_id: {
             type: String
         },

@@ -36,8 +36,8 @@ export class ContractorController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
+        const { org_id } = req.employee.employee_info
+        const { id: _id } = req.params
 
         const contractor = await storage.contractor.update({ org_id, _id }, {
             ...req.body
@@ -58,7 +58,7 @@ export class ContractorController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
         const ids = req.body
 
         await storage.contractor.deleteMany({ org_id, _id: { $in: ids } })
@@ -80,7 +80,7 @@ export class ContractorController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const contractors = await storage.contractor.find({ org_id })
 
@@ -93,8 +93,8 @@ export class ContractorController {
     })
 
     getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
+        const { org_id } = req.employee.employee_info
+        const { _id } = req.params
 
         const contractor = await storage.contractor.findOne({ org_id, _id })
 

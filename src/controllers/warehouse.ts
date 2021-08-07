@@ -55,7 +55,7 @@ export class WarehouseController {
             )
         }
 
-        const check = warehouse.sub_warehouses.some(async (el) => {
+        const check = warehouse.sub_warehouses.some(async (el: any) => {
             const ware = await storage.warehouse.findOne({ org_id, _id: el })
             return ware.id === parent_warehouse
         })
@@ -144,6 +144,18 @@ export class WarehouseController {
                 )
             )
         }
+
+        async function deleteWarehouseSubs(arr: IWarehouse[]): Promise<void> {
+            for (let i = 0; i < arr.length; i++) {
+                await storage.warehouse.delete({ _id: arr[i]._id })
+                if (arr[i].sub_warehouses.length) {
+                    await deleteWarehouseSubs(arr[i].sub_warehouses as IWarehouse[])
+                }
+            }
+        }
+
+        await deleteWarehouseSubs(warehouse.sub_warehouses as IWarehouse[])
+
         if (warehouse.parent_warehouse) {
             await storage.warehouse.update(
                 { org_id, _id: warehouse.parent_warehouse },
@@ -166,7 +178,7 @@ export class WarehouseController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         let warehouses = await storage.warehouse.find({ org_id })
 

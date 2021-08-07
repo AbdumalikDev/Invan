@@ -5,6 +5,7 @@ import catchAsync from '../utils/catchAsync'
 import { ICategory } from '../models/Category'
 import { IAudit } from '../models/Audit'
 import AppError from '../utils/appError'
+import { IProduct } from '../models/Product'
 
 export class CategoryController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
@@ -51,7 +52,7 @@ export class CategoryController {
                 { $pull: { sub_categories: category.id } }
             )
         }
-        const check = category.sub_categories.some(async (el) => {
+        const check = category.sub_categories.some(async (el: any) => {
             const cat = await storage.category.findOne({ org_id, _id: el })
             return cat.id === parent_category
         })
@@ -106,28 +107,41 @@ export class CategoryController {
             )
         }
 
-        async function catInProduct(arr: any): Promise<any> {
+        async function catInProduct(arr: ICategory[]): Promise<IProduct[] | undefined> {
             for (let i = 0; i < arr.length; i++) {
                 let product = await storage.product.find({ org_id, category: arr[i]._id })
                 if (product.length) {
                     return product
-                } else if (arr[i].sub_categories.length) {
-                    const result = await catInProduct(arr[i].sub_categories)
+                } else if (arr[i].sub_categories && arr[i].sub_categories.length) {
+                    const result = await catInProduct(arr[i].sub_categories as ICategory[])
                     if (result) return result
                 }
             }
         }
 
-        let result = await catInProduct(category.sub_categories)
+        let result = await catInProduct(category.sub_categories as ICategory[])
+
         if (result) {
             return next(
                 new AppError(
                     400,
-                    `${result[0].name} is using ${result[0].category.name}`,
+                    `${result[0].name} is using ${(result[0].category as ICategory).name}`,
                     'category'
                 )
             )
         }
+
+        async function deleteCategorySubs(arr: ICategory[]): Promise<void> {
+            for (let i = 0; i < arr.length; i++) {
+                await storage.category.delete({ _id: arr[i]._id })
+                if (arr[i].sub_categories.length) {
+                    await deleteCategorySubs(arr[i].sub_categories as ICategory[])
+                }
+            }
+        }
+
+        await deleteCategorySubs(category.sub_categories as ICategory[])
+
         if (category.parent_category) {
             await storage.category.update(
                 { org_id, _id: category.parent_category },
@@ -163,13 +177,13 @@ export class CategoryController {
         res.status(200).json({
             success: true,
             status: 'category',
-            message: 'One category',
+            message: 'All categories',
             category
         })
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const categories = await storage.category.find({ org_id })
 

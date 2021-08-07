@@ -6,7 +6,7 @@ export interface ICategory extends Document {
     _id: string
     org_id: string
     name: string
-    sub_categories: string[]
+    sub_categories: string[] | ICategory[]
     parent_category: string
 }
 

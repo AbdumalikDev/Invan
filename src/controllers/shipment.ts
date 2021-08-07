@@ -8,8 +8,7 @@ import { IAudit } from '../models/Audit'
 export class ShipmentController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { item, contractor_id, doc_id, doc_date, is_checked, warehouse_id } = req.body
-        const emp_id = req.employee.employee_info.id
-        const org_id = req.employee.employee_info.org_id
+        const { id: emp_id, org_id } = req.employee.employee_info
 
         const shipment = await storage.shipment.create({
             item,
@@ -38,8 +37,7 @@ export class ShipmentController {
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { item, contractor_id, doc_id, doc_date, is_checked, warehouse_id } = req.body
-        const org_id = req.employee.employee_info.org_id
-        const emp_id = req.employee.employee_info.id
+        const { org_id, id: emp_id } = req.employee.employee_info
 
         const shipment = await storage.shipment.update({ org_id, id: req.params.id }, {
             item,

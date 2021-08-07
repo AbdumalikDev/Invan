@@ -79,7 +79,7 @@ const ProductSchema: Schema<IProduct> = new Schema(
         },
         update_history: [
             {
-                type: Object,
+                type: String,
                 ref: 'products'
             }
         ]

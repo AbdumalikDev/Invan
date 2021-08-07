@@ -9,7 +9,7 @@ import { IAudit } from '../models/Audit'
 export class UnitController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { name, full_name } = req.body
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const isUnitExist = await storage.unit.find({ org_id, name })
         if (isUnitExist.length) {
@@ -38,8 +38,8 @@ export class UnitController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
+        const { org_id } = req.employee.employee_info
+        const { id: _id } = req.params
 
         const unit = await storage.unit.update({ org_id, _id }, {
             ...req.body
@@ -60,7 +60,7 @@ export class UnitController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
         const { ids } = req.body
         let filteredIds: string[] = []
         const unDeleted: string[] = []
@@ -103,7 +103,7 @@ export class UnitController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const units = await storage.unit.find({ org_id })
 
@@ -116,7 +116,7 @@ export class UnitController {
     })
 
     getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const unit = await storage.unit.findOne({ org_id, _id: req.params.id })
 

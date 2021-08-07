@@ -9,8 +9,7 @@ import { IItem } from '../models/Item'
 export class ReceiptController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { warehouse_id, contractor_id, items, doc_id, is_checked } = req.body
-        const org_id = req.employee.employee_info.org_id
-        const emp_id = req.employee.employee_info.id
+        const { org_id, id: emp_id } = req.employee.employee_info
 
         const receipt = await storage.receipt.create({
             org_id,

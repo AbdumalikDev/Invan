@@ -8,8 +8,7 @@ import { IAudit } from '../models/Audit'
 export class IncomeController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { doc_id, payment_type, sum } = req.body
-        const emp_id = req.employee.employee_info.id
-        const org_id = req.employee.employee_info.org_id
+        const { id: emp_id, org_id } = req.employee.employee_info
 
         const income = await storage.income.create({
             doc_id,
@@ -35,8 +34,7 @@ export class IncomeController {
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const { doc_id, payment_type, sum } = req.body
-        const org_id = req.employee.employee_info.org_id
-        const emp_id = req.employee.employee_info.id
+        const { org_id, id: emp_id } = req.employee.employee_info
 
         const income = await storage.income.update({ org_id, id: req.params.id }, {
             doc_id,
@@ -61,7 +59,7 @@ export class IncomeController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const ids = req.body
 
@@ -86,7 +84,7 @@ export class IncomeController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         let incomes = await storage.income.find({ org_id })
 

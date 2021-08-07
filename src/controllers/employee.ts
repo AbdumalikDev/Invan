@@ -353,23 +353,37 @@ export class EmployeeController {
                 )
 
                 await fsPromise.writeFile(filePath, req.files.file.data)
+
+                let prevImg = employeeInfo.avatar.substring(
+                    employeeInfo.avatar.lastIndexOf('/') + 1,
+                    employeeInfo.avatar.length
+                )
+                let prevImgPath = fsSync.existsSync(
+                    path.join(__dirname, '../', 'assets', 'images', employeeOrg.org_name, prevImg)
+                )
+                if (prevImgPath) {
+                    await fsPromise.unlink(
+                        path.join(
+                            __dirname,
+                            '../',
+                            'assets',
+                            'images',
+                            employeeOrg.org_name,
+                            prevImg
+                        )
+                    )
+                }
             }
 
             let employeeAvatar = req.files
                 ? `/employee/image/${employeeOrg.org_name}/${employeeImgId}.png`
-                : null
+                : employeeInfo.avatar
 
-            let { first_name, last_name, email, gender, age, allow_sessions } = req.body
-
-            // let { phone_number: empOldPhone } = employeeInfo
-            // let isPhoneNumberExist = await storage.employee.userExist({ phone_number })
-
-            // if (empOldPhone != phone_number && isPhoneNumberExist)
-            // return next(new AppError(400, 'Phone number already exist', 'phone number'))
+            let { first_name, last_name } = req.body
 
             let edit_employee = await storage.employee.update(
                 { _id: id },
-                { ...req.body, avatar: employeeAvatar }
+                { ...req.body, name: { first_name, last_name }, avatar: employeeAvatar }
             )
 
             await storage.audit.create({

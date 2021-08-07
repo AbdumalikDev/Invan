@@ -7,8 +7,7 @@ import { IAudit } from '../models/Audit'
 
 export class OutcomeController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-        const emp_id = req.employee.employee_info.id
+        const { id: emp_id, org_id } = req.employee.employee_info
         const { doc_id, payment_type, sum } = req.body
 
         const outcome = await storage.outcome.create({
@@ -34,8 +33,7 @@ export class OutcomeController {
     })
 
     update = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
-        const emp_id = req.employee.employee_info.id
+        const { org_id, id: emp_id } = req.employee.employee_info
         const { doc_id, payment_type, sum } = req.body
 
         const outcome = await storage.outcome.update({ org_id, _id: req.params.id }, {
@@ -60,7 +58,7 @@ export class OutcomeController {
     })
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
         const ids = req.body
 
         ids.forEach(async (_id: string) => {
@@ -78,7 +76,7 @@ export class OutcomeController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const outcomes = await storage.outcome.find({ org_id })
 
@@ -91,7 +89,7 @@ export class OutcomeController {
     })
 
     getOne = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.org_id
+        const { org_id } = req.employee.employee_info
 
         const outcome = await storage.outcome.findOne({ org_id, _id: req.params.id })
 

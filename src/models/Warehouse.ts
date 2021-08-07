@@ -8,7 +8,7 @@ export interface IWarehouse extends Document {
     emp_id: string
     name: string
     address: string
-    sub_warehouses: string[]
+    sub_warehouses: string[] | IWarehouse[]
     parent_warehouse: string
 }
 
