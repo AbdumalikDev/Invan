@@ -52,6 +52,9 @@ export class ReceiptStorage implements ReceiptRepo {
     async find(query: Object): Promise<IReceipt[]> {
         try {
             const receipts = await Receipt.find(query)
+                .populate('items.product_id')
+                .populate('warehouse_id')
+                .populate('contractor_id')
 
             return receipts
         } catch (error) {
@@ -63,6 +66,9 @@ export class ReceiptStorage implements ReceiptRepo {
     async findOne(query: Object): Promise<IReceipt> {
         try {
             const receipt = await Receipt.findOne(query)
+                .populate('items.product_id')
+                .populate('warehouse_id')
+                .populate('contractor_id')
 
             if (!receipt) {
                 logger.warn(`${this.scope}.findOne failed to findOne`)

@@ -53,7 +53,7 @@ export class CategoryController {
             )
         }
         const check = category.sub_categories.some(async (el: any) => {
-            const cat = await storage.category.findOne({ org_id, _id: el })
+            const cat = await storage.category.findOne({ org_id, _id: el.id })
             return cat.id === parent_category
         })
         if (check) {

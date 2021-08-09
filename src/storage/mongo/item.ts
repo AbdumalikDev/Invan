@@ -8,7 +8,7 @@ export class ItemStorage implements ItemRepo {
 
     async find(query: Object): Promise<IItem[]> {
         try {
-            let items = await Item.find(query).populate('product')
+            let items = await Item.find(query).populate('product_id')
 
             return items
         } catch (error) {
@@ -19,7 +19,7 @@ export class ItemStorage implements ItemRepo {
 
     async findOne(query: Object): Promise<IItem> {
         try {
-            let item = await Item.findOne(query).populate('product')
+            let item = await Item.findOne(query).populate('product_id')
 
             if (!item) {
                 logger.warn(`${this.scope}.get failed to findOne`)

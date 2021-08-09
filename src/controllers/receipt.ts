@@ -103,7 +103,7 @@ export class ReceiptController {
     })
 
     getAll = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const org_id = req.employee.employee_info.id
+        const org_id = req.employee.employee_info.org_id
 
         const receipts = await storage.receipt.find({ org_id })
 

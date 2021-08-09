@@ -10,7 +10,7 @@ export interface IProduct extends Document {
     name: string
     description: string
     bar_code: string
-    SKU: number
+    SKU: string
     image: any
     unit: string | IUnit
     category: string | ICategory
@@ -47,7 +47,7 @@ const ProductSchema: Schema<IProduct> = new Schema(
             type: String
         },
         SKU: {
-            type: Number
+            type: String
         },
         image: {
             data: Buffer,
