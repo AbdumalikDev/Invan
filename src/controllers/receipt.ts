@@ -4,7 +4,7 @@ import { storage } from '../storage/main'
 import catchAsync from '../utils/catchAsync'
 import { IReceipt } from '../models/Receipt'
 import { IAudit } from '../models/Audit'
-import { IItem } from '../models/Item'
+import Item, { IItem } from '../models/Item'
 
 export class ReceiptController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
@@ -82,9 +82,8 @@ export class ReceiptController {
 
     delete = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
         const org_id = req.employee.employee_info.org_id
-        const _id = req.params.id
-
-        await storage.receipt.delete({ org_id, _id })
+        const ids = req.body
+        await storage.receipt.deleteMany({ org_id, _id: { $in: ids } })
 
         await storage.audit.create({
             org_id,
@@ -106,12 +105,19 @@ export class ReceiptController {
         const org_id = req.employee.employee_info.org_id
 
         const receipts = await storage.receipt.find({ org_id })
+        let updatedReciepts: any = []
+        receipts.map((reciept: IReceipt) => {
+            let totalSum = reciept.items
+                .map((item) => item.quantity * item.cost)
+                .reduce((a, b) => a + b)
 
+            updatedReciepts.push({ ...reciept.toJSON(), total: totalSum })
+        })
         res.status(200).json({
             success: true,
             status: 'receipt',
             message: 'All receipts',
-            receipts
+            receipts: updatedReciepts
         })
     })
 

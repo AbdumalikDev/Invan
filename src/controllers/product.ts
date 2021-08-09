@@ -81,15 +81,14 @@ export class ProductController {
         let filteredIds: string[] = []
         const unDeleted: string[] = []
 
-        const isExist = await storage.item.find({ org_id, product: { $in: ids } })
-
+        const isExist = await storage.item.find({ org_id, product_id: { $in: ids } })
         if (isExist.length) {
             for (const { product_id } of isExist) {
                 const { _id, name } = product_id as IProduct
 
                 filteredIds = ids.filter((id: string) => {
                     if (id === _id) {
-                        unDeleted.push(id)
+                        unDeleted.push(name)
                     }
 
                     return id !== _id
@@ -97,7 +96,10 @@ export class ProductController {
             }
         }
 
-        await storage.product.deleteMany({ org_id, _id: { $in: filteredIds } })
+        await storage.product.deleteMany({
+            org_id,
+            _id: { $in: isExist.length ? filteredIds : ids }
+        })
 
         await storage.audit.create({
             org_id,
@@ -109,7 +111,7 @@ export class ProductController {
 
         res.status(200).json({
             success: true,
-            status: 'product',
+            status: `${isExist.length ? 'product-used' : 'product'}`,
             message: unDeleted.length
                 ? `${unDeleted} products being used in item`
                 : 'Product has been successfully deleted',
