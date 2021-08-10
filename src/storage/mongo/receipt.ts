@@ -81,4 +81,20 @@ export class ReceiptStorage implements ReceiptRepo {
             throw error
         }
     }
+
+    async deleteMany(query: Object): Promise<string> {
+        try {
+            let receipts = await Receipt.deleteMany(query)
+
+            if (!receipts) {
+                logger.warn(`${this.scope}.delete failed to deleteMany`)
+                throw new AppError(404, 'Receipts not found', 'item')
+            }
+
+            return 'Receipts have been successfully deleted'
+        } catch (error) {
+            logger.error(`${this.scope}.delete: finished with error: ${error}`)
+            throw error
+        }
+    }
 }

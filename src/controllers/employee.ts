@@ -354,15 +354,15 @@ export class EmployeeController {
 
                 await fsPromise.writeFile(filePath, req.files.file.data)
 
-                let prevImg = employeeInfo.avatar.substring(
-                    employeeInfo.avatar.lastIndexOf('/') + 1,
-                    employeeInfo.avatar.length
-                )
-                let prevImgPath = fsSync.existsSync(
-                    path.join(__dirname, '../', 'assets', 'images', employeeOrg.org_name, prevImg)
-                )
-                if (prevImgPath) {
-                    await fsPromise.unlink(
+                let prevImg
+                let prevImgPath
+
+                if (employeeInfo.avatar) {
+                    prevImg = employeeInfo.avatar.substring(
+                        employeeInfo.avatar.lastIndexOf('/') + 1,
+                        employeeInfo.avatar.length
+                    )
+                    prevImgPath = fsSync.existsSync(
                         path.join(
                             __dirname,
                             '../',
@@ -372,6 +372,18 @@ export class EmployeeController {
                             prevImg
                         )
                     )
+                    if (prevImgPath) {
+                        await fsPromise.unlink(
+                            path.join(
+                                __dirname,
+                                '../',
+                                'assets',
+                                'images',
+                                employeeOrg.org_name,
+                                prevImg
+                            )
+                        )
+                    }
                 }
             }
 
