@@ -1,6 +1,6 @@
-FROM node:latest
+FROM node:14
 
-WORKDIR /user/src/invan
+WORKDIR /user/src/app
 
 COPY package*.json ./
 

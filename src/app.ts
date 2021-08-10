@@ -5,8 +5,6 @@ import { expressLogger } from './config/logger'
 import { ErrorController } from './controllers/error'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDocs from './swagger'
-import Category from './models/Category'
-import Product from './models/Product'
 
 const app = express()
 const errorController = new ErrorController()
@@ -24,10 +22,6 @@ app.get('/status', (req: Request, res: Response) => {
         status: 'OK'
     })
 })
-// ;(async (_) => {
-//     await Category.deleteMany({})
-//     await Product.deleteMany({})
-// })()
 
 app.use(errorController.hanle)
 

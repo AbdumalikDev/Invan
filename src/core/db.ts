@@ -23,11 +23,20 @@ interface mongoDBInfo {
 function getMongoDBUrl(authDisable: boolean, dbInfo?: mongoDBInfo): string {
     let url: string
     if (authDisable) {
-        return `mongodb://localhost:27017/${config.MongoDatabase}`
+        return `mongodb://mongo:27017/${config.MongoDatabase}`
     }
 
     url =
-        'mongodb+srv://Samandar:rersamandar123@cluster1.i31hr.mongodb.net/invan-updated?retryWrites=true&w=majority'
+        'mongodb://' +
+        config.MongoUser +
+        ':' +
+        config.MongoPassword +
+        '@' +
+        config.MongoHost +
+        ':' +
+        config.MongoPort.toString() +
+        '/' +
+        config.MongoDatabase
     return url
 }
 export default class Database {
