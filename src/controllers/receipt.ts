@@ -5,11 +5,17 @@ import catchAsync from '../utils/catchAsync'
 import { IReceipt } from '../models/Receipt'
 import { IAudit } from '../models/Audit'
 import Item, { IItem } from '../models/Item'
+import AppError from '../utils/appError'
 
 export class ReceiptController {
     create = catchAsync(async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-        const { warehouse_id, contractor_id, items, doc_id, is_checked } = req.body
+        const { warehouse_id, contractor_id, items, doc_id, is_checked, doc_date } = req.body
         const { org_id, id: emp_id } = req.employee.employee_info
+
+        let isDocIDExist = await storage.receipt.find({ org_id, doc_id })
+        if (isDocIDExist.length) return next(new AppError(400, 'Doc id already exist', 'doc_id'))
+
+        let ExistReceipts = await storage.receipt.find({ org_id })
 
         const receipt = await storage.receipt.create({
             org_id,
@@ -17,8 +23,9 @@ export class ReceiptController {
             warehouse_id,
             contractor_id,
             items,
-            doc_id,
-            is_checked
+            doc_id: doc_id ? doc_id : +ExistReceipts[ExistReceipts.length - 1].doc_id + 1,
+            is_checked,
+            doc_date
         } as IReceipt)
 
         items.forEach(async (item: IItem) => {
@@ -105,7 +112,9 @@ export class ReceiptController {
         const org_id = req.employee.employee_info.org_id
 
         const receipts = await storage.receipt.find({ org_id })
+
         let updatedReciepts: any = []
+
         receipts.map((reciept: IReceipt) => {
             let totalSum = reciept.items
                 .map((item) => item.quantity * item.cost)
@@ -113,6 +122,7 @@ export class ReceiptController {
 
             updatedReciepts.push({ ...reciept.toJSON(), total: totalSum })
         })
+
         res.status(200).json({
             success: true,
             status: 'receipt',

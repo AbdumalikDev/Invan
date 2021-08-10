@@ -15,6 +15,7 @@ export interface IReceipt extends Document {
     doc_id: string
     is_checked: boolean
     total: number
+    doc_date: string
 }
 
 const ReceiptSchema = new Schema(
@@ -61,6 +62,10 @@ const ReceiptSchema = new Schema(
         is_checked: {
             type: Boolean,
             required: true
+        },
+        doc_date: {
+            type: String,
+            default: Date.now()
         }
     },
     {
