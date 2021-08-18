@@ -23,7 +23,7 @@ interface mongoDBInfo {
 function getMongoDBUrl(authDisable: boolean, dbInfo?: mongoDBInfo): string {
     let url: string
     if (authDisable) {
-        return `mongodb://mongo:27017/${config.MongoDatabase}`
+        return `mongodb://localhost:27017/${config.MongoDatabase}`
     }
 
     url =
